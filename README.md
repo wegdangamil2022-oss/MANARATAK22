@@ -1,11 +1,42 @@
-<div align="center">
+# MANARATAK
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+نسخة المشروع المرفقة، مرتبة ومرفوعة إلى:
+https://github.com/wegdangamil2022-oss/MANARATAK22
 
-  <h1>Built with AI Studio</h2>
+## هيكل الملفات
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+- `apps/web/`: الواجهة العامة الحالية وصورها.
+- `apps/admin/`: لوحة الإدارة.
+- `apps/api/`: ملفات الواجهة الخلفية الموجودة في النسخة المرفقة.
+- `apps/frontend-security/`: إعدادات أمان تطبيقات الواجهة.
+- `packages/`: الحزم المشتركة.
+- `config/testing/`: إعدادات الاختبارات وفحص الأنواع، مجمعة من الجذر.
+- `config/`: بقية إعدادات المشروع.
+- `docs/`: الوثائق، ومنها دليل الطالب في `docs/guides/`.
+- `vendor/`: الاعتماد المحلي المرفق.
+- `workspace/archive/ai-studio/`: ملفات جلسات AI Studio الأصلية محفوظة للأرشفة.
+- `workspace/archive/design-reference-assets/`: الصور المرجعية للتصميم المحذوف، محفوظة خارج أصول التطبيق.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+حُذفت صفحة «قسم التصميمات والواجهات» الإضافية وزر فتحها فقط. لم يتغير تصميم الواجهة الرئيسية، أو صور المنح، أو بياناتها، أو طريقة تشغيل المشروع.
 
-</div>
+## التشغيل كما في النسخة الأصلية
+
+```sh
+npm install
+npm run dev
+```
+
+```sh
+npm run build
+npm run dev:admin
+```
+
+إعدادات الاختبارات المنقولة تُستدعى من جذر المشروع، مثل:
+
+```sh
+npx vitest run --config config/testing/home-catalog-vitest.config.ts
+```
+
+احتُفظ بملف `bun.lock` الأصلي. النسخة المرفقة لا تحتوي على `package-lock.json`، لذلك لم يُستخدم `npm ci` في التحقق المحلي. قد تشير بعض الوثائق والاختبارات التاريخية إلى ملفات غير موجودة أصلًا في الملف المضغوط؛ لم تُضف وظائف بديلة لها ضمن مهمة الترتيب.
+
+انظر `docs/maintenance/ORGANIZATION_REPORT.md` لنتيجة التحقق و`docs/maintenance/file-mapping.json` لخريطة الملفات. الملف التعريفي الأصلي محفوظ دون تعديل في `docs/archive/README.original.md`.
