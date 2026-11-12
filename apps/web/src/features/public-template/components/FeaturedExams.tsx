@@ -1,8 +1,6 @@
 import { useTranslation as usePublicTemplateTranslation } from '../../../i18n/I18nProvider';
 import React from 'react';
 import { Exam } from '../types';
-import { HomeSectionEmptyCards } from './HomeSectionEmptyCards';
-import { homeCatalogStatus } from '../homeCatalogState';
 import type { PublicLiveDomainStatus } from '../publicLiveDataSource';
 import { FileSignature, ArrowUpLeft } from 'lucide-react';
 
@@ -33,8 +31,8 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
 
   if (normalized.includes('DUOLINGO')) {
     return (
-      <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="20" fill="#58CC02" />
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#58CC02" />
         {/* Duo Owl Eyes */}
         <circle cx="36" cy="42" r="14" fill="white" />
         <circle cx="64" cy="42" r="14" fill="white" />
@@ -47,7 +45,7 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
         {/* Feathers */}
         <path d="M22 26C28 20 38 22 38 22" stroke="#46A302" strokeWidth="3.5" strokeLinecap="round" />
         <path d="M78 26C72 20 62 22 62 22" stroke="#46A302" strokeWidth="3.5" strokeLinecap="round" />
-        <text x="50" y="80" textAnchor="middle" fill="white" fontSize="13" fontWeight="900" fontFamily="'Cairo', sans-serif">
+        <text x="50" y="78" textAnchor="middle" fill="white" fontSize="13" fontWeight="900" fontFamily="'Cairo', sans-serif">
           duolingo
         </text>
       </svg>
@@ -56,22 +54,32 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
 
   if (normalized.includes('IELTS')) {
     return (
-      <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="20" fill="#E31837" />
-        <text x="50" y="58" textAnchor="middle" fill="white" fontSize="22" fontWeight="900" fontFamily="sans-serif" letterSpacing="-0.5">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#E31837" />
+        <text x="50" y="56" textAnchor="middle" fill="white" fontSize="22" fontWeight="900" fontFamily="sans-serif" letterSpacing="-0.5">
           IELTS
         </text>
-        <circle cx="18" cy="22" r="4" fill="#142B5F" />
-        <circle cx="82" cy="22" r="4" fill="#142B5F" />
-        <rect x="22" y="68" width="56" height="5" rx="2.5" fill="#142B5F" />
+        <rect x="24" y="66" width="52" height="4.5" rx="2.25" fill="#142B5F" />
+      </svg>
+    );
+  }
+
+  if (normalized.includes('HSK')) {
+    return (
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#142B5F" />
+        <text x="50" y="54" textAnchor="middle" fill="#F2CD78" fontSize="20" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.5">
+          {name.toUpperCase()}
+        </text>
+        <rect x="26" y="65" width="48" height="4" rx="2" fill="#0E7C86" />
       </svg>
     );
   }
 
   if (normalized.includes('TOEFL')) {
     return (
-      <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="20" fill="#00529B" />
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#00529B" />
         <text x="50" y="48" textAnchor="middle" fill="white" fontSize="17" fontWeight="900" fontFamily="sans-serif">
           TOEFL
         </text>
@@ -85,8 +93,8 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
 
   if (normalized.includes('SAT')) {
     return (
-      <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="20" fill="#003366" />
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#003366" />
         <text x="50" y="56" textAnchor="middle" fill="white" fontSize="24" fontWeight="900" fontFamily="sans-serif" letterSpacing="1">
           SAT
         </text>
@@ -97,8 +105,8 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
 
   if (normalized.includes('GRE')) {
     return (
-      <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="20" fill="#1B365D" />
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#1B365D" />
         <text x="50" y="56" textAnchor="middle" fill="white" fontSize="24" fontWeight="900" fontFamily="sans-serif" letterSpacing="1">
           GRE
         </text>
@@ -109,8 +117,8 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
 
   if (normalized.includes('GMAT')) {
     return (
-      <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="20" fill="#002060" />
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#002060" />
         <text x="50" y="56" textAnchor="middle" fill="white" fontSize="20" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.5">
           GMAT
         </text>
@@ -121,8 +129,8 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
 
   if (normalized.includes('PTE')) {
     return (
-      <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="20" fill="#00205B" />
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#00205B" />
         <circle cx="50" cy="38" r="14" fill="#F26A36" />
         <text x="50" y="74" textAnchor="middle" fill="white" fontSize="20" fontWeight="900" fontFamily="sans-serif">
           PTE
@@ -133,10 +141,10 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
 
   if (normalized.includes('USMLE')) {
     return (
-      <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="20" fill="#005B94" />
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#005B94" />
         <path d="M50 20V60M42 30C58 35 58 45 50 48C42 52 42 60 58 65" stroke="#FFC72C" strokeWidth="4" strokeLinecap="round" fill="none" />
-        <text x="50" y="82" textAnchor="middle" fill="white" fontSize="12" fontWeight="900" fontFamily="sans-serif">
+        <text x="50" y="80" textAnchor="middle" fill="white" fontSize="12" fontWeight="900" fontFamily="sans-serif">
           USMLE
         </text>
       </svg>
@@ -145,22 +153,22 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
 
   if (normalized.includes('ACCA')) {
     return (
-      <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="20" fill="#D1001C" />
-        <text x="50" y="58" textAnchor="middle" fill="white" fontSize="22" fontWeight="900" fontFamily="sans-serif" letterSpacing="1">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#D1001C" />
+        <text x="50" y="56" textAnchor="middle" fill="white" fontSize="20" fontWeight="900" fontFamily="sans-serif" letterSpacing="1">
           ACCA
         </text>
-        <rect x="18" y="18" width="64" height="64" rx="8" stroke="white" strokeWidth="2.5" fill="none" strokeDasharray="6 4" />
+        <rect x="24" y="65" width="52" height="4" rx="2" fill="white" fillOpacity="0.85" />
       </svg>
     );
   }
 
   if (normalized.includes('MCAT')) {
     return (
-      <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="20" fill="#003B71" />
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#003B71" />
         <path d="M50 22V52M44 30C56 34 56 42 50 45" stroke="#E3A857" strokeWidth="3.5" fill="none" />
-        <text x="50" y="76" textAnchor="middle" fill="#E3A857" fontSize="18" fontWeight="900" fontFamily="sans-serif">
+        <text x="50" y="74" textAnchor="middle" fill="#E3A857" fontSize="18" fontWeight="900" fontFamily="sans-serif">
           MCAT
         </text>
       </svg>
@@ -168,9 +176,9 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
   }
 
   return (
-    <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100" height="100" rx="20" fill="#142B5F" />
-      <text x="50" y="58" textAnchor="middle" fill="#D6A43B" fontSize="16" fontWeight="900" fontFamily="sans-serif">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#142B5F" />
+      <text x="50" y="56" textAnchor="middle" fill="#D6A43B" fontSize="16" fontWeight="900" fontFamily="sans-serif">
         {name}
       </text>
     </svg>
@@ -179,19 +187,16 @@ export const ExamVectorLogo: React.FC<{ name: string; className?: string }> = ({
 
 export const FeaturedExams: React.FC<FeaturedExamsProps> = ({
   exams,
-  status,
-  onRetry,
-  dataMode = 'api',
+  dataMode = 'prototype',
   onSelectExam,
   onViewAllClick,
 }) => {
   const { t: publicT, dir: publicDir } = usePublicTemplateTranslation();
 
-  const cards = dataMode === 'prototype' ? EXAMS_LIST.map((item) => ({ ...item, owner: undefined as Exam | undefined }))
+  const cards = dataMode === 'prototype' ? EXAMS_LIST.map((item) => ({ ...item, owner: (exams ?? []).find(e => e.id === item.code || e.name.toLowerCase().includes(item.code)) }))
     : (exams ?? []).filter((exam) => exam.ownerId).slice(0, 10).map((exam) => ({
       name: exam.name, code: exam.id, owner: exam,
     }));
-  const displayStatus = homeCatalogStatus(status, cards.length);
 
   const handleExamClick = (examItem: (typeof cards)[number]) => {
     if (examItem.owner && onSelectExam) onSelectExam(examItem.owner);
@@ -227,8 +232,7 @@ export const FeaturedExams: React.FC<FeaturedExamsProps> = ({
             <p className="text-[11px] sm:text-xs text-[var(--mn-text)] font-semibold leading-relaxed max-w-lg mx-auto font-['Cairo',sans-serif]">{publicT('public_explore_language_academic_and_professional_admission_requirements')}</p>
           </div>
 
-          {cards.length === 0 && <HomeSectionEmptyCards kind="exams" status={displayStatus === 'ready' ? 'empty' : displayStatus} onRetry={onRetry} />}
-          {/* Marquee Scrolling Badges Area — published data only */}
+          {/* Marquee Scrolling Badges Area */}
           <div
             className="relative w-full overflow-hidden flex items-center py-2.5 mb-2.5 mask-edges"
             dir={publicDir}

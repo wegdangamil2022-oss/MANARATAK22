@@ -1,9 +1,0 @@
-node_modules
-npm-debug.log
-.git
-.github
-.husky
-.artifacts
-dist
-packages/*/dist
-apps/*/dist

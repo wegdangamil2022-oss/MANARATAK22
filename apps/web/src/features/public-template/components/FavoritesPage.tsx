@@ -28,6 +28,7 @@ import {
   CareerOpportunityPreview,
 } from '../types';
 import { FavoriteButton } from './FavoriteButton';
+import { PublicCardsPagination, usePaginatedCatalog } from './DetailUi';
 
 interface FavoritesPageProps {
   favoriteKeys: FavoriteKey[];
@@ -165,6 +166,13 @@ export const FavoritesPage: React.FC<FavoritesPageProps> = ({
 
   const visible = selectedKind === 'all' ? resolvedItems : resolvedItems.filter((item) => item.kind === selectedKind);
 
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: paginatedVisible,
+    goToPage,
+  } = usePaginatedCatalog(visible, `${selectedKind}|${favoriteKeys.length}`, 30);
+
   const openItem = (item: FavoriteResolvedItem) => {
     if (!item.raw) return;
     if (item.kind === 'scholarship') return onOpenScholarship(item.raw as Scholarship);
@@ -223,7 +231,7 @@ export const FavoritesPage: React.FC<FavoritesPageProps> = ({
           <div className="py-12 text-center text-[11px] text-[var(--mn-text-muted)]">{publicT('public_no_saved_items_in_this_category')}</div>
         ) : (
           <div className="space-y-2.5">
-            {visible.map((item) => (
+            {paginatedVisible.map((item) => (
               <article key={item.key} onClick={() => openItem(item)} className="w-full rounded-3xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3.5 text-start shadow-2xs hover:border-[var(--mn-accent)]/60 hover:shadow-sm transition-all active:scale-[0.99] cursor-pointer mn-panel ">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-[var(--mn-primary)] text-white flex items-center justify-center shrink-0 mn-inverse ">{META[item.kind].icon}</div>
@@ -242,6 +250,15 @@ export const FavoritesPage: React.FC<FavoritesPageProps> = ({
                 </div>
               </article>
             ))}
+
+            <PublicCardsPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={visible.length}
+              pageSize={30}
+              onPageChange={goToPage}
+              dir={publicDir}
+            />
           </div>
         )}
       </div>

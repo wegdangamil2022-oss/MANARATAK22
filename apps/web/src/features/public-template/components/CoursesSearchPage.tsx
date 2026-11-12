@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { Course, ImportedCourse } from '../types';
 import { FavoriteButton } from './FavoriteButton';
-import { PublicFilterSelectModal } from './DetailUi';
+import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
 
 const KNOWN_EN_TO_AR_TITLES: Record<string, string> = {
   'introduction to python': 'مقدمة في برمجة بايثون',
@@ -261,14 +261,32 @@ export const CoursesSearchPage: React.FC<CoursesSearchPageProps> = ({ onBack, on
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const normalizedInitialField = initialField.trim() ? `field:${initialField.trim()}` : 'all';
   const distinct = (values: string[]) => [...new Set(values.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ar'));
-  const IMPORTED_PLATFORM_OPTIONS = distinct(importedCourses.map(c=>c.platform ?? c.provider));
-  const COURSE_FIELD_OPTIONS = [...new Map(importedCourses.flatMap(course => [
-    { value: `field:${course.field}`, label: course.field },
-    ...(course.relatedMajors ?? []).filter(major => major.id).map(major => ({ value: `major:${major.id}`, label: major.name })),
-  ]).filter(option => option.label).map(option => [option.value, option])).values()].sort((a, b) => a.label.localeCompare(b.label, 'ar'));
-  const LANGUAGE_OPTIONS = distinct(importedCourses.map(c=>c.language));
-  const LEVEL_OPTIONS = distinct(importedCourses.map(c=>c.level));
-  const CERTIFICATE_OPTIONS = distinct(importedCourses.map(c=>c.certificateType).concat('بدون شهادة مجانية'));
+  const IMPORTED_PLATFORM_OPTIONS = distinct([
+    ...importedCourses.map(c=>c.platform ?? c.provider),
+    'Saylor Academy',
+    'freeCodeCamp',
+    'Google Skillshop',
+    'UN CC:e-Learn',
+    'Coursera',
+    'edX',
+    'Harvard Online',
+    'MIT OpenCourseWare',
+  ]);
+  const COURSE_FIELD_OPTIONS = [...new Map([
+    ...importedCourses.flatMap(course => [
+      { value: `field:${course.field}`, label: course.field },
+      ...(course.relatedMajors ?? []).filter(major => major.id).map(major => ({ value: `major:${major.id}`, label: major.name })),
+    ]),
+    { value: 'field:البرمجة وتطوير البرمجيات', label: 'البرمجة وتطوير البرمجيات' },
+    { value: 'field:الذكاء الاصطناعي وعلوم البيانات', label: 'الذكاء الاصطناعي وعلوم البيانات' },
+    { value: 'field:التسويق الرقمي والأعمال', label: 'التسويق الرقمي والأعمال' },
+    { value: 'field:الاستدامة والبيئة والمناخ', label: 'الاستدامة والبيئة والمناخ' },
+    { value: 'field:الأمن السيبراني والشبكات', label: 'الأمن السيبراني والشبكات' },
+    { value: 'field:إدارة المشاريع والقيادة', label: 'إدارة المشاريع والقيادة' },
+  ].filter(option => option.label).map(option => [option.value, option])).values()].sort((a, b) => a.label.localeCompare(b.label, 'ar'));
+  const LANGUAGE_OPTIONS = distinct([...importedCourses.map(c=>c.language), 'الإنجليزية', 'العربية', 'الفرنسية', 'الألمانية', 'الصينية']);
+  const LEVEL_OPTIONS = distinct([...importedCourses.map(c=>c.level), 'مبتدئ', 'متوسط', 'متقدم', 'جميع المستويات']);
+  const CERTIFICATE_OPTIONS = distinct(importedCourses.map(c=>c.certificateType).concat(['شهادة مجانية معتمدة', 'بدون شهادة مجانية']));
 
   useEffect(() => {
     setSearchQuery(initialQuery);
@@ -350,6 +368,17 @@ export const CoursesSearchPage: React.FC<CoursesSearchPageProps> = ({ onBack, on
     selectedLevel,
     selectedCertificate,
   ]);
+
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    pageItems: paginatedImportedCourses,
+  } = usePaginatedCatalog(
+    visibleImportedCourses,
+    `${searchQuery}|${freeCourseMode}|${selectedPlatform}|${selectedField}|${selectedLanguage}|${selectedLevel}|${selectedCertificate}`,
+    30,
+  );
 
   return (
     <div
@@ -664,7 +693,7 @@ export const CoursesSearchPage: React.FC<CoursesSearchPageProps> = ({ onBack, on
       {/* External Course Cards */}
       {visibleImportedCourses.length > 0 ? (
         <section className="max-w-lg mx-auto mn-inline-gutter pt-2 pb-5 space-y-3">
-          {visibleImportedCourses.map((course) => {
+          {paginatedImportedCourses.map((course) => {
             const { titleAr, titleEn } = resolveCourseBilingualTitle(course);
             const certificateLabel = course.freeCertificate
               ? 'شهادة مجانية'
@@ -739,36 +768,36 @@ export const CoursesSearchPage: React.FC<CoursesSearchPageProps> = ({ onBack, on
                     </div>
                   </div>
 
-                  {/* 2×2 Compact Single-Line Info Grid */}
+                  {/* 2×2 Compact Single-Line Info Grid with Right-Aligned Parallel Icons */}
                   <div className="mt-2 grid grid-cols-2 gap-1.5">
                     {/* Box 1: اللغة */}
-                    <div className="flex items-center gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)]/85 px-2.5 py-1.5 mn-panel">
-                      <Languages className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" />
-                      <span className="truncate text-[10.5px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
+                    <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+                      <Languages className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#239BA6]" />
+                      <span className="truncate">
                         {course.language}
                       </span>
                     </div>
 
                     {/* Box 2: المستوى */}
-                    <div className="flex items-center gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)]/85 px-2.5 py-1.5 mn-panel">
-                      <GraduationCap className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" />
-                      <span className="truncate text-[10.5px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
+                    <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+                      <GraduationCap className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#239BA6]" />
+                      <span className="truncate">
                         {course.level}
                       </span>
                     </div>
 
                     {/* Box 3: دورة مجانية */}
-                    <div className="flex items-center gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)]/85 px-2.5 py-1.5 mn-panel">
-                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" />
-                      <span className="truncate text-[10.5px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
+                    <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#239BA6]" />
+                      <span className="truncate">
                         {course.studyFree ? 'دورة مجانية' : 'دورة مدفوعة'}
                       </span>
                     </div>
 
                     {/* Box 4: شهادة مجانية */}
-                    <div className="flex items-center gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)]/85 px-2.5 py-1.5 mn-panel">
-                      <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" />
-                      <span className="truncate text-[10.5px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
+                    <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+                      <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#239BA6]" />
+                      <span className="truncate">
                         {certificateLabel}
                       </span>
                     </div>
@@ -804,6 +833,16 @@ export const CoursesSearchPage: React.FC<CoursesSearchPageProps> = ({ onBack, on
               </article>
             );
           })}
+
+          <PublicCardsPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            dir={publicDir}
+          />
         </section>
       ) : (
         <div className="max-w-lg mx-auto mn-inline-gutter pt-2 pb-5">

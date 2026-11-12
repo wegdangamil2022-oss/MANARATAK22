@@ -31,7 +31,7 @@ import {
   StudentToolPreview,
 } from '../types';
 import { FavoriteButton } from './FavoriteButton';
-import { DetailBackButton, DetailSectionHeader, PublicFilterSelectModal, useDetailSearchTarget } from './DetailUi';
+import { DetailBackButton, DetailSectionHeader, PublicCardsPagination, PublicFilterSelectModal, useDetailSearchTarget, usePaginatedCatalog } from './DetailUi';
 
 interface AIToolsPageProps {
   dataMode?: 'prototype' | 'api';
@@ -337,23 +337,6 @@ const StudentToolCard: React.FC<{
           )}
         </div>
 
-        {/* Sleek Domain & AI Engine Ribbon */}
-        <div className="mt-2 flex items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface-muted)]/70 px-2.5 py-1.5">
-          <div className="flex items-center gap-1.5 min-w-0 flex-1">
-            <Layers3 className="h-3.5 w-3.5 shrink-0 text-[#142B5F] dark:text-[#D6A43B]" />
-            <span className="truncate text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
-              {tool.category}
-            </span>
-          </div>
-
-          <div className="shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-[#D6A43B]/45 bg-[#142B5F] px-2.5 py-0.5 text-white shadow-2xs">
-            <Sparkles className="h-3 w-3 shrink-0 text-[#F3CE74]" />
-            <span className="text-[9.5px] sm:text-[10px] font-bold text-[#F3CE74] font-['Cairo',sans-serif]">
-              {publicEnumLabel(tool.executionLabel, publicT)}
-            </span>
-          </div>
-        </div>
-
         {/* Brief Tool Description (نبذة مختصرة ومرتبة وواضحة عن الأداة) */}
         <div className="mt-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-2.5 py-2">
           <p className="text-[11px] sm:text-[11.5px] leading-relaxed font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif] line-clamp-2">
@@ -361,22 +344,30 @@ const StudentToolCard: React.FC<{
           </p>
         </div>
 
-        {/* 2-Box Single-Row Info Grid (آلية الأداة + المخرج النهائي للطالب) */}
+        {/* 2×2 Parallel Info Boxes with Right-Aligned Icons at the start of each box matching Country Cards */}
         <div className="mt-2 grid grid-cols-2 gap-1.5">
-          {/* Box 1: آلية الذكاء الاصطناعي */}
-          <div className="flex items-center gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)]/85 px-2.5 py-1.5 mn-panel">
-            <Wand2 className="h-3.5 w-3.5 shrink-0 text-[#142B5F] dark:text-[#F2CD78]" />
-            <span className="truncate text-[10.5px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
-              {aiModeLabel}
-            </span>
+          {/* Box 1 (Top-Right): المجال */}
+          <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+            <Layers3 className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#239BA6]" />
+            <span className="truncate">{tool.category}</span>
           </div>
 
-          {/* Box 2: المخرج النهائي للطالب */}
-          <div className="flex items-center gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)]/85 px-2.5 py-1.5 mn-panel">
-            <FileCheck2 className="h-3.5 w-3.5 shrink-0 text-[#142B5F] dark:text-[#F2CD78]" />
-            <span className="truncate text-[10.5px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
-              {outputLabel}
-            </span>
+          {/* Box 2 (Top-Left): نوع الأداة */}
+          <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+            <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#239BA6]" />
+            <span className="truncate">{publicEnumLabel(tool.executionLabel, publicT)}</span>
+          </div>
+
+          {/* Box 3 (Bottom-Right - Directly under Domain icon): آلية الذكاء الاصطناعي */}
+          <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+            <Wand2 className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#239BA6]" />
+            <span className="truncate">{aiModeLabel}</span>
+          </div>
+
+          {/* Box 4 (Bottom-Left - Directly under Tool Type icon): المخرج النهائي للطالب */}
+          <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+            <FileCheck2 className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#239BA6]" />
+            <span className="truncate">{outputLabel}</span>
           </div>
         </div>
 
@@ -692,6 +683,17 @@ export const AIToolsPage: React.FC<AIToolsPageProps> = ({
     });
   }, [tools, searchQuery, selectedCategory, selectedAvailability, selectedType]);
 
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: paginatedTools,
+    goToPage,
+  } = usePaginatedCatalog(
+    filteredTools,
+    `${searchQuery}|${selectedCategory}|${selectedAvailability}|${selectedType}`,
+    30,
+  );
+
   const resetFilters = () => {
     setSearchQuery('');
     setSelectedCategory('الكل');
@@ -978,18 +980,29 @@ export const AIToolsPage: React.FC<AIToolsPageProps> = ({
               </button>
             </div>
           ) : (
-            filteredTools.map((tool) => (
-              <StudentToolCard
-                key={tool.id}
-                tool={tool}
-                isFavorite={favoriteIds.includes(tool.id)}
-                onToggleFavorite={onToggleFavorite}
-                onOpen={(selected) => {
-                  setSelectedTool(selected);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+            <>
+              {paginatedTools.map((tool) => (
+                <StudentToolCard
+                  key={tool.id}
+                  tool={tool}
+                  isFavorite={favoriteIds.includes(tool.id)}
+                  onToggleFavorite={onToggleFavorite}
+                  onOpen={(selected) => {
+                    setSelectedTool(selected);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+              ))}
+
+              <PublicCardsPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={filteredTools.length}
+                pageSize={30}
+                onPageChange={goToPage}
+                dir={publicDir}
               />
-            ))
+            </>
           )}
         </div>
       </div>

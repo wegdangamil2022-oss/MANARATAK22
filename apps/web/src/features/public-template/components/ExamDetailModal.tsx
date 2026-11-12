@@ -37,6 +37,8 @@ import {
   Mic,
   ArrowRight,
   Heart,
+  Target,
+  ShieldCheck,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Exam } from '../types';
@@ -2951,7 +2953,7 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
       {/* SECTION 1: 1. نظرة عامة على الاختبار                                       */}
       {/* ========================================================================= */}
       <div
-        className="relative w-full bg-[var(--mn-surface)] rounded-none px-2 sm:px-2.5 py-3.5 sm:py-4 border-b border-[var(--mn-border-brand)] shadow-md shadow-[var(--mn-shadow-ink)]/60 overflow-hidden mn-panel"
+        className="relative w-full bg-[var(--mn-surface)] rounded-none px-2 sm:px-2.5 py-3.5 sm:py-4 border-b border-[var(--mn-border-brand)] shadow-md shadow-[var(--mn-shadow-ink)]/60 overflow-hidden mn-panel font-['Cairo',sans-serif]"
         dir={publicDir}
       >
         <DetailSectionHeader
@@ -2963,97 +2965,94 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
         <div className="space-y-3 text-start w-full">
           {/* ما هو اختبار IELTS؟ */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-            {/* الخط الكبير الطولي الجانبي النيلي البترولي */}
-            <span className="absolute top-2.5 bottom-2.5 right-0 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] via-[#153B75] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78] mn-dark:from-[#D6A43B] mn-dark:to-[#F2CD78]" />
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+            <span className="absolute top-2.5 bottom-2.5 right-0 w-[3.5px] rounded-l-full bg-[linear-gradient(180deg,#0E7C86_0%,#0E7C86_75%,#142B5F_100%)]" />
 
-            <div className="flex items-center gap-1.5 mb-1.5">
-              {/* الخط الصغير الذهبي بجانب السؤال */}
-              <span className="w-1 h-3.5 rounded-full bg-[var(--mn-accent)] shrink-0" />
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <HelpCircle className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 ما هو اختبار IELTS؟
               </h3>
             </div>
 
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
               الآيلتس اختبار دولي لقياس الكفاءة في اللغة الإنجليزية في المواقف الأكاديمية والاجتماعية والمهنية. يُقيّم أربع مهارات هي الاستماع (Listening)، والقراءة (Reading)، والكتابة (Writing)، والمحادثة (Speaking). وتصدر للمتقدم في الاختبار الكامل درجة منفصلة لكل مهارة ودرجة إجمالية تسمى Overall Band Score.
             </p>
           </div>
 
           {/* معلومات سريعة */}
           <div className="space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Info className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 معلومات سريعة
               </h3>
             </div>
 
-            {/* بطاقة عناصر معلومات سريعة بحجم متناسق مع فاصل عمودي وأيقونات مصغرة */}
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] divide-y divide-[var(--mn-border)] shadow-2xs w-full overflow-hidden">
-              {SECTION1_QUICK_INFO_ROWS.map((row, idx) => {
-                const RowIcon = row.icon;
-                return (
+            {/* جدول معلومات سريعة بمرجع قسم التخصصات (بكالوريوس طب وجراحة) */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)] items-center">
+                <div className="col-span-4 py-2.5 px-3 sm:px-4 text-[11px] sm:text-[11.5px] font-bold text-white text-start border-l border-white/15">
+                  العنصر
+                </div>
+                <div className="col-span-8 py-2.5 px-3 sm:px-4 text-[11px] sm:text-[11.5px] font-bold text-white text-start">
+                  التفاصيل
+                </div>
+              </div>
+
+              <div className="divide-y divide-[var(--mn-border)]">
+                {SECTION1_QUICK_INFO_ROWS.map((row) => (
                   <div
                     key={row.item}
-                    className={`px-2.5 py-1.5 flex items-center transition-colors ${
-                      idx % 2 === 1 ? 'bg-[var(--mn-surface)]/55' : ''
-                    }`}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
                   >
-                    {/* اليمين: أيقونة مصغرة + اسم المعلومة مع فاصل عمودي واضح */}
-                    <div className="w-[34%] sm:w-[31%] pl-2 border-l border-[var(--mn-border)] flex items-center gap-1.5 shrink-0">
-                      <div className="w-[22px] h-[22px] rounded-full bg-[#142B5F] border border-[#D6A43B]/80 flex items-center justify-center shrink-0">
-                        <RowIcon className="w-2.5 h-2.5 text-[#F2CD78]" />
-                      </div>
-                      <span className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)] leading-snug truncate">
-                        {row.item}
-                      </span>
+                    <div className="col-span-4 py-2.5 px-3 sm:px-4 text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center">
+                      {row.item}
                     </div>
-
-                    {/* اليسار: التفاصيل بحجم خط أقل بدرجة واحدة فقط من العنوان */}
-                    <div className="flex-1 pr-2.5 min-w-0 text-start">
-                      <span className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-snug block">
-                        {row.details}
-                      </span>
+                    <div className="col-span-8 py-2.5 px-3 sm:px-4 text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-relaxed flex items-center">
+                      {row.details}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-
-            {/* يتشارك في إدارة IELTS كل من... (مع خط قبل كلمة يتشارك) */}
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 shadow-2xs w-full">
-              <div className="flex items-start gap-2">
-                <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0 mt-1" />
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] flex-1">
-                  يتشارك في إدارة IELTS كل من British Council وIDP IELTS وCambridge University Press &amp; Assessment. والموقع الرسمي للاختبار هو{' '}
-                  <a
-                    href="https://ielts.org/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#142B5F] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] underline font-extrabold"
-                  >
-                    IELTS.org
-                  </a>
-                  .
-                </p>
+                ))}
               </div>
             </div>
 
-            {/* هل يوجد نجاح أو رسوب؟ (بنفس تصميم بطاقة السؤال: ما هو اختبار IELTS؟) */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              {/* الخط الكبير الطولي الجانبي النيلي البترولي */}
-              <span className="absolute top-2.5 bottom-2.5 right-0 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] via-[#153B75] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78] mn-dark:from-[#D6A43B] mn-dark:to-[#F2CD78]" />
+            {/* يتشارك في إدارة IELTS كل من... */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="absolute top-2.5 bottom-2.5 right-0 w-[3.5px] rounded-l-full bg-[linear-gradient(180deg,#0E7C86_0%,#0E7C86_75%,#142B5F_100%)]" />
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
+                <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#142B5F] shadow-[2px_2px_0px_#0E7C86] ml-2 align-middle shrink-0" />
+                يتشارك في إدارة IELTS كل من British Council وIDP IELTS وCambridge University Press &amp; Assessment. والموقع الرسمي للاختبار هو{' '}
+                <a
+                  href="https://ielts.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0E7C86] dark:text-[#38C6D4] underline font-extrabold"
+                >
+                  IELTS.org
+                </a>
+                .
+              </p>
+            </div>
 
-              <div className="flex items-center gap-1.5 mb-1.5">
-                {/* الخط الصغير الذهبي بجانب السؤال */}
-                <span className="w-1 h-3.5 rounded-full bg-[var(--mn-accent)] shrink-0" />
+            {/* هل يوجد نجاح أو رسوب؟ */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="absolute top-2.5 bottom-2.5 right-0 w-[3.5px] rounded-l-full bg-[linear-gradient(180deg,#0E7C86_0%,#0E7C86_75%,#142B5F_100%)]" />
+
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                </span>
                 <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                   هل يوجد نجاح أو رسوب؟
                 </h3>
               </div>
 
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                 لا توجد درجة نجاح عامة موحدة في IELTS Academic وGeneral Training؛ فالجامعة أو جهة العمل أو الهجرة تحدد الدرجة والنوع المطلوبين. أما IELTS Life Skills فيستخدم نظام Pass/Fail، كما سيأتي في قسم الأنواع.
               </p>
             </div>
@@ -3065,7 +3064,7 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
       {/* SECTION 2: 2. استخدامات اختبار IELTS ومميزاته                             */}
       {/* ========================================================================= */}
       <div
-        className="relative w-full bg-[var(--mn-surface)] rounded-none px-2 sm:px-2.5 py-3.5 sm:py-4 border-y border-[var(--mn-border-brand)] shadow-md shadow-[var(--mn-shadow-ink)]/60 overflow-hidden mt-4 sm:mt-5 mn-panel"
+        className="relative w-full bg-[var(--mn-surface)] rounded-none px-2 sm:px-2.5 py-3.5 sm:py-4 border-y border-[var(--mn-border-brand)] shadow-md shadow-[var(--mn-shadow-ink)]/60 overflow-hidden mt-4 sm:mt-5 mn-panel font-['Cairo',sans-serif]"
         dir={publicDir}
       >
         <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-transparent via-[var(--mn-section-line)] to-transparent z-10" />
@@ -3080,8 +3079,10 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
         <div className="space-y-3 text-start w-full">
           {/* لماذا قد تحتاج إلى اختبار IELTS؟ */}
           <div className="space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Target className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 لماذا قد تحتاج إلى اختبار IELTS؟
               </h3>
@@ -3134,24 +3135,22 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 return (
                   <div
                     key={idx}
-                    className="snap-start relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden flex flex-col shadow-2xs"
+                    className="snap-start relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden flex flex-col shadow-2xs"
                   >
-                    {/* شريط علوي نيلي فيروزي بترولي */}
                     <div className="h-[2px] w-full bg-gradient-to-r from-[#142B5F] via-[#153B75] to-[#0E7C86]" />
 
-                    {/* رأس البطاقة: أيقونة موحدة هادئة + عنوان الاستخدام */}
+                    {/* رأس البطاقة بأيقونة جامعة أكسفورد الفرعية */}
                     <div className="px-2.5 py-1.5 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)]/75 flex items-center gap-2">
-                      <div className="w-[21px] h-[21px] rounded-full bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] border border-[#D6A43B]/80 flex items-center justify-center shrink-0 shadow-2xs">
-                        <IconComp className="w-2.5 h-2.5 text-[#F2CD78]" />
-                      </div>
+                      <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                        <IconComp className="w-3 h-3 text-white" />
+                      </span>
                       <h4 className="text-[11px] sm:text-[11.5px] font-bold text-[var(--mn-heading)] leading-snug truncate">
                         {useItem.title}
                       </h4>
                     </div>
 
-                    {/* محتوى البطاقة: خط ذهبي صغير مع الوصف بحجم خط متناسق */}
-                    <div className="px-2.5 py-1.5 flex-1 flex items-start gap-1.5">
-                      <span className="w-1 h-3 rounded-full bg-[var(--mn-accent)] shrink-0 mt-1.5" />
+                    <div className="px-2.5 py-2 flex-1 flex items-start gap-1.5">
+                      <span className="w-1 h-3 rounded-full bg-[#0E7C86] shrink-0 mt-1.5" />
                       <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.75] flex-1">
                         {useItem.description}
                       </p>
@@ -3162,38 +3161,38 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
             </div>
           </div>
 
-          {/* ما الذي يميز IELTS؟ (بنفس تصميم بطاقات الأسئلة: ما هو اختبار IELTS؟ / هل يوجد نجاح أو رسوب؟) */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-            {/* الخط الكبير الطولي الجانبي النيلي البترولي */}
-            <span className="absolute top-2.5 bottom-2.5 right-0 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] via-[#153B75] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78] mn-dark:from-[#D6A43B] mn-dark:to-[#F2CD78]" />
+          {/* ما الذي يميز IELTS؟ */}
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+            <span className="absolute top-2.5 bottom-2.5 right-0 w-[3.5px] rounded-l-full bg-[linear-gradient(180deg,#0E7C86_0%,#0E7C86_75%,#142B5F_100%)]" />
 
-            <div className="flex items-center gap-1.5 mb-1.5">
-              {/* الخط الصغير الذهبي بجانب السؤال */}
-              <span className="w-1 h-3.5 rounded-full bg-[var(--mn-accent)] shrink-0" />
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Award className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 ما الذي يميز IELTS؟
               </h3>
             </div>
 
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
               يمتاز الاختبار باعتراف واسع، وبأن المحادثة تُجرى مع ممتحن بشري معتمد، وبوجود نسخ تخدم أغراضًا أكاديمية وعامة ومتطلبات تأشيرات معينة. تصدر نتائج الكمبيوتر عادة خلال فترة قصيرة، وتتيح مراكز مؤهلة خدمة One Skill Retake لإعادة مهارة واحدة. يمكن أيضًا التحقق من تقارير النتائج رسميًا، وتتوفر ترتيبات مساندة معتمدة للحالات المؤهلة من ذوي الإعاقة أو الظروف الطبية.
             </p>
           </div>
 
-          {/* هل يناسبك؟ (بنفس تصميم بطاقات الأسئلة: ما هو اختبار IELTS؟ / هل يوجد نجاح أو رسوب؟) */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-            {/* الخط الكبير الطولي الجانبي النيلي البترولي */}
-            <span className="absolute top-2.5 bottom-2.5 right-0 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] via-[#153B75] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78] mn-dark:from-[#D6A43B] mn-dark:to-[#F2CD78]" />
+          {/* هل يناسبك؟ */}
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+            <span className="absolute top-2.5 bottom-2.5 right-0 w-[3.5px] rounded-l-full bg-[linear-gradient(180deg,#0E7C86_0%,#0E7C86_75%,#142B5F_100%)]" />
 
-            <div className="flex items-center gap-1.5 mb-1.5">
-              {/* الخط الصغير الذهبي بجانب السؤال */}
-              <span className="w-1 h-3.5 rounded-full bg-[var(--mn-accent)] shrink-0" />
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 هل يناسبك؟
               </h3>
             </div>
 
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
               قد يناسبك IELTS إذا كانت جامعتك أو منحتك أو الهيئة التي تتقدم إليها تقبله، وتحتاج تقريرًا لدرجة كل مهارة، أو تفضل مقابلة Speaking مع ممتحن. لا تختَر الاختبار اعتمادًا على شهرته فقط: تحقق أولًا من النسخة المطلوبة، والدرجات، وطريقة التقديم المقبولة، وحداثة النتيجة.
             </p>
           </div>
@@ -3204,7 +3203,7 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
       {/* SECTION 3: 3. أنواع اختبار IELTS وكيف تختار النوع المناسب                  */}
       {/* ========================================================================= */}
       <div
-        className="relative w-full bg-[var(--mn-surface)] rounded-none px-2 sm:px-2.5 py-3.5 sm:py-4 border-y border-[var(--mn-border-brand)] shadow-md shadow-[var(--mn-shadow-ink)]/60 overflow-hidden mt-4 sm:mt-5 mn-panel"
+        className="relative w-full bg-[var(--mn-surface)] rounded-none px-2 sm:px-2.5 py-3.5 sm:py-4 border-y border-[var(--mn-border-brand)] shadow-md shadow-[var(--mn-shadow-ink)]/60 overflow-hidden mt-4 sm:mt-5 mn-panel font-['Cairo',sans-serif]"
         dir={publicDir}
       >
         <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-transparent via-[var(--mn-section-line)] to-transparent z-10" />
@@ -3217,10 +3216,12 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
         />
 
         <div className="space-y-3.5 text-start w-full">
-          {/* الأنواع الأربعة (سحب عرضي مع خط ذهبي داكن مدمج ودائرة أكسفورد المزدوجة) */}
+          {/* الأنواع الأربعة */}
           <div className="space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Layers className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 أنواع اختبار IELTS
               </h3>
@@ -3232,29 +3233,24 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 return (
                   <div
                     key={typeItem.id}
-                    className="snap-start shrink-0 w-[82%] sm:w-[265px] relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden flex flex-col shadow-2xs"
+                    className="snap-start shrink-0 w-[82%] sm:w-[265px] relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden flex flex-col shadow-2xs"
                   >
-                    {/* شريط علوي نيلي فيروزي بترولي */}
                     <div className="h-[2px] w-full bg-gradient-to-r from-[#142B5F] via-[#153B75] to-[#0E7C86]" />
 
-                    {/* رأس البطاقة: أيقونة موحدة + عنوان النوع */}
+                    {/* رأس البطاقة بأيقونة أكسفورد الفرعية */}
                     <div className="px-2.5 py-1.5 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)]/75 flex items-center gap-2 shrink-0">
-                      <div className="w-[21px] h-[21px] rounded-full bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] border border-[#D6A43B]/80 flex items-center justify-center shrink-0 shadow-2xs">
-                        <TypeIcon className="w-2.5 h-2.5 text-[#F2CD78]" />
-                      </div>
+                      <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                        <TypeIcon className="w-3 h-3 text-white" />
+                      </span>
                       <h4 className="text-[11px] sm:text-[11.5px] font-bold text-[var(--mn-heading)] leading-snug truncate">
                         {typeItem.title}
                       </h4>
                     </div>
 
-                    {/* محتوى البطاقة بارتفاع موحد متناسق بدون أي فراغ سفلي */}
                     <div className="px-2.5 py-2 flex-1 max-h-[122px] overflow-y-auto no-scrollbar">
                       {idx === 3 ? (
                         <div className="space-y-1.5">
                           <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.7] text-justify">
-                            <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                              <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                            </span>
                             يقيس الاستماع والمحادثة فقط، وتكون النتيجة Pass أو Fail بدل Band من 0 إلى 9. يُستخدم في مسارات بريطانية تشترط إثبات القدرة على التواصل الشفهي بمستوى محدد:
                           </p>
                           {typeItem.levelsList && (
@@ -3264,7 +3260,7 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                                   key={lvl.code}
                                   className="rounded-lg bg-[var(--mn-surface)] border border-[var(--mn-border)] px-2 py-1 flex items-start gap-1.5"
                                 >
-                                  <span className="px-1.5 py-0.5 rounded bg-gradient-to-br from-[#142B5F] to-[#0E7C86] text-[#F2CD78] text-[8.5px] font-extrabold shrink-0 mt-0.5">
+                                  <span className="px-1.5 py-0.5 rounded bg-[#0E7C86] text-white text-[8.5px] font-extrabold shrink-0 mt-0.5">
                                     {lvl.code}:
                                   </span>
                                   <span className="text-[9.5px] font-bold text-[var(--mn-heading)] leading-snug">
@@ -3275,17 +3271,11 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                             </div>
                           )}
                           <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.7] text-justify">
-                            <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                              <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                            </span>
                             تستغرق الجلسة نحو 20 دقيقة في العادة، وتُجرى مع ممتحن، وغالبًا بمشاركة متقدم آخر، وتتضمن طلب معلومات وتقديم آراء وتفضيلات ومناقشة مواقف يومية. Life Skills ليس بديلًا عن Academic للقبول الجامعي لأنه لا يقيس القراءة والكتابة.
                           </p>
                         </div>
                       ) : (
                         <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.7] text-justify">
-                          <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                          </span>
                           {typeItem.description}
                         </p>
                       )}
@@ -3298,42 +3288,30 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
           {/* كيف تختار النسخة الصحيحة؟ */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[var(--mn-accent)] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Compass className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 كيف تختار النسخة الصحيحة؟
               </h3>
             </div>
 
-            {/* جدول الاختيار بتصميم متقطع على جدار المربع الأيمن لكل صف */}
-            <div className="w-full rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs overflow-hidden">
-              {/* شريط علوي نيلي فيروزي بترولي */}
-              <div className="h-[2px] w-full bg-gradient-to-r from-[#142B5F] via-[#153B75] to-[#0E7C86]" />
-
-              {/* ترويسة الجدول: الهدف | النسخة المرجحة | التحقق الضروري */}
-              <div className="grid grid-cols-12 bg-gradient-to-l from-[#142B5F]/[0.06] via-[var(--mn-surface)] to-[#0E7C86]/[0.06] dark:from-[#142B5F]/55 dark:via-[var(--mn-surface)] dark:to-[#0E7C86]/30 border-b border-[var(--mn-border)]">
-                <div className="col-span-4 py-2 pr-3 pl-1.5 border-l border-[var(--mn-border)] flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#142B5F] dark:bg-[#F2CD78] mn-dark:bg-[#F2CD78] shrink-0" />
-                  <span className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
-                    الهدف
-                  </span>
+            {/* جدول الاختيار بمرجع قسم التخصصات بدون أي نصوص ذهبية */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)] items-center">
+                <div className="col-span-4 py-2.5 px-3 sm:px-4 text-[11px] sm:text-[11.5px] font-bold text-white text-start border-l border-white/15">
+                  الهدف
                 </div>
-                <div className="col-span-4 py-2 px-2 border-l border-[var(--mn-border)] flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#9E731F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
-                  <span className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
-                    النسخة المرجحة
-                  </span>
+                <div className="col-span-4 py-2.5 px-3 sm:px-4 text-[11px] sm:text-[11.5px] font-bold text-white text-start border-l border-white/15">
+                  النسخة المرجحة
                 </div>
-                <div className="col-span-4 py-2 px-2 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0E7C86] dark:bg-[#F2CD78] mn-dark:bg-[#F2CD78] shrink-0" />
-                  <span className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
-                    التحقق الضروري
-                  </span>
+                <div className="col-span-4 py-2.5 px-3 sm:px-4 text-[11px] sm:text-[11.5px] font-bold text-white text-start">
+                  التحقق الضروري
                 </div>
               </div>
 
-              {/* صفوف الجدول مع خط جانبي متقطع داخل جدار المربع الأيمن يبدأ وينتهي لكل صف */}
-              <div className="divide-y divide-[var(--mn-border)]/80">
+              <div className="divide-y divide-[var(--mn-border)]">
                 {[
                   {
                     goal: 'بكالوريوس أو ماجستير أو دكتوراه',
@@ -3370,59 +3348,40 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                     likelyVersion: 'General Training أو نوع آخر',
                     verify: 'شروط الجهة المستقبلة',
                   },
-                ].map((row, idx) => (
+                ].map((row) => (
                   <div
                     key={row.goal}
-                    className={`relative grid grid-cols-12 items-stretch transition-colors ${
-                      idx % 2 === 1 ? 'bg-[var(--mn-surface)]/65' : 'bg-[var(--mn-page)]'
-                    }`}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
                   >
-                    {/* الخط المتقطع المدمج في جدار المربع الأيمن: يبدأ مع كل صف وينقطع قبل الصف التالي */}
-                    <span className="absolute top-1.5 bottom-1.5 right-0 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] via-[#153B75] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78] mn-dark:from-[#D6A43B] mn-dark:to-[#F2CD78]" />
-
-                    <div className="col-span-4 py-2 pr-3 pl-1.5 border-l border-[var(--mn-border)]/80 flex items-center">
-                      <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-snug">
-                        {row.goal}
-                      </span>
+                    <div className="col-span-4 py-2.5 px-3 sm:px-4 text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center leading-snug">
+                      {row.goal}
                     </div>
-
-                    <div className="col-span-4 py-2 px-2 border-l border-[var(--mn-border)]/80 flex items-center">
-                      <span className="text-[10px] sm:text-[10.5px] font-bold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] leading-snug">
-                        {row.likelyVersion}
-                      </span>
+                    <div className="col-span-4 py-2.5 px-3 sm:px-4 text-[10.5px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] border-l border-[var(--mn-border)] flex items-center leading-snug">
+                      {row.likelyVersion}
                     </div>
-
-                    <div className="col-span-4 py-2 px-2 flex items-center">
-                      <span className="text-[9.5px] sm:text-[10px] font-bold text-[var(--mn-text)] leading-snug">
-                        {row.verify}
-                      </span>
+                    <div className="col-span-4 py-2.5 px-3 sm:px-4 text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] flex items-center leading-snug">
+                      {row.verify}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* المربع الأول: انتبه إلى الفرق بين النوع والطريقة (بتصميم زاوية خدمات جامعة أكسفورد المدمجة مع نيلي وبترولي وذهبي داكن + امتلاء النص) */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
+            {/* انتبه إلى الفرق بين النوع والطريقة */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
 
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                 <strong className="text-[var(--mn-heading)]">انتبه إلى الفرق بين النوع والطريقة:</strong> IELTS Online Academic طريقة لتقديم النسخة الأكاديمية من المنزل في دول مدعومة، وليس مهارة أو شهادة جديدة؛ وWriting on Paper خيار لأداء الكتابة بالقلم ضمن اختبار الكمبيوتر. أما One Skill Retake فهي خدمة إعادة مهارة بعد اختبار أصلي مؤهل، وليست نوعًا أساسيًا من الاختبار.
               </p>
             </div>
 
-            {/* المربع الثاني: من الأخطاء الشائعة (بنفس تصميم زاوية خدمات جامعة أكسفورد المدمجة مع نيلي وبترولي وذهبي داكن + امتلاء النص) */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
+            {/* من الأخطاء الشائعة */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#0E7C86] dark:border-[#38C6D4]" />
 
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
-                من الأخطاء الشائعة حجز General بدل Academic، أو حجز IELTS عادي لمسار يتطلب UKVI، أو افتراض قبول IELTS Online أو One Skill Retake من دون سؤال الجهة المستقبلة.
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
+                <strong className="text-[var(--mn-heading)]">من الأخطاء الشائعة:</strong> حجز General بدل Academic، أو حجز IELTS عادي لمسار يتطلب UKVI، أو افتراض قبول IELTS Online أو One Skill Retake من دون سؤال الجهة المستقبلة.
               </p>
             </div>
           </div>
@@ -3433,7 +3392,7 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
       {/* SECTION 4: 4. الاعتراف الدولي ومتطلبات القبول                              */}
       {/* ========================================================================= */}
       <div
-        className="relative w-full bg-[var(--mn-surface)] rounded-none px-2 sm:px-2.5 py-3.5 sm:py-4 border-y border-[var(--mn-border-brand)] shadow-md shadow-[var(--mn-shadow-ink)]/60 overflow-hidden mt-4 sm:mt-5 mn-panel"
+        className="relative w-full bg-[var(--mn-surface)] rounded-none px-2 sm:px-2.5 py-3.5 sm:py-4 border-y border-[var(--mn-border-brand)] shadow-md shadow-[var(--mn-shadow-ink)]/60 overflow-hidden mt-4 sm:mt-5 mn-panel font-['Cairo',sans-serif]"
         dir={publicDir}
       >
         <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-transparent via-[var(--mn-section-line)] to-transparent z-10" />
@@ -3446,63 +3405,56 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
         />
 
         <div className="space-y-3 text-start w-full">
-          {/* 1. أين يُعترف باختبار IELTS؟ (بنفس تصميم بطاقة السؤال الموحدة: خط جانبي نيلي بترولي + خط ذهبي صغير بجوار السؤال) */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-            <span className="absolute top-2.5 bottom-2.5 right-0 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] via-[#153B75] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78] mn-dark:from-[#D6A43B] mn-dark:to-[#F2CD78]" />
+          {/* 1. أين يُعترف باختبار IELTS؟ */}
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+            <span className="absolute top-2.5 bottom-2.5 right-0 w-[3.5px] rounded-l-full bg-[linear-gradient(180deg,#0E7C86_0%,#0E7C86_75%,#142B5F_100%)]" />
 
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <span className="w-1 h-3.5 rounded-full bg-[var(--mn-accent)] shrink-0" />
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Globe className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 أين يُعترف باختبار IELTS؟
               </h3>
             </div>
 
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
               تستخدم نتيجة IELTS مؤسسات تعليمية ومهنية وجهات أخرى في المملكة المتحدة والولايات المتحدة وكندا وأستراليا ونيوزيلندا وأوروبا وآسيا والشرق الأوسط. وذكر ملف منارتك المرجعي اعتراف أكثر من{' '}
-              <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">12,500 مؤسسة</span>{' '}
+              <strong className="text-[var(--mn-heading)]">12,500 مؤسسة</strong>{' '}
               وانتشار الاختبار في أكثر من{' '}
-              <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">140 دولة</span>{' '}
+              <strong className="text-[var(--mn-heading)]">140 دولة</strong>{' '}
               وقت توثيقه؛ أما دليل المراكز الرسمي الذي راجعناه في أكتوبر 2026 فيشير إلى أكثر من{' '}
-              <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">4,500 موقع اختبار في أكثر من 160 دولة</span>. تتغير هذه الأرقام بمرور الوقت ولا تعني قبول جميع أنواع الاختبار لدى كل مؤسسة.
+              <strong className="text-[var(--mn-heading)]">4,500 موقع اختبار في أكثر من 160 دولة</strong>. تتغير هذه الأرقام بمرور الوقت ولا تعني قبول جميع أنواع الاختبار لدى كل مؤسسة.
             </p>
           </div>
 
           {/* 2. ما الدرجات المطلوبة للدراسة والمنح؟ */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[var(--mn-accent)] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <GraduationCap className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 ما الدرجات المطلوبة للدراسة والمنح؟
               </h3>
             </div>
 
-            <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.8] text-justify px-0.5">
-              <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-              </span>
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify px-0.5">
               تختلف متطلبات IELTS من جامعة إلى أخرى، بل قد تختلف بين برنامجين في الجامعة نفسها. وتستخدم النطاقات التالية كأمثلة إرشادية غير ملزمة:
             </p>
 
-            {/* جدول النطاقات التقريبية بتصميم الخط الجانبي المتقطع لكل صف وشارة الدرجة بالذهبي الداكن */}
-            <div className="w-full rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs overflow-hidden">
-              <div className="h-[2px] w-full bg-gradient-to-r from-[#142B5F] via-[#153B75] to-[#0E7C86]" />
-
-              <div className="grid grid-cols-12 bg-gradient-to-l from-[#142B5F]/[0.06] via-[var(--mn-surface)] to-[#0E7C86]/[0.06] dark:from-[#142B5F]/55 dark:via-[var(--mn-surface)] dark:to-[#0E7C86]/30 border-b border-[var(--mn-border)]">
-                <div className="col-span-6 py-2 pr-3 pl-2 border-l border-[var(--mn-border)] flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#142B5F] dark:bg-[#F2CD78] mn-dark:bg-[#F2CD78] shrink-0" />
-                  <span className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
-                    الغرض
-                  </span>
+            {/* جدول النطاقات التقريبية بمرجع قسم التخصصات بدون أي شارات ذهبية */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)] items-center">
+                <div className="col-span-6 py-2.5 px-3 sm:px-4 text-[11px] sm:text-[11.5px] font-bold text-white text-start border-l border-white/15">
+                  الغرض
                 </div>
-                <div className="col-span-6 py-2 px-2.5 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#9E731F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
-                  <span className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
-                    نطاق تقريبي وارد في الملف
-                  </span>
+                <div className="col-span-6 py-2.5 px-3 sm:px-4 text-[11px] sm:text-[11.5px] font-bold text-white text-start">
+                  نطاق تقريبي وارد في الملف
                 </div>
               </div>
 
-              <div className="divide-y divide-[var(--mn-border)]/80">
+              <div className="divide-y divide-[var(--mn-border)]">
                 {[
                   { pathway: 'برنامج تأسيسي أو تحضيري', commonRange: '4.5–5.5' },
                   { pathway: 'بكالوريوس', commonRange: '6.0–6.5' },
@@ -3512,97 +3464,76 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                     pathway: 'طب وتمريض وبعض الهيئات المهنية',
                     commonRange: 'حدود مستقلة أكثر صرامة بحسب الهيئة',
                   },
-                ].map((row, idx) => (
+                ].map((row) => (
                   <div
                     key={row.pathway}
-                    className={`relative grid grid-cols-12 items-stretch transition-colors ${
-                      idx % 2 === 1 ? 'bg-[var(--mn-surface)]/65' : 'bg-[var(--mn-page)]'
-                    }`}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
                   >
-                    {/* الخط المتقطع المدمج في جدار المربع الأيمن لكل صف */}
-                    <span className="absolute top-1.5 bottom-1.5 right-0 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] via-[#153B75] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78] mn-dark:from-[#D6A43B] mn-dark:to-[#F2CD78]" />
-
-                    <div className="col-span-6 py-2 pr-3 pl-2 border-l border-[var(--mn-border)]/80 flex items-center">
-                      <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-snug">
-                        {row.pathway}
-                      </span>
+                    <div className="col-span-6 py-2.5 px-3 sm:px-4 text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center leading-snug">
+                      {row.pathway}
                     </div>
-
-                    <div className="col-span-6 py-1.5 px-2.5 flex items-center">
-                      <span className="inline-flex items-center rounded-lg bg-[#D6A43B]/[0.08] dark:bg-[#D6A43B]/15 mn-dark:bg-[#D6A43B]/15 border border-[#D6A43B]/35 px-2 py-0.5 text-[10px] sm:text-[10.5px] font-bold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] leading-snug">
-                        {row.commonRange}
-                      </span>
+                    <div className="col-span-6 py-2.5 px-3 sm:px-4 text-[10.5px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] flex items-center leading-snug">
+                      {row.commonRange}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* ملاحظة شرط الدرجة الإجمالية وحد كل مهارة (بتصميم زاوية أكسفورد المدمجة وامتلاء النص) */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
+            {/* ملاحظة شرط الدرجة الإجمالية وحد كل مهارة */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
 
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                 قد تشترط جهة{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">Overall 6.5 مع 6.0 في كل مهارة</span>، بينما تشترط أخرى{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">Overall 7.0 مع Writing 6.5</span>. لا يكفي أن تحقق المتوسط إذا كانت إحدى المهارات دون الحد المطلوب. وفي المنح، راجع شروط المنحة والجامعة المستضيفة معًا.
+                <strong className="text-[var(--mn-heading)]">Overall 6.5 مع 6.0 في كل مهارة</strong>، بينما تشترط أخرى{' '}
+                <strong className="text-[var(--mn-heading)]">Overall 7.0 مع Writing 6.5</strong>. لا يكفي أن تحقق المتوسط إذا كانت إحدى المهارات دون الحد المطلوب. وفي المنح، راجع شروط المنحة والجامعة المستضيفة معًا.
               </p>
             </div>
           </div>
 
           {/* 3. IELTS للهجرة والتأشيرات البريطانية */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <ShieldCheck className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 IELTS للهجرة والتأشيرات البريطانية
               </h3>
             </div>
 
-            {/* بطاقة متطلبات الجهات الحكومية وB1/B2/C1 */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
               <div className="h-[2px] w-full bg-gradient-to-r from-[#142B5F] via-[#153B75] to-[#0E7C86]" />
-              <div className="p-2.5 sm:p-3 space-y-2">
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-3 space-y-2">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                   للجهات الحكومية جداول وشروط خاصة بمسارات الهجرة والتأشيرات. يسرد ملف منارتك بعض القيم التي تُستخدم لمتطلبات IELTS for UKVI ذات المهارات الأربع، مثل{' '}
-                  <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">B1 = 4.0</span>، و
-                  <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">B2 = 5.5</span>، و
-                  <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">C1 = 7.0</span>{' '}
+                  <strong dir="ltr" className="text-[#0E7C86] dark:text-[#38C6D4]">B1 = 4.0</strong>، و
+                  <strong dir="ltr" className="text-[#0E7C86] dark:text-[#38C6D4]">B2 = 5.5</strong>، و
+                  <strong dir="ltr" className="text-[#0E7C86] dark:text-[#38C6D4]">C1 = 7.0</strong>{' '}
                   في كل مهارة في المسارات التي تعتمد ذلك الجدول. لا تعني هذه القيم أنها مطلوبة في جميع التأشيرات، ولا يجوز تحويل CEFR إلى IELTS بمعادلة عامة من دون الرجوع إلى تفاصيل المسار والتاريخ والقواعد الانتقالية.
                 </p>
 
                 <div className="pt-2 border-t border-[var(--mn-border)]/80">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
+                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                     قد يقبل برنامج جامعي اختبارًا أُدي داخل مركز ويرفض IELTS Online؛ وقد تقبل مؤسسة نتيجة الاختبار الكامل ولا تقبل نتيجة One Skill Retake. كذلك تحدد المؤسسات العمر الأقصى المقبول للنتيجة.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* قبل الحجز (بتصميم زاوية أكسفورد المدمجة وامتلاء النص) */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
+            {/* قبل الحجز */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#0E7C86] dark:border-[#38C6D4]" />
 
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                 <strong className="text-[var(--mn-heading)]">قبل الحجز:</strong> افتح صفحة الجامعة أو الهيئة أو الجهة الحكومية الرسمية، وحدد نوع IELTS، والدرجة الإجمالية، وحد كل مهارة، وطريقة التقديم، وصلاحية النتيجة، وقبول الإعادة إن كنت تحتاجها. لمتطلبات SELT البريطانية راجع{' '}
                 <a
                   href="https://www.gov.uk/guidance/prove-your-english-language-abilities-with-a-secure-english-language-test-selt"
                   target="_blank"
                   rel="noopener noreferrer"
                   dir="ltr"
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#142B5F]/10 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/45 dark:border-[#F2CD78]/50 text-[#142B5F] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] text-[9.5px] font-extrabold hover:border-[#0E7C86] transition-colors align-middle"
+                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#0E7C86]/10 border border-[#0E7C86]/35 text-[#0E7C86] dark:text-[#38C6D4] text-[9.5px] font-extrabold hover:border-[#0E7C86] transition-colors align-middle"
                 >
                   <span>GOV.UK</span>
                   <ExternalLink className="w-2.5 h-2.5" />
@@ -3618,7 +3549,7 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
       {/* SECTION 5: 5. طرق تقديم الاختبار والمتطلبات التقنية                       */}
       {/* ========================================================================= */}
       <div
-        className="relative w-full bg-[var(--mn-surface)] rounded-none px-2 sm:px-2.5 py-3.5 sm:py-4 border-y border-[var(--mn-border-brand)] shadow-md shadow-[var(--mn-shadow-ink)]/60 overflow-hidden mt-4 sm:mt-5 mn-panel"
+        className="relative w-full bg-[var(--mn-surface)] rounded-none px-2 sm:px-2.5 py-3.5 sm:py-4 border-y border-[var(--mn-border-brand)] shadow-md shadow-[var(--mn-shadow-ink)]/60 overflow-hidden mt-4 sm:mt-5 mn-panel font-['Cairo',sans-serif]"
         dir={publicDir}
       >
         <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-transparent via-[var(--mn-section-line)] to-transparent z-10" />
@@ -3632,91 +3563,73 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
         <div className="space-y-3 text-start w-full">
           {/* مقدمة القسم الخامس */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-            <div className="p-2.5 sm:p-3">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
-                تختلف طريقة أداء IELTS عن نوع الاختبار: فقد تختار Academic أو General ثم تؤديه بطريقة متاحة في بلدك ومقبولة لدى الجهة المستقبلة.
-              </p>
-            </div>
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+            <span className="absolute top-2.5 bottom-2.5 right-0 w-[3.5px] rounded-l-full bg-[linear-gradient(180deg,#0E7C86_0%,#0E7C86_75%,#142B5F_100%)]" />
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
+              تختلف طريقة أداء IELTS عن نوع الاختبار: فقد تختار Academic أو General ثم تؤديه بطريقة متاحة في بلدك ومقبولة لدى الجهة المستقبلة.
+            </p>
           </div>
 
-          {/* الطرق الثلاث لتقديم الاختبار — بطاقات بهوية أيقونية ورأس مفصول */}
+          {/* الطرق الثلاث لتقديم الاختبار — بطاقات بأيقونة أكسفورد الفرعية */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
             {/* 1. IELTS on Computer داخل المركز */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs flex flex-col">
-              <div className="px-2.5 py-2 bg-[var(--mn-surface)]/65 border-b border-[var(--mn-border)] flex items-center gap-2">
-                <div className="w-6.5 h-6.5 rounded-full bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] border border-[#D6A43B]/60 flex items-center justify-center shrink-0 shadow-2xs">
-                  <Monitor className="w-3.5 h-3.5 text-[#F3C969]" />
-                </div>
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs flex flex-col">
+              <div className="px-3 py-2 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)] flex items-center gap-2">
+                <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                  <Monitor className="w-3.5 h-3.5 text-white" />
+                </span>
                 <h3 className="text-[11px] sm:text-[11.5px] font-bold text-[var(--mn-heading)] leading-snug">
                   IELTS on Computer داخل المركز
                 </h3>
               </div>
-              <div className="p-2.5 sm:p-3 flex-1">
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-3 flex-1">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                   تُؤدى مهارات الاستماع والقراءة والكتابة على الكمبيوتر داخل مركز رسمي، بينما تكون المحادثة مع ممتحن معتمد. تشمل المزايا سرعة ظهور النتائج عادة خلال{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">1–5 أيام</span>، وإمكانية الاستفادة من One Skill Retake إذا كان الاختبار الأصلي والمركز مؤهلين وتحققت شروط الخدمة.
+                  <strong className="text-[var(--mn-heading)]">1–5 أيام</strong>، وإمكانية الاستفادة من One Skill Retake إذا كان الاختبار الأصلي والمركز مؤهلين وتحققت شروط الخدمة.
                 </p>
               </div>
             </div>
 
             {/* 2. IELTS on Computer مع Writing on Paper */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs flex flex-col">
-              <div className="px-2.5 py-2 bg-[var(--mn-surface)]/65 border-b border-[var(--mn-border)] flex items-center gap-2">
-                <div className="w-6.5 h-6.5 rounded-full bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] border border-[#D6A43B]/60 flex items-center justify-center shrink-0 shadow-2xs">
-                  <PenTool className="w-3.5 h-3.5 text-[#F3C969]" />
-                </div>
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs flex flex-col">
+              <div className="px-3 py-2 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)] flex items-center gap-2">
+                <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                  <PenTool className="w-3.5 h-3.5 text-white" />
+                </span>
                 <h3 className="text-[11px] sm:text-[11.5px] font-bold text-[var(--mn-heading)] leading-snug">
                   IELTS on Computer مع Writing on Paper
                 </h3>
               </div>
-              <div className="p-2.5 sm:p-3 flex-1">
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-3 flex-1">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                   في دول مختارة، تظهر أسئلة الكتابة على الشاشة لكن يكتب المتقدم الإجابات بالقلم على ورقة مخصصة، بينما تبقى مهارتا الاستماع والقراءة على الكمبيوتر. يتوافق محتوى الكتابة ومعاييرها ومدتها مع الطريقة المحوسبة، وتظهر النتيجة خلال نحو خمسة أيام وفق الإعلان الرسمي. لا يذكر تقرير TRF اختيار هذه الطريقة، ولا تتوفر لـIELTS for UKVI. وعند إعادة كتابة هذه المهارة بخدمة One Skill Retake يجب الحفاظ على طريقة الكتابة الأصلية.
                 </p>
               </div>
             </div>
 
             {/* 3. IELTS Online Academic من المنزل */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs sm:col-span-2">
-              <div className="px-2.5 py-2 bg-[var(--mn-surface)]/65 border-b border-[var(--mn-border)] flex items-center gap-2">
-                <div className="w-6.5 h-6.5 rounded-full bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] border border-[#D6A43B]/60 flex items-center justify-center shrink-0 shadow-2xs">
-                  <Laptop className="w-3.5 h-3.5 text-[#F3C969]" />
-                </div>
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs sm:col-span-2">
+              <div className="px-3 py-2 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)] flex items-center gap-2">
+                <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                  <Laptop className="w-3.5 h-3.5 text-white" />
+                </span>
                 <h3 className="text-[11px] sm:text-[11.5px] font-bold text-[var(--mn-heading)] leading-snug">
                   IELTS Online Academic من المنزل
                 </h3>
               </div>
 
-              <div className="p-2.5 sm:p-3 space-y-2.5">
-                {/* الفقرة الأولى: الأهلية وطريقة الأداء وشروط القبول */}
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-3 space-y-2.5">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                   يُسمح بأداء Academic فقط من المنزل أو حيز خاص في الدول المدعومة لمن يبلغ{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">18 عامًا فأكثر</span>. تُؤدى الاستماع والقراءة والكتابة على الكمبيوتر، والمحادثة عبر فيديو مباشر مع ممتحن معتمد. لا يقبل IELTS Online لأغراض الهجرة أو التسجيل المهني، ويجب التأكد من قبول الجامعة للنتيجة قبل الدفع.
+                  <strong className="text-[var(--mn-heading)]">18 عامًا فأكثر</strong>. تُؤدى الاستماع والقراءة والكتابة على الكمبيوتر، والمحادثة عبر فيديو مباشر مع ممتحن معتمد. لا يقبل IELTS Online لأغراض الهجرة أو التسجيل المهني، ويجب التأكد من قبول الجامعة للنتيجة قبل الدفع.
                 </p>
 
-                {/* الفقرة الثانية: كبسولة المتطلبات التقنية وضوابط المراقبة */}
-                <div className="relative rounded-xl bg-[var(--mn-surface)]/85 border border-[var(--mn-border)] p-2.5 pr-3 shadow-2xs overflow-hidden">
+                <div className="relative rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs overflow-hidden">
                   <span
                     aria-hidden="true"
-                    className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
+                    className="absolute right-0 top-2 bottom-2 w-[3px] rounded-l-full bg-[linear-gradient(180deg,#0E7C86_0%,#0E7C86_75%,#142B5F_100%)]"
                   />
-                  <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
+                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                     يتطلب الاختبار جهاز كمبيوتر مكتبيًا أو محمولًا متوافقًا مع Windows أو macOS، وشاشة واحدة وكاميرا وميكروفون ومكبرات صوت واتصالًا ثابتًا، وغرفة خاصة هادئة ومضيئة. لا تُسمح سماعات الرأس أو الملاحظات الورقية أو فتح برامج ومتصفحات أخرى. يمكن تدوين ملاحظات على الشاشة وتعديل الإجابات داخل القسم قبل انتهاء الوقت. وقد تسمح السياسة باستراحة واحدة قصيرة بإذن المراقب في موضع محدد. إذا حدث انقطاع قصير للاتصال فقد يُعوض الوقت المفقود، أما الانقطاع الطويل فقد يستلزم ترتيبات جديدة من الشريك. تُستخدم منصة الاختبار المعتمدة، ويجري الرصد والمراقبة لأغراض النزاهة.
                   </p>
                 </div>
@@ -3725,128 +3638,95 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           </div>
 
           {/* 4. ماذا عن الاختبار الورقي التقليدي؟ */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 sm:p-3.5 pr-4 overflow-hidden shadow-2xs w-full">
-            <div className="absolute right-1.5 top-2.5 bottom-2.5 w-[3.5px] rounded-full bg-gradient-to-b from-[#142B5F] via-[#153B75] to-[#0E7C86]" />
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 overflow-hidden shadow-2xs w-full">
+            <div className="absolute right-0 top-2.5 bottom-2.5 w-[3.5px] rounded-l-full bg-[linear-gradient(180deg,#0E7C86_0%,#0E7C86_75%,#142B5F_100%)]" />
 
-            <div className="flex items-center gap-1.5 mb-1.5 pb-1.5 border-b border-[var(--mn-border)]">
-              <span className="w-1 h-3.5 rounded-full bg-[#B78628] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2 mb-1.5 pb-1.5 border-b border-[var(--mn-border)]">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <FileText className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 ماذا عن الاختبار الورقي التقليدي؟
               </h3>
             </div>
 
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
               أعلنت IELTS في{' '}
-              <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">5 مارس 2026</span>{' '}
+              <strong className="text-[var(--mn-heading)]">5 مارس 2026</strong>{' '}
               أنه ابتداءً من منتصف 2026 ستنتقل تدريجيًا من تقديم الاختبار الورقي المستقل إلى الكمبيوتر، مع اختلاف التوقيت بين الدول. النتائج الورقية السابقة لا تفقد صلاحيتها بسبب هذا الانتقال. ويجب الاستعلام عن حالة الخيار المتاح في بلدك من نظام الحجز الحالي بدل الاعتماد على المواعيد القديمة.
             </p>
           </div>
 
-          {/* جدول طرق الأداء الأربعة المعتمد في الدليل */}
-          <div className="relative w-full rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs overflow-hidden">
-            <table className="w-full text-start border-collapse">
-              <thead>
-                <tr className="bg-[var(--mn-surface)] border-b border-[var(--mn-border)]">
-                  <th className="py-2 px-1.5 sm:px-2.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[26%]">
-                    <div className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#0E7C86] shrink-0" />
-                      <span>طريقة الأداء</span>
-                    </div>
-                  </th>
-                  <th className="py-2 px-1.5 sm:px-2.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[22%]">
-                    <div className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#142B5F] dark:bg-[#60A5FA] shrink-0" />
-                      <span>المكان</span>
-                    </div>
-                  </th>
-                  <th className="py-2 px-1.5 sm:px-2.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[19%]">
-                    <div className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#0E7C86] shrink-0" />
-                      <span>الكتابة</span>
-                    </div>
-                  </th>
-                  <th className="py-2 px-1.5 sm:px-2.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] w-[33%]">
-                    <div className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#9E731F] dark:bg-[#F2CD78] shrink-0" />
-                      <span>ملاحظات قبول أساسية</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--mn-border)]">
-                {[
-                  {
-                    method: 'IELTS on Computer',
-                    place: 'مركز رسمي',
-                    writing: 'لوحة مفاتيح',
-                    notes: 'بحسب النوع المطلوب',
-                  },
-                  {
-                    method: 'Computer + Writing on Paper',
-                    place: 'مركز مختار',
-                    writing: 'بالقلم في Writing',
-                    notes: 'غير متاح لـUKVI',
-                  },
-                  {
-                    method: 'IELTS Online Academic',
-                    place: 'المنزل في دولة مدعومة',
-                    writing: 'لوحة مفاتيح',
-                    notes: 'تأكد من قبول الجامعة؛ ليس للهجرة أو الترخيص المهني',
-                  },
-                  {
-                    method: 'Paper التقليدي',
-                    place: 'مركز إذا بقي متاحًا في السوق',
-                    writing: 'بالقلم',
-                    notes: 'قيد الإيقاف التدريجي حسب السوق',
-                  },
-                ].map((row, idx) => {
-                  const isEven = idx % 2 === 0;
-                  return (
-                    <tr
-                      key={row.method}
-                      className={
-                        isEven
-                          ? 'bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                          : 'bg-[var(--mn-surface)]/55 hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                      }
-                    >
-                      <td className="relative py-2 pr-2.5 pl-1.5 sm:px-2.5 text-[9.5px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] align-middle leading-[1.6]">
-                        <span
-                          aria-hidden="true"
-                          className={`absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full ${
-                            isEven
-                              ? 'bg-gradient-to-b from-[#142B5F] to-[#0E7C86]'
-                              : 'bg-gradient-to-b from-[#0E7C86] to-[#142B5F]'
-                          }`}
-                        />
-                        {row.method}
-                      </td>
-                      <td className="py-2 px-1.5 sm:px-2.5 text-[9.5px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] align-middle leading-[1.6]">
-                        {row.place}
-                      </td>
-                      <td className="py-2 px-1.5 sm:px-2.5 text-[9.5px] sm:text-[10.5px] font-bold border-l border-[var(--mn-border)] align-middle leading-[1.6]">
-                        <span className="inline-block px-1.5 py-0.5 rounded-md bg-[#142B5F]/[0.06] dark:bg-[#D6A43B]/15 border border-[#0E7C86]/30 dark:border-[#F2CD78]/35 text-[9px] sm:text-[10px] font-extrabold text-[var(--mn-heading)]">
-                          {row.writing}
-                        </span>
-                      </td>
-                      <td className="py-2 px-1.5 sm:px-2.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] align-middle leading-[1.6]">
-                        {row.notes}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          {/* جدول طرق الأداء الأربعة بمرجع قسم التخصصات */}
+          <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+            <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)] items-center">
+              <div className="col-span-3 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white text-start border-l border-white/15">
+                طريقة الأداء
+              </div>
+              <div className="col-span-3 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white text-start border-l border-white/15">
+                المكان
+              </div>
+              <div className="col-span-2 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white text-start border-l border-white/15">
+                الكتابة
+              </div>
+              <div className="col-span-4 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white text-start">
+                ملاحظات قبول أساسية
+              </div>
+            </div>
+
+            <div className="divide-y divide-[var(--mn-border)]">
+              {[
+                {
+                  method: 'IELTS on Computer',
+                  place: 'مركز رسمي',
+                  writing: 'لوحة مفاتيح',
+                  notes: 'بحسب النوع المطلوب',
+                },
+                {
+                  method: 'Computer + Writing on Paper',
+                  place: 'مركز مختار',
+                  writing: 'بالقلم في Writing',
+                  notes: 'غير متاح لـUKVI',
+                },
+                {
+                  method: 'IELTS Online Academic',
+                  place: 'المنزل في دولة مدعومة',
+                  writing: 'لوحة مفاتيح',
+                  notes: 'تأكد من قبول الجامعة؛ ليس للهجرة أو الترخيص المهني',
+                },
+                {
+                  method: 'Paper التقليدي',
+                  place: 'مركز إذا بقي متاحًا في السوق',
+                  writing: 'بالقلم',
+                  notes: 'قيد الإيقاف التدريجي حسب السوق',
+                },
+              ].map((row) => (
+                <div
+                  key={row.method}
+                  className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
+                >
+                  <div className="col-span-3 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center leading-snug">
+                    {row.method}
+                  </div>
+                  <div className="col-span-3 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] border-l border-[var(--mn-border)] flex items-center leading-snug">
+                    {row.place}
+                  </div>
+                  <div className="col-span-2 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] border-l border-[var(--mn-border)] flex items-center leading-snug">
+                    {row.writing}
+                  </div>
+                  <div className="col-span-4 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] flex items-center leading-snug">
+                    {row.notes}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* قبل اختيار الطريقة (بتصميم زاوية أكسفورد المدمجة وامتلاء النص) */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-            <span aria-hidden="true" className="mn-corner-accent-blended" />
+          {/* قبل اختيار الطريقة */}
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+            <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
 
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-              <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-              </span>
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
               <strong className="text-[var(--mn-heading)]">قبل اختيار الطريقة:</strong> راجع نوع IELTS المقبول لدى الجهة، وتوفر الموعد والمركز، ودرجة راحتك مع الكتابة على الكمبيوتر، والمتطلبات التقنية إن كنت ستختبر من المنزل. من المهم أيضًا الانتباه إلى أن بعض السياسات مثل UKVI لا تقبل الاختبار المنزلي.
             </p>
           </div>
@@ -3871,130 +3751,98 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
         <div className="space-y-3 text-start w-full">
           {/* الجملة الافتتاحية + جدول المهارات الأربع */}
-          <div className="space-y-2 w-full">
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify px-0.5">
-              <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
+          <div className="space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Layers className="w-3.5 h-3.5 text-white" />
               </span>
+              <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
+                المهارات الأربع ومدتها
+              </h3>
+            </div>
+
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify px-0.5">
               يتكون IELTS Academic وGeneral Training من أربع مهارات متتابعة في تجربة الاختبار، ولكل مهارة طبيعتها ووقتها:
             </p>
 
-            {/* جدول المهارات الأربع */}
-            <div className="relative w-full rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs overflow-hidden">
-              <table className="w-full text-start border-collapse">
-                <thead>
-                  <tr className="bg-[var(--mn-surface)] border-b border-[var(--mn-border)]">
-                    <th className="py-2 px-2 sm:px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[38%]">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#0E7C86] shrink-0" />
-                        <span>المهارة</span>
+            {/* جدول المهارات الأربع — مطابق لجدول الطب والجراحة */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)]">
+                <div className="col-span-5 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center">
+                  المهارة
+                </div>
+                <div className="col-span-3 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center">
+                  المدة
+                </div>
+                <div className="col-span-4 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white flex items-center">
+                  الأسئلة أو المهام
+                </div>
+              </div>
+
+              <div className="divide-y divide-[var(--mn-border)]">
+                {[
+                  {
+                    skill: 'الاستماع — Listening',
+                    duration: 'نحو 30 دقيقة',
+                    tasks: '40 سؤالًا في 4 أجزاء',
+                    Icon: Headphones,
+                  },
+                  {
+                    skill: 'القراءة — Reading',
+                    duration: '60 دقيقة',
+                    tasks: '40 سؤالًا في 3 أقسام',
+                    Icon: BookOpen,
+                  },
+                  {
+                    skill: 'الكتابة — Writing',
+                    duration: '60 دقيقة',
+                    tasks: 'مهمتان',
+                    Icon: PenTool,
+                  },
+                  {
+                    skill: 'المحادثة — Speaking',
+                    duration: '11–14 دقيقة',
+                    tasks: '3 أجزاء',
+                    Icon: Mic,
+                  },
+                ].map((row) => {
+                  const RowIcon = row.Icon;
+                  return (
+                    <div
+                      key={row.skill}
+                      className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
+                    >
+                      <div className="col-span-5 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center gap-1.5 leading-snug">
+                        <span className="w-5 h-5 rounded-md bg-[#0E7C86] border border-[#142B5F] flex items-center justify-center shrink-0">
+                          <RowIcon className="w-2.5 h-2.5 text-white" />
+                        </span>
+                        <span>{row.skill}</span>
                       </div>
-                    </th>
-                    <th className="py-2 px-2 sm:px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[26%]">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#142B5F] dark:bg-[#60A5FA] shrink-0" />
-                        <span>المدة</span>
+                      <div className="col-span-3 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] border-l border-[var(--mn-border)] flex items-center leading-snug">
+                        {row.duration}
                       </div>
-                    </th>
-                    <th className="py-2 px-2 sm:px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] w-[36%]">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#9E731F] dark:bg-[#F2CD78] shrink-0" />
-                        <span>الأسئلة أو المهام</span>
+                      <div className="col-span-4 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] flex items-center leading-snug">
+                        {row.tasks}
                       </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--mn-border)]">
-                  {[
-                    {
-                      skill: 'الاستماع — Listening',
-                      duration: 'نحو 30 دقيقة',
-                      tasks: '40 سؤالًا في 4 أجزاء',
-                      Icon: Headphones,
-                    },
-                    {
-                      skill: 'القراءة — Reading',
-                      duration: '60 دقيقة',
-                      tasks: '40 سؤالًا في 3 أقسام',
-                      Icon: BookOpen,
-                    },
-                    {
-                      skill: 'الكتابة — Writing',
-                      duration: '60 دقيقة',
-                      tasks: 'مهمتان',
-                      Icon: PenTool,
-                    },
-                    {
-                      skill: 'المحادثة — Speaking',
-                      duration: '11–14 دقيقة',
-                      tasks: '3 أجزاء',
-                      Icon: Mic,
-                    },
-                  ].map((row, idx) => {
-                    const isEven = idx % 2 === 0;
-                    const RowIcon = row.Icon;
-                    return (
-                      <tr
-                        key={row.skill}
-                        className={
-                          isEven
-                            ? 'bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                            : 'bg-[var(--mn-surface)]/55 hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                        }
-                      >
-                        <td className="relative py-2 pr-2.5 pl-1.5 sm:px-2.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] align-middle leading-[1.6]">
-                          <span
-                            aria-hidden="true"
-                            className={`absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full ${
-                              isEven
-                                ? 'bg-gradient-to-b from-[#142B5F] to-[#0E7C86]'
-                                : 'bg-gradient-to-b from-[#0E7C86] to-[#142B5F]'
-                            }`}
-                          />
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-5 h-5 rounded-md bg-gradient-to-br from-[#142B5F] to-[#0E7C86] border border-[#D6A43B]/55 flex items-center justify-center shrink-0">
-                              <RowIcon className="w-2.5 h-2.5 text-[#F3C969]" />
-                            </span>
-                            <span>{row.skill}</span>
-                          </div>
-                        </td>
-                        <td className="py-2 px-1.5 sm:px-2.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] align-middle leading-[1.6]">
-                          <span className="inline-block px-1.5 py-0.5 rounded-md bg-[#142B5F]/[0.06] dark:bg-[#D6A43B]/15 border border-[#0E7C86]/30 dark:border-[#F2CD78]/35 text-[9.5px] sm:text-[10px] font-extrabold text-[var(--mn-heading)]">
-                            {row.duration}
-                          </span>
-                        </td>
-                        <td className="py-2 px-2 sm:px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] align-middle leading-[1.6]">
-                          {row.tasks}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
           {/* الفقرة الأولى بعد الجدول */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-            <div className="p-2.5 sm:p-3">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
-                تبلغ مدة الاختبار{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">نحو ساعتين و45 دقيقة</span>. تُؤدى أقسام Listening وReading وWriting في المركز عادة ضمن جلسة متصلة من دون استراحة رسمية. وقد تُجرى المحادثة في اليوم نفسه أو قبله أو بعده وفق جدول المركز؛ وفي IELTS Online تُحدد ترتيبات الجلسات حسب نظام الحجز.
-              </p>
-            </div>
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 shadow-2xs w-full overflow-hidden">
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+              تبلغ مدة الاختبار <strong className="text-[var(--mn-heading)]">نحو ساعتين و45 دقيقة</strong>. تُؤدى أقسام Listening وReading وWriting في المركز عادة ضمن جلسة متصلة من دون استراحة رسمية. وقد تُجرى المحادثة في اليوم نفسه أو قبله أو بعده وفق جدول المركز؛ وفي IELTS Online تُحدد ترتيبات الجلسات حسب نظام الحجز.
+            </p>
           </div>
 
-          {/* الفقرة الثانية بعد الجدول — بتصميم زاوية أكسفورد المدمجة وامتلاء النص */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-            <span aria-hidden="true" className="mn-corner-accent-blended" />
+          {/* الفقرة الثانية بعد الجدول */}
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+            <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
 
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-              <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-              </span>
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
               <strong className="text-[var(--mn-heading)]">خصص وقتًا إضافيًا</strong> للتحقق من الهوية والتصوير والإجراءات الأمنية والانتظار. لا تُحسب هذه الإجراءات بالضرورة ضمن مدة أداء المهارات، ولا ينبغي أن تصل إلى المركز عند موعد بداية الاختبار تمامًا.
             </p>
           </div>
@@ -4021,33 +3869,28 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           {/* ===================================================================== */}
           {/* أولًا: الاستماع — Listening                                            */}
           {/* ===================================================================== */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-            {/* الشريط العلوي للمهارة الأولى */}
-            <div className="px-2.5 sm:px-3 py-2 bg-[var(--mn-surface)]/65 border-b border-[var(--mn-border)] flex items-center gap-2">
-              <div className="w-6.5 h-6.5 rounded-lg bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] border border-[#D6A43B]/60 flex items-center justify-center shrink-0 shadow-2xs">
-                <Headphones className="w-3.5 h-3.5 text-[#F3C969]" />
-              </div>
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+            <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Headphones className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 أولًا: الاستماع — Listening
               </h3>
             </div>
 
             <div className="p-2.5 sm:p-3 space-y-2.5">
-              {/* وصف قسم الاستماع */}
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 يقيس قدرة المتقدم على فهم الإنجليزية المسموعة في الحياة اليومية والدراسة. يتكون من{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">40 سؤالًا</span>{' '}
+                <strong className="text-[var(--mn-heading)]">40 سؤالًا</strong>{' '}
                 موزعة على أربعة أجزاء، عشرة أسئلة لكل جزء، ويُشغّل التسجيل مرة واحدة. تُمنح نقطة لكل إجابة صحيحة قبل تحويل العدد إلى Band.
               </p>
 
               {/* الشبكة الرباعية للأجزاء الأربعة */}
-              <div className="rounded-xl bg-[var(--mn-surface)]/75 border border-[var(--mn-border)] p-2.5 space-y-2">
+              <div className="rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5 space-y-2">
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#0E7C86] shrink-0" />
-                  <h4 className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
+                  <h4 className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)]">
                     الأجزاء الأربعة:
                   </h4>
                 </div>
@@ -4070,52 +3913,34 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                       num: '4.',
                       text: 'حديث أكاديمي أكثر امتدادًا، مثل محاضرة.',
                     },
-                  ].map((part, idx) => {
-                    const isEven = idx % 2 === 0;
-                    return (
-                      <div
-                        key={part.num}
-                        className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2 pr-3 flex items-start gap-2 shadow-2xs overflow-hidden"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className={`absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full ${
-                            isEven
-                              ? 'bg-gradient-to-b from-[#142B5F] to-[#0E7C86]'
-                              : 'bg-gradient-to-b from-[#0E7C86] to-[#142B5F]'
-                          }`}
-                        />
-                        <span className="w-4.5 h-4.5 rounded-md bg-gradient-to-br from-[#142B5F] to-[#0E7C86] text-[#F3C969] text-[9.5px] font-extrabold flex items-center justify-center shrink-0 mt-0.5">
-                          {part.num}
-                        </span>
-                        <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.7] flex-1">
-                          {part.text}
-                        </span>
-                      </div>
-                    );
-                  })}
+                  ].map((part) => (
+                    <div
+                      key={part.num}
+                      className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2 flex items-start gap-2 shadow-2xs overflow-hidden"
+                    >
+                      <span className="w-5 h-5 rounded-md bg-[#0E7C86] border border-[#142B5F] text-white text-[9.5px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                        {part.num}
+                      </span>
+                      <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.7] flex-1">
+                        {part.text}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               {/* لوحة أنواع الأسئلة */}
-              <div className="relative rounded-xl bg-[var(--mn-surface)]/85 border border-[var(--mn-border)] p-2.5 pr-3 shadow-2xs overflow-hidden">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+              <div className="relative rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5 pr-3 shadow-2xs overflow-hidden">
+                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   <strong className="text-[var(--mn-heading)]">أنواع الأسئلة:</strong>{' '}
                   الاختيار من متعدد (Multiple Choice)، والمطابقة (Matching)، وتسمية الخرائط والمخططات (Map/Plan/Diagram Labelling)، وإكمال النماذج والملاحظات والجداول والمخططات الانسيابية والملخصات، وإكمال الجمل، والإجابات القصيرة.
                 </p>
               </div>
 
-              {/* قواعد مهمة — بزاوية أكسفورد المدمجة */}
-              <div className="relative rounded-xl bg-[var(--mn-surface)]/90 border border-[var(--mn-border)] p-2.5 pr-3.5 shadow-2xs overflow-hidden">
-                <span aria-hidden="true" className="mn-corner-accent-blended" />
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              {/* قواعد مهمة */}
+              <div className="relative rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5 pr-3.5 shadow-2xs overflow-hidden">
+                <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
+                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   <strong className="text-[var(--mn-heading)]">قواعد مهمة:</strong> تظهر الإجابات غالبًا بترتيب التسجيل؛ احترم حد الكلمات المكتوب، وانتبه إلى الإملاء والأرقام والأسماء، واستعد للهجات معيارية بريطانية وأسترالية ونيوزيلندية وأمريكية شمالية. لا تفترض إمكانية إعادة تشغيل المقطع.
                 </p>
               </div>
@@ -4125,58 +3950,41 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           {/* ===================================================================== */}
           {/* ثانيًا: القراءة — Reading                                              */}
           {/* ===================================================================== */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-            {/* الشريط العلوي للمهارة الثانية */}
-            <div className="px-2.5 sm:px-3 py-2 bg-[var(--mn-surface)]/65 border-b border-[var(--mn-border)] flex items-center gap-2">
-              <div className="w-6.5 h-6.5 rounded-lg bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] border border-[#D6A43B]/60 flex items-center justify-center shrink-0 shadow-2xs">
-                <BookOpen className="w-3.5 h-3.5 text-[#F3C969]" />
-              </div>
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+            <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <BookOpen className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 ثانيًا: القراءة — Reading
               </h3>
             </div>
 
             <div className="p-2.5 sm:p-3 space-y-2.5">
-              {/* وصف قسم القراءة */}
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 يقيس فهم الفكرة الرئيسية والتفاصيل والاستنتاج وموقف الكاتب وبنية النص ومعاني الكلمات من السياق. يستغرق{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">60 دقيقة</span>{' '}
+                <strong className="text-[var(--mn-heading)]">60 دقيقة</strong>{' '}
                 ويضم{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">40 سؤالًا</span>، دون وقت إضافي لنقل الإجابات بعد انتهاء مدة القراءة.
+                <strong className="text-[var(--mn-heading)]">40 سؤالًا</strong>، دون وقت إضافي لنقل الإجابات بعد انتهاء مدة القراءة.
               </p>
 
               {/* المسار الأول: القراءة الأكاديمية */}
-              <div className="relative rounded-xl bg-[var(--mn-surface)]/85 border border-[var(--mn-border)] p-2.5 pr-3 shadow-2xs overflow-hidden">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+              <div className="relative rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5 pr-3 shadow-2xs overflow-hidden">
+                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   <strong className="text-[var(--mn-heading)]">القراءة الأكاديمية (Academic Reading):</strong>{' '}
                   تتكون من ثلاثة نصوص طويلة نسبيًا، بإجمالي تقريبي{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">2,150–2,750 كلمة</span>، وتُختار موادها من كتب ودوريات ومجلات وصحف. تشمل الأسئلة الاختيار من متعدد، وTrue/False/Not Given، وYes/No/Not Given، ومطابقة العناوين والمعلومات والسمات ونهايات الجمل، وإكمال الجمل والجداول والملخصات، وتسمية المخططات، والإجابات القصيرة.
+                  <strong className="text-[var(--mn-heading)]">2,150–2,750 كلمة</strong>، وتُختار موادها من كتب ودوريات ومجلات وصحف. تشمل الأسئلة الاختيار من متعدد، وTrue/False/Not Given، وYes/No/Not Given، ومطابقة العناوين والمعلومات والسمات ونهايات الجمل، وإكمال الجمل والجداول والملخصات، وتسمية المخططات، والإجابات القصيرة.
                 </p>
               </div>
 
-              {/* المسار الثاني: القراءة العامة مع سلم التدرج الثلاثي */}
-              <div className="relative rounded-xl bg-[var(--mn-surface)]/85 border border-[var(--mn-border)] p-2.5 space-y-2 shadow-2xs overflow-hidden">
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85]">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              {/* المسار الثاني: القراءة العامة */}
+              <div className="relative rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5 space-y-2 shadow-2xs overflow-hidden">
+                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.85]">
                   <strong className="text-[var(--mn-heading)]">القراءة العامة (General Training Reading):</strong>{' '}
                   تتضمن ثلاثة أقسام متدرجة في الصعوبة:
                 </p>
 
-                {/* سلم التدرج المترابط (1 -> 2 -> 3) */}
-                <div className="relative pr-3 space-y-1.5">
-                  <span
-                    aria-hidden="true"
-                    className="absolute right-1 top-2.5 bottom-2.5 w-[2px] rounded-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                  />
+                <div className="space-y-1.5">
                   {[
                     {
                       num: '1.',
@@ -4193,12 +4001,12 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                   ].map((item) => (
                     <div
                       key={item.num}
-                      className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2 flex items-start gap-2 shadow-2xs"
+                      className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2 flex items-start gap-2 shadow-2xs"
                     >
-                      <span className="w-4.5 h-4.5 rounded-md bg-gradient-to-br from-[#142B5F] to-[#0E7C86] text-[#F3C969] text-[9.5px] font-extrabold flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="w-5 h-5 rounded-md bg-[#0E7C86] border border-[#142B5F] text-white text-[9.5px] font-bold flex items-center justify-center shrink-0 mt-0.5">
                         {item.num}
                       </span>
-                      <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.7] flex-1">
+                      <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.7] flex-1">
                         {item.text}
                       </span>
                     </div>
@@ -4206,13 +4014,10 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 </div>
               </div>
 
-              {/* ملاحظة مقارنة القراءة الأكاديمية والعامة — بزاوية أكسفورد المدمجة */}
-              <div className="relative rounded-xl bg-[var(--mn-surface)]/90 border border-[var(--mn-border)] p-2.5 pr-3.5 shadow-2xs overflow-hidden">
-                <span aria-hidden="true" className="mn-corner-accent-blended" />
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              {/* ملاحظة مقارنة القراءة الأكاديمية والعامة */}
+              <div className="relative rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5 pr-3.5 shadow-2xs overflow-hidden">
+                <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
+                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   تتشابه أشكال الأسئلة مع القراءة الأكاديمية، لكن السياقات تميل إلى الحياة والعمل. ويحتاج General Training عادةً إلى عدد أكبر من الإجابات الصحيحة للحصول على Band مماثل، لأن طبيعة نصوص Academic تختلف في درجة التعقيد. جداول التحويل التقريبية موجودة في قسم الدرجات.
                 </p>
               </div>
@@ -4222,64 +4027,46 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           {/* ===================================================================== */}
           {/* ثالثًا: الكتابة — Writing                                              */}
           {/* ===================================================================== */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-            {/* الشريط العلوي للمهارة الثالثة */}
-            <div className="px-2.5 sm:px-3 py-2 bg-[var(--mn-surface)]/65 border-b border-[var(--mn-border)] flex items-center gap-2">
-              <div className="w-6.5 h-6.5 rounded-lg bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] border border-[#D6A43B]/60 flex items-center justify-center shrink-0 shadow-2xs">
-                <PenTool className="w-3.5 h-3.5 text-[#F3C969]" />
-              </div>
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+            <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <PenTool className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 ثالثًا: الكتابة — Writing
               </h3>
             </div>
 
             <div className="p-2.5 sm:p-3 space-y-2.5">
-              {/* وصف قسم الكتابة وتوزيع الوقت والكلمات */}
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
-                يضم قسم الكتابة مهمتين خلال{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">60 دقيقة</span>. الوقت المقترح{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">20 دقيقة</span>{' '}
-                للمهمة الأولى و
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">40 دقيقة</span>{' '}
-                للمهمة الثانية، ويبلغ الحد الأدنى للكلمات{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">150</span>{' '}
-                في الأولى و
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">250</span>{' '}
-                في الثانية. تحمل Task 2 ضعف وزن Task 1 في التقييم.
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                يضم قسم الكتابة مهمتين خلال <strong className="text-[var(--mn-heading)]">60 دقيقة</strong>. الوقت المقترح{' '}
+                <strong className="text-[var(--mn-heading)]">20 دقيقة</strong> للمهمة الأولى و
+                <strong className="text-[var(--mn-heading)]">40 دقيقة</strong> للمهمة الثانية، ويبلغ الحد الأدنى للكلمات{' '}
+                <strong className="text-[var(--mn-heading)]">150</strong> في الأولى و
+                <strong className="text-[var(--mn-heading)]">250</strong> في الثانية. تحمل Task 2 ضعف وزن Task 1 في التقييم.
               </p>
 
               {/* الشبكة المزدوجة لـ Academic Writing و General Training Writing */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {/* Academic Writing */}
-                <div className="relative rounded-xl bg-[var(--mn-surface)]/85 border border-[var(--mn-border)] overflow-hidden shadow-2xs flex flex-col">
-                  <div className="px-2.5 py-1.5 bg-[var(--mn-page)] border-b border-[var(--mn-border)]/80 flex items-center gap-1.5">
+                <div className="relative rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] overflow-hidden shadow-2xs flex flex-col">
+                  <div className="px-2.5 py-2 bg-[var(--mn-page)] border-b border-[var(--mn-border)] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#0E7C86] shrink-0" />
-                    <h4 dir="ltr" className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
+                    <h4 dir="ltr" className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)]">
                       Academic Writing:
                     </h4>
                   </div>
 
                   <div className="p-2.5 space-y-2 flex-1">
-                    <div className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2 pr-2.5">
-                      <span
-                        aria-hidden="true"
-                        className="absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                      />
-                      <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.8] text-justify">
+                    <div className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2">
+                      <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.8] text-justify">
                         <strong className="text-[var(--mn-heading)]">- Task 1:</strong>{' '}
                         وصف أو تلخيص معلومات مرئية، مثل رسم بياني (Graph)، أو Chart، أو Table، أو Map، أو Diagram، أو Process. يجب إبراز المعلومات والاتجاهات الرئيسية وتقديم نظرة عامة (Overview) واضحة دون إدخال رأي شخصي لا يطلبه السؤال.
                       </p>
                     </div>
 
-                    <div className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2 pr-2.5">
-                      <span
-                        aria-hidden="true"
-                        className="absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#142B5F]"
-                      />
-                      <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.8] text-justify">
+                    <div className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2">
+                      <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.8] text-justify">
                         <strong className="text-[var(--mn-heading)]">- Task 2:</strong>{' '}
                         كتابة مقال يناقش رأيًا أو حجة أو مشكلة وأسبابها وحلولها أو المزايا والعيوب. يتطلب موقفًا واضحًا وأفكارًا مترابطة وتطويرًا مناسبًا للأمثلة.
                       </p>
@@ -4288,32 +4075,24 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 </div>
 
                 {/* General Training Writing */}
-                <div className="relative rounded-xl bg-[var(--mn-surface)]/85 border border-[var(--mn-border)] overflow-hidden shadow-2xs flex flex-col">
-                  <div className="px-2.5 py-1.5 bg-[var(--mn-page)] border-b border-[var(--mn-border)]/80 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#142B5F] dark:bg-[#60A5FA] shrink-0" />
-                    <h4 dir="ltr" className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
+                <div className="relative rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] overflow-hidden shadow-2xs flex flex-col">
+                  <div className="px-2.5 py-2 bg-[var(--mn-page)] border-b border-[var(--mn-border)] flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0E7C86] shrink-0" />
+                    <h4 dir="ltr" className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)]">
                       General Training Writing:
                     </h4>
                   </div>
 
                   <div className="p-2.5 space-y-2 flex-1">
-                    <div className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2 pr-2.5">
-                      <span
-                        aria-hidden="true"
-                        className="absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                      />
-                      <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.8] text-justify">
+                    <div className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2">
+                      <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.8] text-justify">
                         <strong className="text-[var(--mn-heading)]">- Task 1:</strong>{' '}
                         رسالة تستجيب لموقف مثل طلب معلومات أو شكوى أو اعتذار أو دعوة، بنبرة رسمية أو شبه رسمية أو شخصية بحسب السؤال، مع تغطية كل النقاط المطلوبة.
                       </p>
                     </div>
 
-                    <div className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2 pr-2.5">
-                      <span
-                        aria-hidden="true"
-                        className="absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#142B5F]"
-                      />
-                      <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.8] text-justify">
+                    <div className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2">
+                      <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.8] text-justify">
                         <strong className="text-[var(--mn-heading)]">- Task 2:</strong>{' '}
                         مقال عن قضية عامة أو رأي أو حجة أو حل مشكلة، ويظل تحقيق المطلوب وتنظيمه ودقة اللغة أساسيًا في التقييم.
                       </p>
@@ -4322,13 +4101,10 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 </div>
               </div>
 
-              {/* معايير تقييم الكتابة — بزاوية أكسفورد المدمجة */}
-              <div className="relative rounded-xl bg-[var(--mn-surface)]/90 border border-[var(--mn-border)] p-2.5 pr-3.5 shadow-2xs overflow-hidden">
-                <span aria-hidden="true" className="mn-corner-accent-blended" />
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              {/* معايير تقييم الكتابة */}
+              <div className="relative rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5 pr-3.5 shadow-2xs overflow-hidden">
+                <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
+                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   تُقيَّم الكتابة وفق Task Achievement/Task Response، وCoherence and Cohesion، وLexical Resource، وGrammatical Range and Accuracy. تتساوى هذه المعايير الأربعة داخل كل مهمة، مع بقاء وزن المهمة الثانية مضاعفًا. احرص على كتابة فقرات كاملة وتغطية المطلوب والالتزام بحد الكلمات؛ قد تؤثر الإجابات القصيرة أو غير المرتبطة بالسؤال سلبًا في النتيجة. لا تعتمد على نسخ نص السؤال أو حفظ مقالات جاهزة.
                 </p>
               </div>
@@ -4338,34 +4114,24 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           {/* ===================================================================== */}
           {/* رابعًا: المحادثة — Speaking                                           */}
           {/* ===================================================================== */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-            {/* الشريط العلوي للمهارة الرابعة */}
-            <div className="px-2.5 sm:px-3 py-2 bg-[var(--mn-surface)]/65 border-b border-[var(--mn-border)] flex items-center gap-2">
-              <div className="w-6.5 h-6.5 rounded-lg bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] border border-[#D6A43B]/60 flex items-center justify-center shrink-0 shadow-2xs">
-                <Mic className="w-3.5 h-3.5 text-[#F3C969]" />
-              </div>
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+            <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Mic className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 رابعًا: المحادثة — Speaking
               </h3>
             </div>
 
             <div className="p-2.5 sm:p-3 space-y-2.5">
-              {/* وصف قسم المحادثة */}
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 مقابلة مسجلة مع ممتحن IELTS معتمد، مدتها{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">11–14 دقيقة</span>، ومحتواها متطابق في Academic وGeneral Training. وقد تُجرى حضوريًا أو عبر اتصال فيديو مع ممتحن حسب ترتيبات الجهة والمركز.
+                <strong className="text-[var(--mn-heading)]">11–14 دقيقة</strong>، ومحتواها متطابق في Academic وGeneral Training. وقد تُجرى حضوريًا أو عبر اتصال فيديو مع ممتحن حسب ترتيبات الجهة والمركز.
               </p>
 
-              {/* المسار المترابط لأجزاء المحادثة الثلاثة (Part 1 -> Part 2 -> Part 3) */}
-              <div className="relative rounded-xl bg-[var(--mn-surface)]/80 border border-[var(--mn-border)] p-2.5 pr-4 space-y-2">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-2 top-3 bottom-3 w-[2px] rounded-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-
+              {/* أجزاء المحادثة الثلاثة */}
+              <div className="rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5 space-y-2">
                 {[
                   {
                     label: '- Part 1 (نحو 4–5 دقائق):',
@@ -4382,9 +4148,9 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 ].map((part) => (
                   <div
                     key={part.label}
-                    className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2 shadow-2xs"
+                    className="relative rounded-lg bg-[var(--mn-page)] border border-[var(--mn-border)] p-2 shadow-2xs"
                   >
-                    <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.8] text-justify">
+                    <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.8] text-justify">
                       <strong className="text-[var(--mn-heading)] ml-1">{part.label}</strong>
                       {part.text}
                     </p>
@@ -4392,13 +4158,10 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 ))}
               </div>
 
-              {/* معايير تقييم المحادثة — بزاوية أكسفورد المدمجة */}
-              <div className="relative rounded-xl bg-[var(--mn-surface)]/90 border border-[var(--mn-border)] p-2.5 pr-3.5 shadow-2xs overflow-hidden">
-                <span aria-hidden="true" className="mn-corner-accent-blended" />
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              {/* معايير تقييم المحادثة */}
+              <div className="relative rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5 pr-3.5 shadow-2xs overflow-hidden">
+                <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
+                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   المعايير الأربعة هي Fluency and Coherence، وLexical Resource، وGrammatical Range and Accuracy، وPronunciation، ولكل منها وزن متساوٍ. لا يشترط تقليد لهجة بريطانية؛ الأهم الوضوح والطلاقة وتنظيم الحديث. وقد تقلل الإجابات المحفوظة بصورة آلية من طبيعية الأداء.
                 </p>
               </div>
@@ -4426,284 +4189,248 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
         <div className="space-y-4 text-start w-full">
           {/* 1. الدرجات والـOverall */}
           <div className="space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <BarChart3 className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 الدرجات والـOverall
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 space-y-2.5 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 space-y-2.5 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 تُمنح لكل مهارة من المهارات الأربع درجة Band من{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">0 إلى 9</span>، وقد تكون الدرجة عددًا صحيحًا أو نصف درجة. ويُحسب Overall Band Score من متوسط المهارات:
+                <strong className="text-[var(--mn-heading)]">0 إلى 9</strong>، وقد تكون الدرجة عددًا صحيحًا أو نصف درجة. ويُحسب Overall Band Score من متوسط المهارات:
               </p>
 
               <div
                 dir="ltr"
-                className="rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] px-2.5 py-2 text-center font-mono text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] shadow-2xs"
+                className="rounded-lg bg-[var(--mn-surface)] border border-[var(--mn-border)] px-2.5 py-2 text-center text-[10px] sm:text-[10.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4] shadow-2xs"
               >
                 Overall = (Listening + Reading + Writing + Speaking) ÷ 4
               </div>
 
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify pt-1 border-t border-[var(--mn-border)]/70">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify pt-2 border-t border-[var(--mn-border)]">
                 ثم يُطبّق التقريب الرسمي: متوسط{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">6.25</span>{' '}
-                يصبح{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">6.5</span>، ومتوسط{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">6.75</span>{' '}
-                يصبح{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">7.0</span>، وتُقرب القيم الأخرى إلى أقرب نصف Band أو عدد صحيح بحسب موقعها.
+                <strong dir="ltr" className="text-[var(--mn-heading)]">6.25</strong> يصبح{' '}
+                <strong dir="ltr" className="text-[var(--mn-heading)]">6.5</strong>، ومتوسط{' '}
+                <strong dir="ltr" className="text-[var(--mn-heading)]">6.75</strong> يصبح{' '}
+                <strong dir="ltr" className="text-[var(--mn-heading)]">7.0</strong>، وتُقرب القيم الأخرى إلى أقرب نصف Band أو عدد صحيح بحسب موقعها.
               </p>
             </div>
 
-            <div className="w-full overflow-x-auto no-scrollbar rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs">
-              <table className="w-full text-center border-collapse">
-                <thead>
-                  <tr className="bg-[var(--mn-surface)] border-b border-[var(--mn-border)]">
-                    <th dir="ltr" className="py-2 px-1.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[15%]">
-                      Listening
-                    </th>
-                    <th dir="ltr" className="py-2 px-1.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[15%]">
-                      Reading
-                    </th>
-                    <th dir="ltr" className="py-2 px-1.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[15%]">
-                      Writing
-                    </th>
-                    <th dir="ltr" className="py-2 px-1.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[15%]">
-                      Speaking
-                    </th>
-                    <th className="py-2 px-1.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[20%]">
-                      المتوسط
-                    </th>
-                    <th dir="ltr" className="py-2 px-1.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] w-[20%]">
-                      Overall
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--mn-border)]">
-                  {[
-                    { l: '6.5', r: '6.5', w: '5.0', s: '7.0', avg: '6.25', overall: '6.5' },
-                    { l: '4.0', r: '3.5', w: '4.0', s: '4.0', avg: '3.875', overall: '4.0' },
-                    { l: '6.5', r: '6.5', w: '5.5', s: '6.0', avg: '6.125', overall: '6.0' },
-                  ].map((ex, idx) => (
-                    <tr
-                      key={idx}
-                      className={
-                        idx % 2 === 1
-                          ? 'bg-[var(--mn-surface)]/55 hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                          : 'bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                      }
-                    >
-                      <td dir="ltr" className="py-1.5 px-1.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)]">
-                        {ex.l}
-                      </td>
-                      <td dir="ltr" className="py-1.5 px-1.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)]">
-                        {ex.r}
-                      </td>
-                      <td dir="ltr" className="py-1.5 px-1.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)]">
-                        {ex.w}
-                      </td>
-                      <td dir="ltr" className="py-1.5 px-1.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)]">
-                        {ex.s}
-                      </td>
-                      <td dir="ltr" className="py-1.5 px-1.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)]">
-                        {ex.avg}
-                      </td>
-                      <td dir="ltr" className="py-1.5 px-1.5 text-[10.5px] sm:text-[11px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">
-                        {ex.overall}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {/* جدول أمثلة التقريب — مطابق لجدول الطب والجراحة */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)] text-center">
+                <div dir="ltr" className="col-span-2 py-2 px-1 text-[9.5px] sm:text-[11px] font-bold text-white border-l border-white/15 flex items-center justify-center">
+                  Listening
+                </div>
+                <div dir="ltr" className="col-span-2 py-2 px-1 text-[9.5px] sm:text-[11px] font-bold text-white border-l border-white/15 flex items-center justify-center">
+                  Reading
+                </div>
+                <div dir="ltr" className="col-span-2 py-2 px-1 text-[9.5px] sm:text-[11px] font-bold text-white border-l border-white/15 flex items-center justify-center">
+                  Writing
+                </div>
+                <div dir="ltr" className="col-span-2 py-2 px-1 text-[9.5px] sm:text-[11px] font-bold text-white border-l border-white/15 flex items-center justify-center">
+                  Speaking
+                </div>
+                <div className="col-span-2 py-2 px-1 text-[9.5px] sm:text-[11px] font-bold text-white border-l border-white/15 flex items-center justify-center">
+                  المتوسط
+                </div>
+                <div dir="ltr" className="col-span-2 py-2 px-1 text-[9.5px] sm:text-[11px] font-bold text-white flex items-center justify-center">
+                  Overall
+                </div>
+              </div>
+
+              <div className="divide-y divide-[var(--mn-border)]">
+                {[
+                  { l: '6.5', r: '6.5', w: '5.0', s: '7.0', avg: '6.25', overall: '6.5' },
+                  { l: '4.0', r: '3.5', w: '4.0', s: '4.0', avg: '3.875', overall: '4.0' },
+                  { l: '6.5', r: '6.5', w: '5.5', s: '6.0', avg: '6.125', overall: '6.0' },
+                ].map((ex, idx) => (
+                  <div
+                    key={idx}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors text-center"
+                  >
+                    <div dir="ltr" className="col-span-2 py-2 px-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center justify-center">
+                      {ex.l}
+                    </div>
+                    <div dir="ltr" className="col-span-2 py-2 px-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center justify-center">
+                      {ex.r}
+                    </div>
+                    <div dir="ltr" className="col-span-2 py-2 px-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center justify-center">
+                      {ex.w}
+                    </div>
+                    <div dir="ltr" className="col-span-2 py-2 px-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center justify-center">
+                      {ex.s}
+                    </div>
+                    <div dir="ltr" className="col-span-2 py-2 px-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] border-l border-[var(--mn-border)] flex items-center justify-center">
+                      {ex.avg}
+                    </div>
+                    <div dir="ltr" className="col-span-2 py-2 px-1 text-[10.5px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] flex items-center justify-center">
+                      {ex.overall}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* 2. ماذا تعني مستويات Band؟ */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Award className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 ماذا تعني مستويات Band؟
               </h3>
             </div>
 
-            <div className="w-full overflow-x-auto no-scrollbar rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs">
-              <table className="w-full text-start border-collapse">
-                <thead>
-                  <tr className="bg-[var(--mn-surface)] border-b border-[var(--mn-border)]">
-                    <th dir="ltr" className="py-2 px-2 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] border-l border-[var(--mn-border)] w-[14%] text-center">
-                      Band
-                    </th>
-                    <th className="py-2 px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[30%]">
-                      الاسم الرسمي
-                    </th>
-                    <th className="py-2 px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] w-[56%]">
-                      المعنى المختصر
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--mn-border)]">
-                  {[
-                    { band: '9', name: 'Expert', desc: 'تحكم كامل ودقيق وطليق' },
-                    { band: '8', name: 'Very Good', desc: 'تحكم قوي مع أخطاء عرضية' },
-                    { band: '7', name: 'Good', desc: 'مستوى جيد مع بعض الأخطاء' },
-                    { band: '6', name: 'Competent', desc: 'استخدام فعّال رغم بعض الأخطاء' },
-                    { band: '5', name: 'Modest', desc: 'تحكم جزئي وأخطاء متكررة' },
-                    { band: '4', name: 'Limited', desc: 'قدرة محدودة' },
-                    { band: '3', name: 'Extremely Limited', desc: 'فهم محدود في المواقف المألوفة' },
-                    { band: '2', name: 'Intermittent', desc: 'صعوبة كبيرة في الفهم والاستخدام' },
-                    { band: '1', name: 'Non-user', desc: 'استخدام كلمات منفصلة قليلة' },
-                    { band: '0', name: 'Did Not Attempt', desc: 'لم يحاول أداء الاختبار' },
-                  ].map((item, idx) => (
-                    <tr
-                      key={item.band}
-                      className={
-                        idx % 2 === 1
-                          ? 'bg-[var(--mn-surface)]/55 hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                          : 'bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                      }
-                    >
-                      <td dir="ltr" className="py-1.5 px-2 text-center border-l border-[var(--mn-border)] align-middle font-extrabold text-[10.5px] text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">
-                        {item.band}
-                      </td>
-                      <td dir="ltr" className="py-1.5 px-2.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] align-middle">
-                        {item.name}
-                      </td>
-                      <td className="py-1.5 px-2.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] align-middle">
-                        {item.desc}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)]">
+                <div dir="ltr" className="col-span-2 py-2.5 px-2 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center justify-center text-center">
+                  Band
+                </div>
+                <div className="col-span-4 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center">
+                  الاسم الرسمي
+                </div>
+                <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white flex items-center">
+                  المعنى المختصر
+                </div>
+              </div>
+
+              <div className="divide-y divide-[var(--mn-border)]">
+                {[
+                  { band: '9', name: 'Expert', desc: 'تحكم كامل ودقيق وطليق' },
+                  { band: '8', name: 'Very Good', desc: 'تحكم قوي مع أخطاء عرضية' },
+                  { band: '7', name: 'Good', desc: 'مستوى جيد مع بعض الأخطاء' },
+                  { band: '6', name: 'Competent', desc: 'استخدام فعّال رغم بعض الأخطاء' },
+                  { band: '5', name: 'Modest', desc: 'تحكم جزئي وأخطاء متكررة' },
+                  { band: '4', name: 'Limited', desc: 'قدرة محدودة' },
+                  { band: '3', name: 'Extremely Limited', desc: 'فهم محدود في المواقف المألوفة' },
+                  { band: '2', name: 'Intermittent', desc: 'صعوبة كبيرة في الفهم والاستخدام' },
+                  { band: '1', name: 'Non-user', desc: 'استخدام كلمات منفصلة قليلة' },
+                  { band: '0', name: 'Did Not Attempt', desc: 'لم يحاول أداء الاختبار' },
+                ].map((item) => (
+                  <div
+                    key={item.band}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
+                  >
+                    <div dir="ltr" className="col-span-2 py-2 px-2 text-[10.5px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] border-l border-[var(--mn-border)] flex items-center justify-center text-center">
+                      {item.band}
+                    </div>
+                    <div dir="ltr" className="col-span-4 py-2 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center">
+                      {item.name}
+                    </div>
+                    <div className="col-span-6 py-2 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] flex items-center">
+                      {item.desc}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* 3. تحويل الإجابات الصحيحة إلى Band */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 تحويل الإجابات الصحيحة إلى Band
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 في Listening وReading تُمنح نقطة لكل إجابة صحيحة من أصل{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">40</span>، ثم يُحوَّل العدد إلى Band. الجداول التالية متوسطات تقريبية رسمية وردت في الملف المرجعي؛ وقد تختلف حدود التحويل قليلًا بين النماذج، ولا ينبغي اعتمادها كجدول قطعي لحساب كل نتيجة.
+                <strong className="text-[var(--mn-heading)]">40</strong>، ثم يُحوَّل العدد إلى Band. الجداول التالية متوسطات تقريبية رسمية وردت في الملف المرجعي؛ وقد تختلف حدود التحويل قليلًا بين النماذج، ولا ينبغي اعتمادها كجدول قطعي لحساب كل نتيجة.
               </p>
             </div>
 
-            <div className="w-full overflow-x-auto no-scrollbar rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs">
-              <table className="w-full text-center border-collapse">
-                <thead>
-                  <tr className="bg-[var(--mn-surface)] border-b border-[var(--mn-border)]">
-                    <th dir="ltr" className="py-2 px-1.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] border-l border-[var(--mn-border)] w-[16%]">
-                      Band
-                    </th>
-                    <th className="py-2 px-1.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[28%]">
-                      Listening: صحيح من 40
-                    </th>
-                    <th dir="ltr" className="py-2 px-1.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[28%]">
-                      Academic Reading
-                    </th>
-                    <th dir="ltr" className="py-2 px-1.5 text-[9.5px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] w-[28%]">
-                      General Training Reading
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--mn-border)]">
-                  {[
-                    { band: '4', listening: '—', academic: '—', general: '15' },
-                    { band: '5', listening: '16', academic: '15', general: '23' },
-                    { band: '6', listening: '23', academic: '23', general: '30' },
-                    { band: '7', listening: '30', academic: '30', general: '35' },
-                    { band: '8', listening: '35', academic: '35', general: '—' },
-                  ].map((row, idx) => (
-                    <tr
-                      key={row.band}
-                      className={
-                        idx % 2 === 1
-                          ? 'bg-[var(--mn-surface)]/55 hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                          : 'bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                      }
-                    >
-                      <td dir="ltr" className="py-1.5 px-2 text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] border-l border-[var(--mn-border)]">
-                        {row.band}
-                      </td>
-                      <td className="py-1.5 px-2 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)]">
-                        {row.listening}
-                      </td>
-                      <td dir="ltr" className="py-1.5 px-2 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)]">
-                        {row.academic}
-                      </td>
-                      <td dir="ltr" className="py-1.5 px-2 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)]">
-                        {row.general}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)] text-center">
+                <div dir="ltr" className="col-span-3 py-2.5 px-2 text-[10px] sm:text-[11px] font-bold text-white border-l border-white/15 flex items-center justify-center">
+                  Band
+                </div>
+                <div className="col-span-3 py-2.5 px-2 text-[10px] sm:text-[11px] font-bold text-white border-l border-white/15 flex items-center justify-center">
+                  Listening: صحيح من 40
+                </div>
+                <div dir="ltr" className="col-span-3 py-2.5 px-2 text-[10px] sm:text-[11px] font-bold text-white border-l border-white/15 flex items-center justify-center">
+                  Academic Reading
+                </div>
+                <div dir="ltr" className="col-span-3 py-2.5 px-2 text-[10px] sm:text-[11px] font-bold text-white flex items-center justify-center">
+                  General Training Reading
+                </div>
+              </div>
+
+              <div className="divide-y divide-[var(--mn-border)]">
+                {[
+                  { band: '4', listening: '—', academic: '—', general: '15' },
+                  { band: '5', listening: '16', academic: '15', general: '23' },
+                  { band: '6', listening: '23', academic: '23', general: '30' },
+                  { band: '7', listening: '30', academic: '30', general: '35' },
+                  { band: '8', listening: '35', academic: '35', general: '—' },
+                ].map((row) => (
+                  <div
+                    key={row.band}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors text-center"
+                  >
+                    <div dir="ltr" className="col-span-3 py-2 px-2 text-[10.5px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] border-l border-[var(--mn-border)] flex items-center justify-center">
+                      {row.band}
+                    </div>
+                    <div className="col-span-3 py-2 px-2 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center justify-center">
+                      {row.listening}
+                    </div>
+                    <div dir="ltr" className="col-span-3 py-2 px-2 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center justify-center">
+                      {row.academic}
+                    </div>
+                    <div dir="ltr" className="col-span-3 py-2 px-2 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] flex items-center justify-center">
+                      {row.general}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 لا توجد نقاط سالبة عن الإجابات الخاطئة في الاستماع والقراءة. أما الكتابة والمحادثة فتُقيّمان وفق معايير الأداء التفصيلية المذكورة في القسم السابق، وليس بعدّ الإجابات الصحيحة.
               </p>
             </div>
           </div>
 
           {/* 4. علاقة IELTS بمستويات CEFR */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Globe className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 علاقة IELTS بمستويات CEFR
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 الإطار الأوروبي المرجعي المشترك للغات (CEFR) يصف مستويات استخدام اللغة، لكن العلاقة بينه وبين Band في IELTS إرشادية وليست مطابقة حسابية دقيقة. وفق ملف منارتك: تقع حدود{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">C1</span>{' '}
-                تقريبًا عند{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">6.5–7</span>، و
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">Band 8</span>{' '}
-                قريب من حدود{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">C2</span>، بينما يرتبط{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">Band 8.5</span>{' '}
-                فأعلى بمستوى{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">C2</span>{' '}
-                في خريطة IELTS. لا تُحوِّل متطلب تأشيرة إلى درجة اعتمادًا على هذا التقدير؛ فالجداول الرسمية للمسار هي المرجع.
+                <strong dir="ltr" className="text-[var(--mn-heading)]">C1</strong> تقريبًا عند{' '}
+                <strong dir="ltr" className="text-[var(--mn-heading)]">6.5–7</strong>، و
+                <strong dir="ltr" className="text-[var(--mn-heading)]">Band 8</strong> قريب من حدود{' '}
+                <strong dir="ltr" className="text-[var(--mn-heading)]">C2</strong>، بينما يرتبط{' '}
+                <strong dir="ltr" className="text-[var(--mn-heading)]">Band 8.5</strong> فأعلى بمستوى{' '}
+                <strong dir="ltr" className="text-[var(--mn-heading)]">C2</strong> في خريطة IELTS. لا تُحوِّل متطلب تأشيرة إلى درجة اعتمادًا على هذا التقدير؛ فالجداول الرسمية للمسار هي المرجع.
               </p>
             </div>
 
-            {/* النجاح والقبول — بزاوية أكسفورد المدمجة وامتلاء النص */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
+            {/* النجاح والقبول */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
 
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 <strong className="text-[var(--mn-heading)]">النجاح والقبول:</strong> لا توجد درجة نجاح عامة في اختبار IELTS الكامل. قد تحصل على Overall مرتفع ولا تحقق حد الكتابة أو المحادثة الذي تشترطه جهة معينة. وتختلف نتيجة Life Skills الذي يعتمد Pass/Fail.
               </p>
             </div>
@@ -4728,37 +4455,33 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
         />
 
         <div className="space-y-3.5 text-start w-full">
-          {/* 1. كيف تبدأ التحضير؟ (مصمم كبطاقة سؤال موحدة) */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 sm:p-3.5 pr-4 overflow-hidden shadow-2xs w-full">
-            <div className="absolute right-1.5 top-2.5 bottom-2.5 w-[3.5px] rounded-full bg-gradient-to-b from-[#142B5F] via-[#153B75] to-[#0E7C86]" />
+          {/* 1. كيف تبدأ التحضير؟ */}
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 sm:p-3.5 pr-4 overflow-hidden shadow-2xs w-full">
+            <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
 
-            <div className="flex items-center gap-1.5 mb-2 pb-1.5 border-b border-[var(--mn-border)]">
-              <span className="w-1 h-3.5 rounded-full bg-[#B78628] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-[var(--mn-border)]">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Compass className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 كيف تبدأ التحضير؟
               </h3>
             </div>
 
             <div className="space-y-2">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 ابدأ بتحديد الهدف الحقيقي: الدرجة الإجمالية المطلوبة، وحد كل مهارة، وتاريخ تقديم الجامعة أو المنحة، والنسخة المعتمدة من الاختبار. بعد ذلك أدِّ اختبارًا تشخيصيًا كاملًا تحت الوقت لمعرفة مستواك الحالي ونقاط قوتك وضعفك. لا توجد خطة واحدة تناسب الجميع؛ فالطالب الذي يستهدف{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">5.5</span>{' '}
-                يختلف عن المتقدم الذي يحتاج{' '}
-                <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">7.5</span>.
+                <strong dir="ltr" className="text-[var(--mn-heading)]">5.5</strong> يختلف عن المتقدم الذي يحتاج{' '}
+                <strong dir="ltr" className="text-[var(--mn-heading)]">7.5</strong>.
               </p>
 
-              <div className="rounded-xl bg-[var(--mn-surface)]/80 border border-[var(--mn-border)] p-2.5">
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="rounded-lg bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5">
+                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   على سبيل المثال، إذا كان مستواك{' '}
-                  <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">Overall 6.0</span>{' '}
-                  و
-                  <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">Writing 5.5</span>، بينما يتطلب هدفك{' '}
-                  <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">Overall 7.0</span>{' '}
-                  و
-                  <span dir="ltr" className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">Writing 6.5</span>، فعليك تحسين الأداء العام مع إعطاء الكتابة تدريبًا إضافيًا وفق معايير التصحيح الرسمية.
+                  <strong dir="ltr" className="text-[var(--mn-heading)]">Overall 6.0</strong> و
+                  <strong dir="ltr" className="text-[var(--mn-heading)]">Writing 5.5</strong>، بينما يتطلب هدفك{' '}
+                  <strong dir="ltr" className="text-[var(--mn-heading)]">Overall 7.0</strong> و
+                  <strong dir="ltr" className="text-[var(--mn-heading)]">Writing 6.5</strong>، فعليك تحسين الأداء العام مع إعطاء الكتابة تدريبًا إضافيًا وفق معايير التصحيح الرسمية.
                 </p>
               </div>
             </div>
@@ -4766,8 +4489,10 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
           {/* 2. كيف تتدرب على المهارات الأربع؟ */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <BookOpen className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 كيف تتدرب على المهارات الأربع؟
               </h3>
@@ -4800,23 +4525,18 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 return (
                   <div
                     key={skill.title}
-                    className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs flex flex-col"
+                    className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs flex flex-col"
                   >
-                    <div className="px-2.5 py-1.5 bg-[var(--mn-surface)]/65 border-b border-[var(--mn-border)] flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-5.5 h-5.5 rounded-md bg-gradient-to-br from-[#142B5F] to-[#0E7C86] border border-[#D6A43B]/55 flex items-center justify-center shrink-0">
-                          <SkillIcon className="w-3 h-3 text-[#F3C969]" />
-                        </span>
-                        <h4 dir="ltr" className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
-                          {skill.title}
-                        </h4>
-                      </div>
+                    <div className="px-2.5 py-2 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+                      <span className="w-5.5 h-5.5 rounded-md bg-[#0E7C86] border border-[#142B5F] flex items-center justify-center shrink-0">
+                        <SkillIcon className="w-3 h-3 text-white" />
+                      </span>
+                      <h4 dir="ltr" className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)]">
+                        {skill.title}
+                      </h4>
                     </div>
                     <div className="p-2.5 flex-1">
-                      <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                        <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                          <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                        </span>
+                      <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                         {skill.text}
                       </p>
                     </div>
@@ -4828,81 +4548,60 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
           {/* 3. خطة تحضير مقترحة لمدة 12 أسبوعًا */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <CalendarCheck className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 خطة تحضير مقترحة لمدة 12 أسبوعًا
               </h3>
             </div>
 
-            <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.8] px-0.5">
-              <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-              </span>
+            <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.8] px-0.5">
               هذه خطة نموذجية قابلة للتعديل، وليست المدة الإلزامية للاستعداد:
             </p>
 
-            <div className="relative w-full rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs overflow-hidden">
-              <table className="w-full text-start border-collapse">
-                <thead>
-                  <tr className="bg-[var(--mn-surface)] border-b border-[var(--mn-border)]">
-                    <th className="py-2 px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] border-l border-[var(--mn-border)] w-[35%]">
-                      الفترة
-                    </th>
-                    <th className="py-2 px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] w-[65%]">
-                      النشاط الأساسي
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--mn-border)]">
-                  {[
-                    { weeks: 'الأسبوع الأول', focus: 'تشخيص المستوى والتعرف على بنية الاختبار' },
-                    { weeks: 'الأسبوعان 2–3', focus: 'استماع مكثف ومعالجة الأخطاء' },
-                    { weeks: 'الأسبوعان 4–5', focus: 'قراءة وتدريب على إدارة الوقت' },
-                    { weeks: 'الأسبوعان 6–7', focus: 'Writing Task 1 بحسب نوع الاختبار' },
-                    { weeks: 'الأسبوعان 8–9', focus: 'Writing Task 2 والمراجعة وفق المعايير' },
-                    { weeks: 'الأسبوع العاشر', focus: 'تدريب مكثف على Speaking' },
-                    { weeks: 'الأسبوع الحادي عشر', focus: 'اختبارات تجريبية كاملة' },
-                    { weeks: 'الأسبوع الثاني عشر', focus: 'معالجة نقاط الضعف والمحاكاة النهائية' },
-                  ].map((row, idx) => {
-                    const isEven = idx % 2 === 0;
-                    return (
-                      <tr
-                        key={row.weeks}
-                        className={
-                          isEven
-                            ? 'bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                            : 'bg-[var(--mn-surface)]/55 hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                        }
-                      >
-                        <td className="relative py-1.5 pr-3 pl-2 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] border-l border-[var(--mn-border)] align-middle">
-                          <span
-                            aria-hidden="true"
-                            className={`absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full ${
-                              isEven
-                                ? 'bg-gradient-to-b from-[#142B5F] to-[#0E7C86]'
-                                : 'bg-gradient-to-b from-[#0E7C86] to-[#142B5F]'
-                            }`}
-                          />
-                          {row.weeks}
-                        </td>
-                        <td className="py-1.5 px-2.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] align-middle">
-                          {row.focus}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            {/* جدول خطة 12 أسبوعًا — مطابق لجدول الطب والجراحة */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)]">
+                <div className="col-span-4 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center">
+                  الفترة
+                </div>
+                <div className="col-span-8 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white flex items-center">
+                  النشاط الأساسي
+                </div>
+              </div>
+
+              <div className="divide-y divide-[var(--mn-border)]">
+                {[
+                  { weeks: 'الأسبوع الأول', focus: 'تشخيص المستوى والتعرف على بنية الاختبار' },
+                  { weeks: 'الأسبوعان 2–3', focus: 'استماع مكثف ومعالجة الأخطاء' },
+                  { weeks: 'الأسبوعان 4–5', focus: 'قراءة وتدريب على إدارة الوقت' },
+                  { weeks: 'الأسبوعان 6–7', focus: 'Writing Task 1 بحسب نوع الاختبار' },
+                  { weeks: 'الأسبوعان 8–9', focus: 'Writing Task 2 والمراجعة وفق المعايير' },
+                  { weeks: 'الأسبوع العاشر', focus: 'تدريب مكثف على Speaking' },
+                  { weeks: 'الأسبوع الحادي عشر', focus: 'اختبارات تجريبية كاملة' },
+                  { weeks: 'الأسبوع الثاني عشر', focus: 'معالجة نقاط الضعف والمحاكاة النهائية' },
+                ].map((row) => (
+                  <div
+                    key={row.weeks}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
+                  >
+                    <div className="col-span-4 py-2 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center">
+                      {row.weeks}
+                    </div>
+                    <div className="col-span-8 py-2 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] flex items-center">
+                      {row.focus}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* نصيحة استمرارية الممارسة — بزاوية أكسفورد المدمجة */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            {/* نصيحة استمرارية الممارسة */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 مارس جميع المهارات بصورة مستمرة طوال الأسابيع، حتى عندما تكون مهارة واحدة محور التدريب. ونفّذ المحاكاة من دون قاموس أو هاتف أو توقف غير مسموح، ودرّب نفسك على الكمبيوتر إذا كنت ستؤدي الاختبار محوسبًا، وعلى Writing on Paper إذا كان خيارك المؤكد.
               </p>
             </div>
@@ -4910,24 +4609,23 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
           {/* 4. الموارد الرسمية والاستعداد النهائي */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <FileText className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 الموارد الرسمية والاستعداد النهائي
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 space-y-2 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 space-y-2 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 توفر IELTS مواد لأقسام Academic وGeneral Training وLife Skills، وأمثلة أسئلة، وأدلة مهارات، ووصف معايير الدرجات، وفيديوهات، وقد تتوفر اختبارات تجريبية في بعض المراكز. ابدأ من{' '}
                 <a
                   href="https://ielts.org/take-a-test/preparation-resources/sample-test-questions"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#142B5F]/10 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/45 dark:border-[#F2CD78]/50 text-[#142B5F] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] text-[9.5px] font-extrabold hover:border-[#0E7C86] transition-colors align-middle"
+                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#0E7C86]/10 border border-[#0E7C86]/40 text-[#0E7C86] dark:text-[#38C6D4] text-[9.5px] font-bold hover:border-[#0E7C86] transition-colors align-middle"
                 >
                   <span>نماذج وأسئلة IELTS الرسمية</span>
                   <ExternalLink className="w-2.5 h-2.5" />
@@ -4935,11 +4633,8 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 .
               </p>
 
-              <div className="pt-2 border-t border-[var(--mn-border)]/80">
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="pt-2 border-t border-[var(--mn-border)]">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   تكون أقرب إلى الجاهزية عندما تستطيع إكمال الاختبارات التجريبية في زمنها وتحقق نتائج مستقرة قريبة من متطلبات جهتك، وتعرف أنواع الأسئلة وأسباب أخطائك. تجنب الأخطاء الشائعة مثل التدريب العشوائي، وحفظ الإجابات، وإهمال مهارة منخفضة، وعدم مراجعة نتائج المحاكاة.
                 </p>
               </div>
@@ -4965,24 +4660,26 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
         />
 
         <div className="space-y-3.5 text-start w-full">
-          {/* 1. أين تجد مركز اختبار رسميًا؟ (بطاقة سؤال موحدة) */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 sm:p-3.5 pr-4 overflow-hidden shadow-2xs w-full">
-            <div className="absolute right-1.5 top-2.5 bottom-2.5 w-[3.5px] rounded-full bg-gradient-to-b from-[#142B5F] via-[#153B75] to-[#0E7C86]" />
+          {/* 1. أين تجد مركز اختبار رسميًا؟ */}
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 sm:p-3.5 pr-4 overflow-hidden shadow-2xs w-full">
+            <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
 
-            <div className="flex items-center gap-1.5 mb-1.5 pb-1.5 border-b border-[var(--mn-border)]">
-              <span className="w-1 h-3.5 rounded-full bg-[#B78628] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-[var(--mn-border)]">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <MapPin className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 أين تجد مركز اختبار رسميًا؟
               </h3>
             </div>
 
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
               ابحث في{' '}
               <a
                 href="https://ielts.org/test-centres"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#142B5F]/10 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/45 dark:border-[#F2CD78]/50 text-[#142B5F] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] text-[9.5px] font-extrabold hover:border-[#0E7C86] transition-colors align-middle"
+                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#0E7C86]/10 border border-[#0E7C86]/40 text-[#0E7C86] dark:text-[#38C6D4] text-[9.5px] font-bold hover:border-[#0E7C86] transition-colors align-middle"
               >
                 <span>دليل مراكز IELTS</span>
                 <ExternalLink className="w-2.5 h-2.5" />
@@ -4992,27 +4689,23 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           </div>
 
           {/* 2. المواعيد والأسعار */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <CalendarCheck className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 المواعيد والأسعار
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 space-y-2 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 space-y-2 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 لا يوجد جدول عالمي واحد لمواعيد IELTS؛ فالسعة والمواعيد تختلفان حسب المركز ونوع الاختبار، وقد تُحدد جلسة Speaking بصورة منفصلة. كما لا يوجد رسم عالمي موحد؛ إذ تعتمد التكلفة على الدولة والمدينة والشريك والمركز والنسخة وطريقة التقديم والضرائب. ولخدمات إعادة المهارة أو المراجعة أو تغيير الموعد رسوم وشروط منفصلة.
               </p>
 
-              <div className="pt-2 border-t border-[var(--mn-border)]/80">
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="pt-2 border-t border-[var(--mn-border)]">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   احرص على التحقق من السعر الإجمالي النهائي في شاشة الحجز، ولا تعتبر رسم مركز واحد سعرًا ثابتًا لكل الدولة، ولا تخلط بين رسوم IELTS العادي وUKVI وLife Skills.
                 </p>
               </div>
@@ -5021,135 +4714,106 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
           {/* 3. IELTS في اليمن */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Building2 className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 IELTS في اليمن
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 space-y-2.5 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
-                سجل ملف منارتك بتاريخ{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">2 أغسطس 2026</span>{' '}
-                المركز التالي بوصفه ظاهرًا في دليل IELTS الرسمي:
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 space-y-2.5 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                سجل ملف منارتك بتاريخ <strong className="text-[var(--mn-heading)]">2 أغسطس 2026</strong> المركز التالي بوصفه ظاهرًا في دليل IELTS الرسمي:
               </p>
 
               {/* بطاقة هوية مركز عدن المعتمد */}
-              <div className="rounded-xl bg-[var(--mn-surface)]/85 border border-[var(--mn-border)] overflow-hidden shadow-2xs">
-                <div className="px-2.5 py-1.5 bg-[var(--mn-page)] border-b border-[var(--mn-border)] flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-5.5 h-5.5 rounded-md bg-gradient-to-br from-[#142B5F] to-[#0E7C86] border border-[#D6A43B]/55 flex items-center justify-center shrink-0">
-                      <Building2 className="w-3 h-3 text-[#F3C969]" />
+              <div className="rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] overflow-hidden shadow-2xs">
+                <div className="px-2.5 py-2 bg-[var(--mn-page)] border-b border-[var(--mn-border)] flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5.5 h-5.5 rounded-md bg-[#0E7C86] border border-[#142B5F] flex items-center justify-center shrink-0">
+                      <Building2 className="w-3 h-3 text-white" />
                     </span>
-                    <span dir="ltr" className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
+                    <span dir="ltr" className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)]">
                       British Council / New Horizons Yemen
                     </span>
                   </div>
                 </div>
-                <div className="divide-y divide-[var(--mn-border)]/70">
-                  <div className="px-2.5 py-1.5 flex items-center justify-between gap-2">
-                    <span className="text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)]">
+                <div className="divide-y divide-[var(--mn-border)]">
+                  <div className="px-2.5 py-2 flex items-center justify-between gap-2">
+                    <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)]">
                       المدينة:
                     </span>
-                    <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)]">
+                    <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)]">
                       عدن — خور مكسر
                     </span>
                   </div>
-                  <div className="px-2.5 py-1.5 flex items-center justify-between gap-2">
-                    <span className="text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)]">
+                  <div className="px-2.5 py-2 flex items-center justify-between gap-2">
+                    <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)]">
                       العنوان:
                     </span>
-                    <span dir="ltr" className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)]">
+                    <span dir="ltr" className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)]">
                       Ba Hada Building — Fourth Floor
                     </span>
                   </div>
                 </div>
               </div>
 
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 والاختباران المدرجان هما IELTS Academic وIELTS General Training على الكمبيوتر. ووردت الرسوم التالية في الملف المرجعي، وتظهر القيم نفسها في صفحة المركز عند مراجعتها في{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">أكتوبر 2026</span>، لكن قد تتغير لاحقًا وتخضع لضرائب محلية:
+                <strong className="text-[var(--mn-heading)]">أكتوبر 2026</strong>، لكن قد تتغير لاحقًا وتخضع لضرائب محلية:
               </p>
             </div>
 
-            {/* جدول رسوم مركز عدن */}
-            <div className="relative w-full rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs overflow-hidden">
-              <table className="w-full text-start border-collapse">
-                <thead>
-                  <tr className="bg-[var(--mn-surface)] border-b border-[var(--mn-border)]">
-                    <th className="py-2 px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] w-[52%] border-l border-[var(--mn-border)]">
-                      الاختبار في مركز عدن
-                    </th>
-                    <th className="py-2 px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] w-[48%]">
-                      السعر المدرج
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--mn-border)]">
-                  {[
-                    { label: 'Academic', value: '265 دولارًا أمريكيًا' },
-                    { label: 'General Training', value: '265 دولارًا أمريكيًا' },
-                  ].map((row, idx) => {
-                    const isEven = idx % 2 === 0;
-                    return (
-                      <tr
-                        key={row.label}
-                        className={
-                          isEven
-                            ? 'bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                            : 'bg-[var(--mn-surface)]/55 hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                        }
-                      >
-                        <td className="relative py-2 pr-3 pl-2.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] align-middle">
-                          <span
-                            aria-hidden="true"
-                            className={`absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full ${
-                              isEven
-                                ? 'bg-gradient-to-b from-[#142B5F] to-[#0E7C86]'
-                                : 'bg-gradient-to-b from-[#0E7C86] to-[#142B5F]'
-                            }`}
-                          />
-                          <span dir="ltr">{row.label}</span>
-                        </td>
-                        <td className="py-1.5 px-2.5 align-middle">
-                          <span className="inline-flex items-center rounded-lg bg-[#D6A43B]/[0.08] dark:bg-[#D6A43B]/15 border border-[#D6A43B]/35 px-2 py-0.5 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">
-                            {row.value}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            {/* جدول رسوم مركز عدن — مطابق لجدول الطب والجراحة */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)]">
+                <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center">
+                  الاختبار في مركز عدن
+                </div>
+                <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white flex items-center">
+                  السعر المدرج
+                </div>
+              </div>
+
+              <div className="divide-y divide-[var(--mn-border)]">
+                {[
+                  { label: 'Academic', value: '265 دولارًا أمريكيًا' },
+                  { label: 'General Training', value: '265 دولارًا أمريكيًا' },
+                ].map((row) => (
+                  <div
+                    key={row.label}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
+                  >
+                    <div dir="ltr" className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center">
+                      {row.label}
+                    </div>
+                    <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] flex items-center">
+                      {row.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 لم يرد ضمن الملف توثيق لتوفر UKVI في المركز، كما ينبغي التحقق من خدمات One Skill Retake وWriting on Paper قبل الحجز. وقد يحتاج الطالب المقيم خارج عدن إلى السفر، وقد يلزم السفر إلى بلد آخر إذا كان مساره يتطلب مركز UKVI غير متاح محليًا.
               </p>
             </div>
 
-            {/* التحقق النهائي — بزاوية أكسفورد المدمجة وامتلاء النص */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
+            {/* التحقق النهائي */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
 
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 <strong className="text-[var(--mn-heading)]">التحقق النهائي:</strong> افتح{' '}
                 <a
                   href="https://ielts.org/test-centres/british-council-new-horizons-yemen"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#142B5F]/10 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/45 dark:border-[#F2CD78]/50 text-[#142B5F] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] text-[9.5px] font-extrabold hover:border-[#0E7C86] transition-colors align-middle"
+                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#0E7C86]/10 border border-[#0E7C86]/40 text-[#0E7C86] dark:text-[#38C6D4] text-[9.5px] font-bold hover:border-[#0E7C86] transition-colors align-middle"
                 >
                   <span>صفحة مركز عدن الرسمية</span>
                   <ExternalLink className="w-2.5 h-2.5" />
@@ -5178,16 +4842,18 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
         />
 
         <div className="space-y-3.5 text-start w-full">
-          {/* 1. خطوات التسجيل الرسمي (حاوية تسلسلية مرقمة مدمجة) */}
-          <div className="space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+          {/* 1. خطوات التسجيل الرسمي */}
+          <div className="space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 خطوات التسجيل الرسمي
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs divide-y divide-[var(--mn-border)]/80 w-full">
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs divide-y divide-[var(--mn-border)] w-full">
               {[
                 { num: '1.', text: 'حدد الغرض من IELTS وافتح شروط الجامعة أو الهجرة أو الهيئة.' },
                 { num: '2.', text: 'اختر النسخة الصحيحة: Academic أو General Training أو UKVI أو Life Skills.' },
@@ -5198,60 +4864,42 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 { num: '7.', text: 'أدخل بياناتك واسمك مطابقين تمامًا لوثيقة الهوية.' },
                 { num: '8.', text: 'قدم الوثيقة المطلوبة وسدد الرسم بالطريقة الرسمية.' },
                 { num: '9.', text: 'احتفظ بتأكيد التسجيل والتعليمات وتحقق من استكمال أي ترتيبات خاصة.' },
-              ].map((step, idx) => {
-                const isEven = idx % 2 === 0;
-                return (
-                  <div
-                    key={step.num}
-                    className={`relative py-2 pr-3 pl-2.5 flex items-start gap-2 transition-colors ${
-                      isEven ? 'bg-[var(--mn-page)]' : 'bg-[var(--mn-surface)]/55'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full ${
-                        isEven
-                          ? 'bg-gradient-to-b from-[#142B5F] to-[#0E7C86]'
-                          : 'bg-gradient-to-b from-[#0E7C86] to-[#142B5F]'
-                      }`}
-                    />
-                    <span className="w-4.5 h-4.5 rounded-md bg-gradient-to-br from-[#142B5F] to-[#0E7C86] text-[#F3C969] text-[9.5px] font-extrabold flex items-center justify-center shrink-0 mt-0.5">
-                      {step.num}
-                    </span>
-                    <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.75] flex-1">
-                      {step.text}
-                    </span>
-                  </div>
-                );
-              })}
+              ].map((step) => (
+                <div
+                  key={step.num}
+                  className="py-2 px-2.5 flex items-start gap-2 odd:bg-[var(--mn-page)] even:bg-[var(--mn-surface)]/55 transition-colors"
+                >
+                  <span className="w-5 h-5 rounded-md bg-[#0E7C86] border border-[#142B5F] text-white text-[9.5px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                    {step.num}
+                  </span>
+                  <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.75] flex-1">
+                    {step.text}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* 2. الهوية والعمر والبيانات الشخصية */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <ShieldCheck className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 الهوية والعمر والبيانات الشخصية
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 space-y-2 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 space-y-2 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 يجب أن تكون وثيقة الهوية أصلية وسارية ومن النوع المقبول لدى الجهة والمركز، وأن تُحضر الوثيقة نفسها المستخدمة عند التسجيل يوم الاختبار. قد يكون جواز السفر الخيار الأنسب عند الاختبار خارج بلد الجنسية، لكن القرار النهائي يعود لقواعد المركز. لا تؤجل تصحيح أي اختلاف في الاسم حتى يوم الاختبار.
               </p>
 
-              <div className="pt-2 border-t border-[var(--mn-border)]/80">
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
-                  لا يُنصح عادة بأداء IELTS لمن هم دون{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">16 عامًا</span>، وقد يحتاج القاصر إلى موافقة بحسب البلد. ويشترط IELTS Online عمر{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">18 عامًا فأكثر</span>. تشمل بيانات التسجيل معلومات حساسة مثل أرقام الهوية والصور؛ لا تشاركها إلا عبر القنوات الرسمية المؤمّنة.
+              <div className="pt-2 border-t border-[var(--mn-border)]">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                  لا يُنصح عادة بأداء IELTS لمن هم دون <strong className="text-[var(--mn-heading)]">16 عامًا</strong>، وقد يحتاج القاصر إلى موافقة بحسب البلد. ويشترط IELTS Online عمر{' '}
+                  <strong className="text-[var(--mn-heading)]">18 عامًا فأكثر</strong>. تشمل بيانات التسجيل معلومات حساسة مثل أرقام الهوية والصور؛ لا تشاركها إلا عبر القنوات الرسمية المؤمّنة.
                 </p>
               </div>
             </div>
@@ -5259,112 +4907,78 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
           {/* 3. تغيير الموعد والإلغاء والاسترداد */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <FileCheck className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 تغيير الموعد والإلغاء والاسترداد
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 space-y-2 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 space-y-2 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 قد تسمح سياسات الجهة المقدمة للاختبار بنقل الحجز أو إلغائه مع رسوم أو خصومات تختلف بحسب الدولة والشريك والنسخة وتوقيت الطلب. ووفق المعلومات الواردة في الملف المرجعي، تسمح بعض السياسات بنقل الموعد إلى تاريخ لا يتجاوز ثلاثة أشهر من التاريخ الأصلي، وقد تُقيد عدد مرات النقل. هذه ليست قاعدة مضمونة لكل حجز، فاقرأ الشروط المعروضة لك قبل الدفع.
               </p>
 
-              <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.8] pt-1.5 border-t border-[var(--mn-border)]/80">
-                ورد في ملف{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">2026</span>{' '}
-                مثال لجدول استرداد خاص ببعض حجوزات IELTS for UKVI:
+              <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.8] pt-2 border-t border-[var(--mn-border)]">
+                ورد في ملف 2026 مثال لجدول استرداد خاص ببعض حجوزات IELTS for UKVI:
               </p>
             </div>
 
-            {/* جدول نسب الاسترداد */}
-            <div className="relative w-full rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs overflow-hidden">
-              <table className="w-full text-start border-collapse">
-                <thead>
-                  <tr className="bg-[var(--mn-surface)] border-b border-[var(--mn-border)]">
-                    <th className="py-2 px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] w-[55%] border-l border-[var(--mn-border)]">
-                      توقيت طلب الإلغاء
-                    </th>
-                    <th className="py-2 px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] w-[45%]">
-                      نسبة الاسترداد الواردة في الملف
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--mn-border)]">
-                  {[
-                    { timing: 'قبل أكثر من 14 يومًا', rate: '75%' },
-                    { timing: 'من 14 يومًا إلى يومين', rate: '50%' },
-                    { timing: 'خلال آخر يومين', rate: '25%' },
-                    { timing: 'يوم الاختبار أو بعده', rate: 'لا استرداد' },
-                  ].map((row, idx) => {
-                    const isEven = idx % 2 === 0;
-                    return (
-                      <tr
-                        key={row.timing}
-                        className={
-                          isEven
-                            ? 'bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                            : 'bg-[var(--mn-surface)]/55 hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                        }
-                      >
-                        <td className="relative py-2 pr-3 pl-2.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] align-middle">
-                          <span
-                            aria-hidden="true"
-                            className={`absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full ${
-                              isEven
-                                ? 'bg-gradient-to-b from-[#142B5F] to-[#0E7C86]'
-                                : 'bg-gradient-to-b from-[#0E7C86] to-[#142B5F]'
-                            }`}
-                          />
-                          {row.timing}
-                        </td>
-                        <td className="py-1.5 px-2.5 align-middle">
-                          <span className="inline-flex items-center rounded-lg bg-[#D6A43B]/[0.08] dark:bg-[#D6A43B]/15 border border-[#D6A43B]/35 px-2 py-0.5 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">
-                            {row.rate}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            {/* جدول نسب الاسترداد — مطابق لجدول الطب والجراحة */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)]">
+                <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center">
+                  توقيت طلب الإلغاء
+                </div>
+                <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white flex items-center">
+                  نسبة الاسترداد الواردة في الملف
+                </div>
+              </div>
+
+              <div className="divide-y divide-[var(--mn-border)]">
+                {[
+                  { timing: 'قبل أكثر من 14 يومًا', rate: '75%' },
+                  { timing: 'من 14 يومًا إلى يومين', rate: '50%' },
+                  { timing: 'خلال آخر يومين', rate: '25%' },
+                  { timing: 'يوم الاختبار أو بعده', rate: 'لا استرداد' },
+                ].map((row) => (
+                  <div
+                    key={row.timing}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
+                  >
+                    <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center">
+                      {row.timing}
+                    </div>
+                    <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] flex items-center">
+                      {row.rate}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* ضوابط الجدول والاستثناءات */}
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 space-y-2 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 space-y-2 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 <strong className="text-[var(--mn-heading)]">هذا الجدول مرجعي وليس سياسة مؤكدة لجميع الدول أو الحجوزات؛</strong> تحقّق من الشروط الحالية مع الجهة التي تستلم الرسوم. وذكر الملف إمكان فرض رسم إدارة لبعض تغييرات UKVI، إضافة إلى اختلاف سياسة IELTS Online، والتي تضمنت إرشادات للإلغاء قبل{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">72 ساعة</span>{' '}
-                في حالات معينة.
+                <strong className="text-[var(--mn-heading)]">72 ساعة</strong> في حالات معينة.
               </p>
 
-              <div className="pt-2 border-t border-[var(--mn-border)]/80">
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="pt-2 border-t border-[var(--mn-border)]">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   قد توجد استثناءات للمرض الخطير أو وفاة قريب أو ظرف قهري موثق، وتستلزم تقديم المستندات في الموعد المحدد. إذا احتجت تسهيلات خاصة للإعاقة أو حالة طبية، تواصل مع المركز قبل الحجز بمدة كافية بدل انتظار يوم الاختبار.
                 </p>
               </div>
             </div>
 
-            {/* تنبيه مراجعة الخمسة أشياء قبل الدفع — بزاوية أكسفورد المدمجة وامتلاء النص */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
+            {/* تنبيه مراجعة الخمسة أشياء قبل الدفع */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
 
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
-                قبل إنهاء الدفع راجع{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">خمسة أشياء</span>: النسخة، والطريقة، والمركز والموعد، والاسم والهوية، والسعر وسياسات التغيير والاسترداد. المعلومات النهائية للحجز هي المعلومات التي يؤكدها المركز الرسمي.
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                قبل إنهاء الدفع راجع <strong className="text-[var(--mn-heading)]">خمسة أشياء</strong>: النسخة، والطريقة، والمركز والموعد، والاسم والهوية، والسعر وسياسات التغيير والاسترداد. المعلومات النهائية للحجز هي المعلومات التي يؤكدها المركز الرسمي.
               </p>
             </div>
           </div>
@@ -5388,66 +5002,43 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
         />
 
         <div className="space-y-3.5 text-start w-full">
-          {/* 1. الاستعداد والحضور — بطاقة جاهزية يوم الاختبار */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-            <span
-              aria-hidden="true"
-              className="absolute right-0 top-2.5 bottom-2.5 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#0E7C86]"
-            />
-            <div className="px-3 py-2 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)]/80 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-3.5 rounded-full bg-gradient-to-b from-[#9E731F] to-[#D6A43B] shrink-0" />
-                <h3 className="text-[11px] sm:text-[11.5px] font-extrabold text-[var(--mn-heading)]">
-                  الاستعداد والحضور
-                </h3>
-              </div>
-              <span className="w-5 h-5 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/30 dark:border-[#D6A43B]/35 flex items-center justify-center shrink-0">
-                <CalendarCheck className="w-3 h-3 text-[#0E7C86] dark:text-[#F2CD78]" />
+          {/* 1. الاستعداد والحضور */}
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+            <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <CalendarCheck className="w-3.5 h-3.5 text-white" />
               </span>
+              <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
+                الاستعداد والحضور
+              </h3>
             </div>
-            <div className="p-2.5 sm:p-3 pr-3.5">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="p-2.5 sm:p-3">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 قبل يوم الاختبار راجع المكان والتاريخ والوقت وتأكيد الحجز، وتحقق مما إذا كان اختبار المحادثة في جلسة مختلفة. أحضر وثيقة الهوية الأصلية التي سجلت بها، واحضر في الوقت المحدد لإتمام إجراءات التحقق والأمن. قد يسمح المركز بالماء في عبوة شفافة بحسب تعليماته.
               </p>
             </div>
           </div>
 
-          {/* 2. الممنوعات والالتزام بالقواعد — بطاقة بروتوكول مزدوجة الحجرات */}
-          <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-            <span
-              aria-hidden="true"
-              className="absolute right-0 top-2.5 bottom-2.5 w-[3px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#142B5F] dark:from-[#0E7C86] dark:to-[#D6A43B]"
-            />
-            <div className="px-3 py-2 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)]/80 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] shrink-0" />
-                <h3 className="text-[11px] sm:text-[11.5px] font-extrabold text-[var(--mn-heading)]">
-                  الممنوعات والالتزام بالقواعد
-                </h3>
-              </div>
-              <span className="w-5 h-5 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/30 dark:border-[#D6A43B]/35 flex items-center justify-center shrink-0">
-                <ShieldAlert className="w-3 h-3 text-[#0E7C86] dark:text-[#F2CD78]" />
+          {/* 2. الممنوعات والالتزام بالقواعد */}
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+            <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <ShieldAlert className="w-3.5 h-3.5 text-white" />
               </span>
+              <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
+                الممنوعات والالتزام بالقواعد
+              </h3>
             </div>
 
-            <div className="divide-y divide-dashed divide-[var(--mn-border)]">
-              <div className="p-2.5 sm:p-3 pr-3.5">
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+            <div className="divide-y divide-[var(--mn-border)]">
+              <div className="p-2.5 sm:p-3">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   يحظر عادةً استخدام الهاتف والساعة الذكية والقاموس والملاحظات والأجهزة الإلكترونية غير المصرح بها داخل قاعة الاختبار. لا تتواصل مع مرشحين آخرين أثناء الجلسة، ولا تُصور أو تنسخ أسئلة الاختبار أو تستخدم برامج أو أدوات ذكاء اصطناعي محظورة. أبلغ المشرف فورًا بأي عطل أو مشكلة أو ظرف طارئ بدل محاولة التعامل معه بوسيلة مخالفة.
                 </p>
               </div>
 
-              <div className="p-2.5 sm:p-3 pr-3.5 bg-[var(--mn-surface)]/45">
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-2.5 sm:p-3 bg-[var(--mn-surface)]/45">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   تُؤدى Listening وReading وWriting في المركز غالبًا دون استراحة رسمية بين الأقسام. وفي Speaking أحضر الهوية، واتبع تعليمات الممتحن وتحدث بصورة طبيعية؛ المقابلة مسجلة لأغراض التقييم والنزاهة.
                 </p>
               </div>
@@ -5455,92 +5046,61 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           </div>
 
           {/* 3. التسهيلات الخاصة لذوي الإعاقة والحالات الطبية */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Heart className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 التسهيلات الخاصة لذوي الإعاقة والحالات الطبية
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 space-y-2 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 space-y-2 shadow-2xs w-full">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 قد تتوفر ترتيبات معتمدة لمن لديهم حالات بصرية أو سمعية أو صعوبات تعلم أو مشكلات كلامية أو ظروف طبية موثقة. من أمثلتها وقت إضافي، وطباعة بخط كبير، ومواد Braille، ومكبر شاشة، وقاعة منفصلة، واستراحات، وتعديل وسائل الإجابة، ومساندة خاصة عند الموافقة. وقد تُعتمد إعفاءات محددة من مكون أو أكثر في حالات مؤهلة، مع استخدام إجراء رسمي لاحتساب الدرجة وذكر الملاحظة في التقرير.
               </p>
 
-              <div className="relative rounded-xl bg-[var(--mn-surface)]/80 border border-[var(--mn-border)] p-2.5 pr-3 overflow-hidden">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#9E731F] to-[#0E7C86]"
-                />
-                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] leading-[1.8] text-justify">
+              <div className="relative rounded-lg bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2.5 overflow-hidden">
+                <p className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-text)] leading-[1.8] text-justify">
                   بعض الترتيبات تحتاج إلى{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">ستة أسابيع تقريبًا</span>{' '}
+                  <strong className="text-[var(--mn-heading)]">ستة أسابيع تقريبًا</strong>{' '}
                   للمعالجة، لذلك يجب تقديم الطلب مبكرًا مع المستندات المطلوبة. لا تفترض الموافقة التلقائية حتى يؤكدها المركز.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* 4. الخصوصية والأمن والشكاوى — مصفوفة ثلاثية المراحل */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] shrink-0" />
+          {/* 4. الخصوصية والأمن والشكاوى */}
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <ShieldCheck className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 الخصوصية والأمن والشكاوى
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden divide-y divide-[var(--mn-border)] shadow-2xs w-full">
-              {/* المرحلة 1: سياسة التسجيل والاحتفاظ */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden divide-y divide-[var(--mn-border)] shadow-2xs w-full">
+              <div className="p-2.5 sm:p-3">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   في IELTS Online تُسجل الجلسة بالصوت والصورة وفق سياسة النزاهة والخصوصية. وذكر ملف منارتك في{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">أغسطس 2026</span>{' '}
-                  مدد احتفاظ مرجعية هي{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">60 يومًا</span>{' '}
-                  لتسجيلات أقسام الاستماع والقراءة والكتابة، و
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">3 أشهر</span>{' '}
-                  لفيديو المحادثة، و
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">3 سنوات</span>{' '}
-                  لصوت المحادثة. راجع السياسة الحالية لأنها قد تتغير ولا تخلط بينها وبين مدة صلاحية نتيجة الاختبار.
+                  <strong className="text-[var(--mn-heading)]">أغسطس 2026</strong>{' '}
+                  مدد احتفاظ مرجعية هي <strong className="text-[var(--mn-heading)]">60 يومًا</strong> لتسجيلات أقسام الاستماع والقراءة والكتابة، و
+                  <strong className="text-[var(--mn-heading)]">3 أشهر</strong> لفيديو المحادثة، و
+                  <strong className="text-[var(--mn-heading)]">3 سنوات</strong> لصوت المحادثة. راجع السياسة الحالية لأنها قد تتغير ولا تخلط بينها وبين مدة صلاحية نتيجة الاختبار.
                 </p>
               </div>
 
-              {/* المرحلة 2: المخالفات الخطيرة */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5 bg-[var(--mn-surface)]/55">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#9E731F]"
-                />
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-2.5 sm:p-3 bg-[var(--mn-surface)]/55">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   قد تؤدي المخالفات الخطيرة مثل انتحال الهوية أو الغش أو التصوير إلى إيقاف الاختبار أو إلغاء النتيجة أو التحقيق أو عقوبات أخرى وفق السياسة المعمول بها.
                 </p>
               </div>
 
-              {/* المرحلة 3: مسار الشكاوى الرسمية */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-2.5 sm:p-3">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   إذا واجهت مشكلة في ظروف الاختبار أو الخدمة، ابدأ بمركز الاختبار واحتفظ بالتفاصيل والمستندات، ثم استخدم قنوات الشكاوى الرسمية عند عدم الحل. وتختلف الشكوى عن الخدمة عن EOR لمراجعة الدرجة وعن طلب النظر في ظرف استثنائي أثّر على الأداء. تذكر وثائق الملف مددًا إجرائية لبعض الشكاوى، لكن المواعيد المعتمدة هي الواردة في سياسة الجهة الحالية.
                 </p>
               </div>
@@ -5568,122 +5128,88 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
         <div className="space-y-3.5 text-start w-full">
           {/* 1. متى تظهر نتائج IELTS؟ */}
           <div className="space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Clock className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 متى تظهر نتائج IELTS؟
               </h3>
             </div>
 
             <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 shadow-2xs w-full">
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 تختلف مدة النتائج حسب النوع وطريقة التقديم، وقد تُؤخَّر أحيانًا بسبب فحوص التحقق. يعرض ملف منارتك الفترات المرجعية التالية:
               </p>
             </div>
 
-            {/* جدول مدد النتائج بخطوط جانبية متقطعة وشارات رقمية ذهبية */}
-            <div className="relative w-full rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs overflow-hidden">
-              <table className="w-full text-start border-collapse">
-                <thead>
-                  <tr className="bg-[var(--mn-surface)] border-b border-[var(--mn-border)]">
-                    <th className="py-2 px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[55%]">
-                      الاختبار أو طريقة التقديم
-                    </th>
-                    <th className="py-2 px-2.5 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] w-[45%]">
-                      المدة التقريبية للنتيجة
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--mn-border)]">
-                  {[
-                    { method: 'IELTS on Computer', duration: '1–5 أيام؛ وغالبًا 1–2 يوم' },
-                    { method: 'IELTS on Computer مع Writing on Paper', duration: 'خلال خمسة أيام' },
-                    { method: 'IELTS on Paper التقليدي', duration: 'حتى 13 يومًا' },
-                    { method: 'IELTS Online Academic', duration: '6–8 أيام' },
-                    { method: 'IELTS for UKVI بأربع مهارات', duration: '1–5 أيام وفق الملف' },
-                    { method: 'UKVI Life Skills', duration: 'حتى سبعة أيام وفق الملف' },
-                    { method: 'One Skill Retake', duration: '3–5 أيام' },
-                  ].map((item, idx) => {
-                    const isEven = idx % 2 === 0;
-                    return (
-                      <tr
-                        key={item.method}
-                        className={
-                          isEven
-                            ? 'bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                            : 'bg-[var(--mn-surface)]/55 hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                        }
-                      >
-                        <td className="relative py-2 pr-3 pl-2 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] align-middle">
-                          <span
-                            aria-hidden="true"
-                            className={`absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full ${
-                              isEven
-                                ? 'bg-gradient-to-b from-[#142B5F] to-[#0E7C86]'
-                                : 'bg-gradient-to-b from-[#0E7C86] to-[#142B5F]'
-                            }`}
-                          />
-                          {item.method}
-                        </td>
-                        <td className="py-1.5 px-2 align-middle">
-                          <span className="inline-flex items-center rounded-lg bg-[#D6A43B]/[0.08] dark:bg-[#D6A43B]/15 border border-[#D6A43B]/35 px-2 py-0.5 text-[9.5px] sm:text-[10px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">
-                            {item.duration}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            {/* جدول مدد النتائج — مطابق لجدول الطب والجراحة */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)]">
+                <div className="col-span-7 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center">
+                  الاختبار أو طريقة التقديم
+                </div>
+                <div className="col-span-5 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white flex items-center">
+                  المدة التقريبية للنتيجة
+                </div>
+              </div>
+
+              <div className="divide-y divide-[var(--mn-border)]">
+                {[
+                  { method: 'IELTS on Computer', duration: '1–5 أيام؛ وغالبًا 1–2 يوم' },
+                  { method: 'IELTS on Computer مع Writing on Paper', duration: 'خلال خمسة أيام' },
+                  { method: 'IELTS on Paper التقليدي', duration: 'حتى 13 يومًا' },
+                  { method: 'IELTS Online Academic', duration: '6–8 أيام' },
+                  { method: 'IELTS for UKVI بأربع مهارات', duration: '1–5 أيام وفق الملف' },
+                  { method: 'UKVI Life Skills', duration: 'حتى سبعة أيام وفق الملف' },
+                  { method: 'One Skill Retake', duration: '3–5 أيام' },
+                ].map((item) => (
+                  <div
+                    key={item.method}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
+                  >
+                    <div className="col-span-7 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center">
+                      {item.method}
+                    </div>
+                    <div className="col-span-5 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] flex items-center">
+                      {item.duration}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* ملاحظة هامش التأخير بزوايا أكسفورد المدمجة */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            {/* ملاحظة هامش التأخير */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 ستوضح الجهة التي حجزت معها طريقة الاطلاع على النتيجة، وقد يصلك بريد إلكتروني عند توفرها. لا تعتمد على المدة التقريبية إذا كان لديك موعد نهائي حاسم لتقديم منحة أو تأشيرة؛ اترك هامشًا لاحتمال التأخير.
               </p>
             </div>
           </div>
 
-          {/* 2. ما تقرير Test Report Form (TRF)؟ — بطاقة مواصفات الشهادة الرسمية */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-              <span
-                aria-hidden="true"
-                className="absolute right-0 top-2.5 bottom-2.5 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] via-[#0E7C86] to-[#9E731F]"
-              />
-              <div className="px-3 py-2 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)]/80 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] shrink-0" />
-                  <h3 className="text-[11px] sm:text-[11.5px] font-extrabold text-[var(--mn-heading)]">
-                    ما تقرير Test Report Form (TRF)؟
-                  </h3>
-                </div>
-                <span className="w-5 h-5 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/30 dark:border-[#D6A43B]/35 flex items-center justify-center shrink-0">
-                  <FileCheck className="w-3 h-3 text-[#0E7C86] dark:text-[#F2CD78]" />
+          {/* 2. ما تقرير Test Report Form (TRF)؟ */}
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+              <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+                <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                  <FileCheck className="w-3.5 h-3.5 text-white" />
                 </span>
+                <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
+                  ما تقرير Test Report Form (TRF)؟
+                </h3>
               </div>
 
               <div className="divide-y divide-[var(--mn-border)]">
-                <div className="p-2.5 sm:p-3 pr-3.5">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
+                <div className="p-2.5 sm:p-3">
+                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                     TRF هو تقرير IELTS الرسمي للنتائج، ويتضمن بيانات المتقدم، ونوع الاختبار، والتاريخ والمركز، ودرجات المهارات الأربع، والـOverall، ومعلومات التحقق من التقرير. أما eTRF فهو التقرير الإلكتروني، ويمكن مشاركته عبر القنوات الرسمية مع المؤسسات التي تقبل هذه الطريقة. يوفر IELTS Online عادة التقرير الإلكتروني فقط، ولا يصدر تقريرًا ورقيًا لهذا المسار وفق صفحته الرسمية.
                   </p>
                 </div>
 
-                <div className="p-2.5 sm:p-3 pr-3.5 bg-[var(--mn-surface)]/55">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    مشاركة النتائج: يمكنك طلب إرسال التقرير إلى الجامعات أو الهيئات عبر الوسائل المعتمدة، ويمكن للمؤسسات استخدام IELTS Results Service للتحقق من صحة بيانات الاختبار والدرجات وحالة التقرير، بما في ذلك بيان إعادة المهارة إن وجدت.
+                <div className="p-2.5 sm:p-3 bg-[var(--mn-surface)]/55">
+                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                    <strong className="text-[var(--mn-heading)]">مشاركة النتائج:</strong> يمكنك طلب إرسال التقرير إلى الجامعات أو الهيئات عبر الوسائل المعتمدة، ويمكن للمؤسسات استخدام IELTS Results Service للتحقق من صحة بيانات الاختبار والدرجات وحالة التقرير، بما في ذلك بيان إعادة المهارة إن وجدت.
                   </p>
                 </div>
               </div>
@@ -5691,57 +5217,37 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           </div>
 
           {/* 3. صلاحية النتيجة وتحديث شكل الشهادة */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Award className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 صلاحية النتيجة وتحديث شكل الشهادة
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden divide-y divide-[var(--mn-border)] shadow-2xs w-full">
-              <div className="relative p-2.5 sm:p-3 pr-3.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
-                  توصي IELTS عادة بالاعتماد على النتائج خلال{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">سنتين</span>{' '}
-                  من تاريخ الاختبار، مع وجود جهات قد تطبق قواعد مختلفة لحداثة النتائج. لا تفترض أن نتيجة أقدم مقبولة حتى تؤكد المؤسسة ذلك.
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden divide-y divide-[var(--mn-border)] shadow-2xs w-full">
+              <div className="p-2.5 sm:p-3">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                  توصي IELTS عادة بالاعتماد على النتائج خلال <strong className="text-[var(--mn-heading)]">سنتين</strong> من تاريخ الاختبار، مع وجود جهات قد تطبق قواعد مختلفة لحداثة النتائج. لا تفترض أن نتيجة أقدم مقبولة حتى تؤكد المؤسسة ذلك.
                 </p>
               </div>
 
-              <div className="relative p-2.5 sm:p-3 pr-3.5 bg-[var(--mn-surface)]/55">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#9E731F]"
-                />
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
-                  تغير تصميم TRF في{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">15 يوليو 2026</span>{' '}
-                  بإضافة شعار Ofqual واسم المؤهل المنظم. يوضح ملف منارتك أن التقارير القديمة والجديدة تظل صالحة، وأن تغيير الشكل لا يمدد مدة صلاحية النتيجة. ووردت خدمة تحديث التصميم لبعض التقارير التي صدرت بين{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">يونيو 2024</span>{' '}
-                  و
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">14 يوليو 2026</span>؛ راجع الشروط الرسمية قبل طلب إصدار جديد.
+              <div className="p-2.5 sm:p-3 bg-[var(--mn-surface)]/55">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                  تغير تصميم TRF في <strong className="text-[var(--mn-heading)]">15 يوليو 2026</strong> بإضافة شعار Ofqual واسم المؤهل المنظم. يوضح ملف منارتك أن التقارير القديمة والجديدة تظل صالحة، وأن تغيير الشكل لا يمدد مدة صلاحية النتيجة. ووردت خدمة تحديث التصميم لبعض التقارير التي صدرت بين{' '}
+                  <strong className="text-[var(--mn-heading)]">يونيو 2024</strong> و
+                  <strong className="text-[var(--mn-heading)]">14 يوليو 2026</strong>؛ راجع الشروط الرسمية قبل طلب إصدار جديد.
                 </p>
               </div>
             </div>
 
-            {/* حماية الخصوصية بزوايا أكسفورد المدمجة */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
-                حماية الخصوصية: لا تنشر رقم TRF علنًا ولا تنسخ جواز سفرك إلى مواقع مجهولة. احتفظ بالنتيجة في مكان آمن وشاركها بإذنك عبر القنوات الرسمية فقط.
+            {/* حماية الخصوصية */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                <strong className="text-[var(--mn-heading)]">حماية الخصوصية:</strong> لا تنشر رقم TRF علنًا ولا تنسخ جواز سفرك إلى مواقع مجهولة. احتفظ بالنتيجة في مكان آمن وشاركها بإذنك عبر القنوات الرسمية فقط.
               </p>
             </div>
           </div>
@@ -5766,112 +5272,80 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
         <div className="space-y-3.5 text-start w-full">
           {/* الجملة الافتتاحية */}
-          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 pr-3.5 shadow-2xs w-full overflow-hidden">
-            <span
-              aria-hidden="true"
-              className="absolute right-0 top-2 bottom-2 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-            />
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 shadow-2xs w-full overflow-hidden">
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
               إذا لم تحقق الدرجة المطلوبة، فتوجد خيارات مختلفة، ومن المهم التمييز بين إعادة الأداء ومراجعة التقييم.
             </p>
           </div>
 
-          {/* المسارات الثلاثة بتصميم هندسي مرقّم (01 - 02 - 03) */}
           <div className="space-y-2.5 w-full">
             {/* مسار: إعادة الاختبار كاملًا */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-              <span
-                aria-hidden="true"
-                className="absolute right-0 top-2.5 bottom-2.5 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-              />
-              <div className="px-3 py-2 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)]/80 flex items-center justify-between gap-2">
-                <h3 className="text-[11px] sm:text-[11.5px] font-extrabold text-[var(--mn-heading)]">
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+              <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+                <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                  <Layers className="w-3.5 h-3.5 text-white" />
+                </span>
+                <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                   إعادة الاختبار كاملًا
                 </h3>
-                <span className="w-5 h-5 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/30 dark:border-[#D6A43B]/35 flex items-center justify-center shrink-0">
-                  <Layers className="w-3 h-3 text-[#0E7C86] dark:text-[#F2CD78]" />
-                </span>
               </div>
-              <div className="p-2.5 sm:p-3 pr-3.5">
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
-                  يمكن حجز اختبار IELTS كامل مرة أخرى بعد دفع الرسوم الجديدة. لا يوجد حد عالمي عام لعدد المحاولات، لكن تخضع الحجوزات للتوفر وسياسات الجهة. قد يكون هذا الخيار أنسب إذا احتجت إلى تحسين أكثر من مهارة أولا تتوافر لديك أهلية إعادة مهارة واحدة.
+              <div className="p-2.5 sm:p-3">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                  يمكن حجز اختبار IELTS كامل مرة أخرى بعد دفع الرسوم الجديدة. لا يوجد حد عالمي عام لعدد المحاولات، لكن تخضع الحجوزات للتوفر وسياسات الجهة. قد يكون هذا الخيار أنسب إذا احتجت إلى تحسين أكثر من مهارة أو لا تتوافر لديك أهلية إعادة مهارة واحدة.
                 </p>
               </div>
             </div>
 
             {/* مسار: One Skill Retake — إعادة مهارة واحدة */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-              <span
-                aria-hidden="true"
-                className="absolute right-0 top-2.5 bottom-2.5 w-[3px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#9E731F]"
-              />
-              <div className="px-3 py-2 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)]/80 flex items-center justify-between gap-2">
-                <h3 className="text-[11px] sm:text-[11.5px] font-extrabold text-[var(--mn-heading)]">
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+              <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+                <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                </span>
+                <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                   One Skill Retake — إعادة مهارة واحدة
                 </h3>
-                <span className="w-5 h-5 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/30 dark:border-[#D6A43B]/35 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-3 h-3 text-[#0E7C86] dark:text-[#F2CD78]" />
-                </span>
               </div>
 
               <div className="divide-y divide-[var(--mn-border)]">
-                <div className="p-2.5 sm:p-3 pr-3.5">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
+                <div className="p-2.5 sm:p-3">
+                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                     تتيح هذه الخدمة إعادة Listening أو Reading أو Writing أو Speaking فقط بعد اختبار أصلي مؤهل على الكمبيوتر في مركز يدعمها. يجب إكمال إعادة المهارة خلال{' '}
-                    <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">60 يومًا</span>{' '}
+                    <strong className="text-[var(--mn-heading)]">60 يومًا</strong>{' '}
                     من موعد الاختبار الأصلي، وهي إعادة واحدة فقط لكل اختبار أصلي. الخدمة متوفرة في دول ومراكز عديدة، لكن لا يجوز افتراض توفرها في كل مركز.
                   </p>
                 </div>
 
-                <div className="p-2.5 sm:p-3 pr-3.5 bg-[var(--mn-surface)]/45">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
+                <div className="p-2.5 sm:p-3 bg-[var(--mn-surface)]/45">
+                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                     تصدر بعد الإعادة TRF جديدة تضم الدرجة المعادة ودرجات المهارات الثلاث الأصلية، مع إعادة حساب Overall، ويبقى التقرير الأصلي متاحًا. تظهر النتيجة عادة خلال{' '}
-                    <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">3–5 أيام</span>، وتختلف رسوم الخدمة بحسب المركز. إذا كان اختبار الكتابة الأصلي بنمط Writing on Paper، فيلزم عند إعادة هذه المهارة استخدام نمط الكتابة نفسه.
+                    <strong className="text-[var(--mn-heading)]">3–5 أيام</strong>، وتختلف رسوم الخدمة بحسب المركز. إذا كان اختبار الكتابة الأصلي بنمط Writing on Paper، فيلزم عند إعادة هذه المهارة استخدام نمط الكتابة نفسه.
                   </p>
                 </div>
 
-                <div className="p-2.5 sm:p-3 pr-3.5">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    القبول ليس تلقائيًا: لا تقبل كل جامعة أو هيئة أو حكومة One Skill Retake، رغم وجود قبول لها في بعض المسارات؛ تحقق من شروط الجهة المستقبلة قبل دفع رسوم الإعادة، بما في ذلك شروط UKVI إن كانت حالتك مرتبطة بتأشيرة بريطانية.
+                <div className="p-2.5 sm:p-3">
+                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                    <strong className="text-[var(--mn-heading)]">القبول ليس تلقائيًا:</strong> لا تقبل كل جامعة أو هيئة أو حكومة One Skill Retake، رغم وجود قبول لها في بعض المسارات؛ تحقق من شروط الجهة المستقبلة قبل دفع رسوم الإعادة، بما في ذلك شروط UKVI إن كانت حالتك مرتبطة بتأشيرة بريطانية.
                   </p>
                 </div>
               </div>
             </div>
 
             {/* مسار: Enquiry on Results (EOR) — مراجعة الدرجة */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-              <span
-                aria-hidden="true"
-                className="absolute right-0 top-2.5 bottom-2.5 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-              />
-              <div className="px-3 py-2 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)]/80 flex items-center justify-between gap-2">
-                <h3 className="text-[11px] sm:text-[11.5px] font-extrabold text-[var(--mn-heading)]">
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+              <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+                <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                  <FileCheck className="w-3.5 h-3.5 text-white" />
+                </span>
+                <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                   Enquiry on Results (EOR) — مراجعة الدرجة
                 </h3>
-                <span className="w-5 h-5 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/30 dark:border-[#D6A43B]/35 flex items-center justify-center shrink-0">
-                  <FileCheck className="w-3 h-3 text-[#0E7C86] dark:text-[#F2CD78]" />
-                </span>
               </div>
-              <div className="p-2.5 sm:p-3 pr-3.5">
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-2.5 sm:p-3">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   EOR ليست اختبارًا جديدًا؛ إنها طلب لإعادة تقييم الإجابات الأصلية في مهارة أو أكثر. يذكر الملف أن المهلة الشائعة لتقديم طلب المراجعة هي{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">ستة أسابيع من الاختبار</span>، وأن الرسوم يحددها المركز وتُسترد عادة إذا تغيرت درجة Band في أحد الأقسام التي تمت مراجعتها. وقد تستغرق عملية المراجعة حتى{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">21 يومًا</span>{' '}
+                  <strong className="text-[var(--mn-heading)]">ستة أسابيع من الاختبار</strong>، وأن الرسوم يحددها المركز وتُسترد عادة إذا تغيرت درجة Band في أحد الأقسام التي تمت مراجعتها. وقد تستغرق عملية المراجعة حتى{' '}
+                  <strong className="text-[var(--mn-heading)]">21 يومًا</strong>{' '}
                   بحسب بعض إرشادات الشركاء. تصدر نتيجة أو TRF محدثة إذا تغيرت الدرجة.
                 </p>
               </div>
@@ -5880,93 +5354,75 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
           {/* 4. ما الخيار الأنسب؟ */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Compass className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 ما الخيار الأنسب؟
               </h3>
             </div>
 
-            <div className="relative w-full rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] shadow-2xs overflow-hidden">
-              <table className="w-full text-start border-collapse">
-                <thead>
-                  <tr className="bg-[var(--mn-surface)] border-b border-[var(--mn-border)]">
-                    <th className="py-2 px-2 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] border-l border-[var(--mn-border)] w-[27%]">
-                      الإجراء
-                    </th>
-                    <th className="py-2 px-2 text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] border-l border-[var(--mn-border)] w-[31%]">
-                      ماذا تفعل؟
-                    </th>
-                    <th className="py-2 px-2 text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)] w-[42%]">
-                      متى تفكر فيه؟
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--mn-border)]">
-                  {[
-                    {
-                      action: 'إعادة الاختبار كاملًا',
-                      what: 'تؤدي المهارات كلها مجددًا',
-                      when: 'عندما تحتاج رفع أكثر من مهارة أو تفتقد أهلية OSR',
-                    },
-                    {
-                      action: 'One Skill Retake',
-                      what: 'تعيد مهارة واحدة فقط',
-                      when: 'عندما تكون مهارة واحدة هي العائق والجهة تقبل الإعادة',
-                    },
-                    {
-                      action: 'EOR',
-                      what: 'تطلب إعادة تقييم الإجابات القديمة',
-                      when: 'عندما ترى أن النتيجة تستحق مراجعة رسمية',
-                    },
-                  ].map((row, idx) => {
-                    const isEven = idx % 2 === 0;
-                    return (
-                      <tr
-                        key={row.action}
-                        className={
-                          isEven
-                            ? 'bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                            : 'bg-[var(--mn-surface)]/55 hover:bg-[var(--mn-surface-muted)]/40 transition-colors'
-                        }
-                      >
-                        <td className="relative py-2 pr-3 pl-2 text-[10px] sm:text-[10.5px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] border-l border-[var(--mn-border)] align-middle">
-                          <span
-                            aria-hidden="true"
-                            className={`absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full ${
-                              isEven
-                                ? 'bg-gradient-to-b from-[#142B5F] to-[#0E7C86]'
-                                : 'bg-gradient-to-b from-[#0E7C86] to-[#142B5F]'
-                            }`}
-                          />
-                          {row.action}
-                        </td>
-                        <td className="py-2 px-2 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] align-middle leading-[1.6]">
-                          {row.what}
-                        </td>
-                        <td className="py-2 px-2 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] align-middle leading-[1.6]">
-                          {row.when}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            {/* جدول مقارنة خيارات الإعادة والمراجعة — مطابق لجدول الطب والجراحة */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)]">
+                <div className="col-span-3 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center">
+                  الإجراء
+                </div>
+                <div className="col-span-4 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center">
+                  ماذا تفعل؟
+                </div>
+                <div className="col-span-5 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white flex items-center">
+                  متى تفكر فيه؟
+                </div>
+              </div>
+
+              <div className="divide-y divide-[var(--mn-border)]">
+                {[
+                  {
+                    action: 'إعادة الاختبار كاملًا',
+                    what: 'تؤدي المهارات كلها مجددًا',
+                    when: 'عندما تحتاج رفع أكثر من مهارة أو تفتقد أهلية OSR',
+                  },
+                  {
+                    action: 'One Skill Retake',
+                    what: 'تعيد مهارة واحدة فقط',
+                    when: 'عندما تكون مهارة واحدة هي العائق والجهة تقبل الإعادة',
+                  },
+                  {
+                    action: 'EOR',
+                    what: 'تطلب إعادة تقييم الإجابات القديمة',
+                    when: 'عندما ترى أن النتيجة تستحق مراجعة رسمية',
+                  },
+                ].map((row) => (
+                  <div
+                    key={row.action}
+                    className="grid grid-cols-12 items-stretch odd:bg-[var(--mn-surface)] even:bg-[var(--mn-page)] hover:bg-[var(--mn-surface-muted)]/50 transition-colors"
+                  >
+                    <div className="col-span-3 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center leading-snug">
+                      {row.action}
+                    </div>
+                    <div className="col-span-4 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] border-l border-[var(--mn-border)] flex items-center leading-snug">
+                      {row.what}
+                    </div>
+                    <div className="col-span-5 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] flex items-center leading-snug">
+                      {row.when}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* نصيحة القرار + رابط OSR الرسمي بزوايا أكسفورد المدمجة */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            {/* نصيحة القرار + رابط OSR الرسمي */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 لا تتخذ القرار اعتمادًا على الدرجة وحدها؛ ضع في الحسبان الموعد النهائي للتقديم، ورسوم الإجراء، ومدته، وسياسة الجهة المستقبلة. مرجع OSR الرسمي:{' '}
                 <a
                   href="https://ielts.org/take-a-test/booking-your-test/one-skill-retake"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/35 dark:border-[#D6A43B]/40 px-2 py-0.5 text-[10px] sm:text-[10.5px] font-extrabold text-[#142B5F] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] hover:border-[#0E7C86] transition-colors align-middle"
+                  className="inline-flex items-center gap-1 rounded-md bg-[#0E7C86]/10 border border-[#0E7C86]/40 px-1.5 py-0.5 text-[10px] font-bold text-[#0E7C86] dark:text-[#38C6D4] hover:border-[#0E7C86] transition-colors align-middle"
                 >
                   <span>IELTS One Skill Retake</span>
                   <ExternalLink className="w-2.5 h-2.5 shrink-0" />
@@ -5995,215 +5451,116 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
         />
 
         <div className="space-y-3.5 text-start w-full">
-          {/* 1. أكثر الاستفسارات شيوعًا — سجل الأسئلة والأجوبة المهيكل (5 مجموعات مترابطة) */}
+          {/* 1. أكثر الاستفسارات شيوعًا */}
           <div className="space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <HelpCircle className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 أكثر الاستفسارات شيوعًا
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden divide-y divide-[var(--mn-border)] shadow-2xs w-full">
-              {/* المجموعة 1 */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5 space-y-1.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-                <div className="rounded-xl bg-[var(--mn-surface)]/65 border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل IELTS Academic مناسب للدراسة الجامعية؟</strong> نعم، غالبًا، ولكن يجب التأكد من متطلبات الجامعة والبرنامج.
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden divide-y divide-[var(--mn-border)] shadow-2xs w-full">
+              {[
+                {
+                  q: 'هل IELTS Academic مناسب للدراسة الجامعية؟',
+                  a: 'نعم، غالبًا، ولكن يجب التأكد من متطلبات الجامعة والبرنامج.',
+                },
+                {
+                  q: 'هل يكفي Overall 6.5 لكل جامعة؟',
+                  a: 'لا؛ فقد تختلف الدرجة الإجمالية وحدود المهارات والنسخة المقبولة.',
+                },
+                {
+                  q: 'ما الفرق بين Academic وGeneral؟',
+                  a: 'تختلف مهام القراءة والكتابة، بينما يتطابق الاستماع والمحادثة.',
+                },
+                {
+                  q: 'هل يمكن أداء IELTS من المنزل؟',
+                  a: 'نعم، عبر IELTS Online Academic في المناطق المدعومة، مع شروط عمر وجهاز ومراقبة، ولكن ليس للهجرة أو التسجيل المهني.',
+                },
+                {
+                  q: 'هل يمكن أداء IELTS for UKVI من المنزل؟',
+                  a: 'لا إذا كان المسار يتطلب اختبار UKVI SELT معتمدًا داخل مركز.',
+                },
+                {
+                  q: 'هل توقف الاختبار الورقي؟',
+                  a: 'أعلنت IELTS في مارس 2026 الانتقال التدريجي إلى الكمبيوتر بدءًا من منتصف 2026، مع اختلاف التنفيذ بين الأسواق.',
+                },
+                {
+                  q: 'هل Writing on Paper هو الاختبار الورقي القديم؟',
+                  a: 'لا؛ إنه اختبار على الكمبيوتر تُكتب فيه مهمة Writing بالقلم، ولا يُذكر هذا الاختيار في تقرير النتيجة وفق الإعلان الرسمي.',
+                },
+                {
+                  q: 'هل يسمح بالقاموس أو الهاتف؟',
+                  a: 'لا داخل جلسة الاختبار.',
+                },
+                {
+                  q: 'هل توجد نقاط سالبة في Listening وReading؟',
+                  a: 'لا؛ تُحتسب الإجابات الصحيحة فقط.',
+                },
+                {
+                  q: 'هل الدرجة صالحة مدى الحياة؟',
+                  a: 'لا؛ الاستخدام المعتاد موصى به لمدة سنتين، والقرار النهائي للمؤسسة.',
+                },
+                {
+                  q: 'هل يمكن إعادة مهارة واحدة؟',
+                  a: 'نعم، عند تحقق شروط One Skill Retake، ولكن يجب التأكد من قبول الجهة المستقبلة.',
+                },
+                {
+                  q: 'هل EOR إعادة اختبار؟',
+                  a: 'لا؛ هي إعادة مراجعة الإجابات الأصلية.',
+                },
+                {
+                  q: 'هل كل مركز في اليمن يقدم UKVI؟',
+                  a: 'لا يصح افتراض ذلك؛ تحقق من تصنيف المركز والاختبار عند الحجز.',
+                },
+              ].map((faq) => (
+                <div
+                  key={faq.q}
+                  className="p-2.5 sm:p-3 odd:bg-[var(--mn-page)] even:bg-[var(--mn-surface)]/45 transition-colors"
+                >
+                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
+                    <strong className="text-[var(--mn-heading)] ml-1">{faq.q}</strong>
+                    {faq.a}
                   </p>
                 </div>
-                <div className="rounded-xl bg-[var(--mn-surface)]/65 border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">
-                      هل يكفي Overall{' '}
-                      <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">6.5</span>{' '}
-                      لكل جامعة؟
-                    </strong>{' '}
-                    لا؛ فقد تختلف الدرجة الإجمالية وحدود المهارات والنسخة المقبولة.
-                  </p>
-                </div>
-              </div>
-
-              {/* المجموعة 2 */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5 bg-[var(--mn-surface)]/35 space-y-1.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#142B5F]"
-                />
-                <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">ما الفرق بين Academic وGeneral؟</strong> تختلف مهام القراءة والكتابة، بينما يتطابق الاستماع والمحادثة.
-                  </p>
-                </div>
-                <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل يمكن أداء IELTS من المنزل؟</strong> نعم، عبر IELTS Online Academic في المناطق المدعومة، مع شروط عمر وجهاز ومراقبة، ولكن ليس للهجرة أو التسجيل المهني.
-                  </p>
-                </div>
-                <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل يمكن أداء IELTS for UKVI من المنزل؟</strong> لا إذا كان المسار يتطلب اختبار UKVI SELT معتمدًا داخل مركز.
-                  </p>
-                </div>
-              </div>
-
-              {/* المجموعة 3 */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5 space-y-1.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-                <div className="rounded-xl bg-[var(--mn-surface)]/65 border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل توقف الاختبار الورقي؟</strong> أعلنت IELTS في{' '}
-                    <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">مارس 2026</span>{' '}
-                    الانتقال التدريجي إلى الكمبيوتر بدءًا من{' '}
-                    <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">منتصف 2026</span>، مع اختلاف التنفيذ بين الأسواق.
-                  </p>
-                </div>
-                <div className="rounded-xl bg-[var(--mn-surface)]/65 border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل Writing on Paper هو الاختبار الورقي القديم؟</strong> لا؛ إنه اختبار على الكمبيوتر تُكتب فيه مهمة Writing بالقلم، ولا يُذكر هذا الاختيار في تقرير النتيجة وفق الإعلان الرسمي.
-                  </p>
-                </div>
-              </div>
-
-              {/* المجموعة 4 */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5 bg-[var(--mn-surface)]/35 space-y-1.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#142B5F]"
-                />
-                <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل يسمح بالقاموس أو الهاتف؟</strong> لا داخل جلسة الاختبار.
-                  </p>
-                </div>
-                <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل توجد نقاط سالبة في Listening وReading؟</strong> لا؛ تُحتسب الإجابات الصحيحة فقط.
-                  </p>
-                </div>
-                <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل الدرجة صالحة مدى الحياة؟</strong> لا؛ الاستخدام المعتاد موصى به لمدة{' '}
-                    <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">سنتين</span>، والقرار النهائي للمؤسسة.
-                  </p>
-                </div>
-              </div>
-
-              {/* المجموعة 5 */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5 space-y-1.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-                <div className="rounded-xl bg-[var(--mn-surface)]/65 border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل يمكن إعادة مهارة واحدة؟</strong> نعم، عند تحقق شروط One Skill Retake، ولكن يجب التأكد من قبول الجهة المستقبلة.
-                  </p>
-                </div>
-                <div className="rounded-xl bg-[var(--mn-surface)]/65 border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل EOR إعادة اختبار؟</strong> لا؛ هي إعادة مراجعة الإجابات الأصلية.
-                  </p>
-                </div>
-                <div className="rounded-xl bg-[var(--mn-surface)]/65 border border-[var(--mn-border)]/70 p-2">
-                  <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <strong className="text-[var(--mn-heading)]">هل كل مركز في اليمن يقدم UKVI؟</strong> لا يصح افتراض ذلك؛ تحقق من تصنيف المركز والاختبار عند الحجز.
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
           {/* 2. الاختبارات التي قد تكون بدائل عن IELTS */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-              <span
-                aria-hidden="true"
-                className="absolute right-0 top-2.5 bottom-2.5 w-[3px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#142B5F]"
-              />
-              <div className="px-3 py-2 bg-[var(--mn-surface)]/80 border-b border-[var(--mn-border)]/80 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] shrink-0" />
-                  <h3 className="text-[11px] sm:text-[11.5px] font-extrabold text-[var(--mn-heading)]">
-                    الاختبارات التي قد تكون بدائل عن IELTS
-                  </h3>
-                </div>
-                <span className="w-5 h-5 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/30 dark:border-[#D6A43B]/35 flex items-center justify-center shrink-0">
-                  <Languages className="w-3 h-3 text-[#0E7C86] dark:text-[#F2CD78]" />
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
+              <div className="px-3 py-2.5 bg-[var(--mn-surface)] border-b border-[var(--mn-border)] flex items-center gap-2">
+                <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                  <Languages className="w-3.5 h-3.5 text-white" />
                 </span>
+                <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
+                  الاختبارات التي قد تكون بدائل عن IELTS
+                </h3>
               </div>
 
-              <div className="p-2.5 sm:p-3 pr-3.5">
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.9] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-2.5 sm:p-3">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.9] text-justify">
                   قد تقبل بعض الجامعات والمؤسسات اختبارات أخرى، منها{' '}
-                  <span className="inline-block rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] px-1.5 py-0.2 text-[10px] font-extrabold text-[var(--mn-heading)]">TOEFL iBT</span>، و
-                  <span className="inline-block rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] px-1.5 py-0.2 text-[10px] font-extrabold text-[var(--mn-heading)]">PTE Academic</span>، و
-                  <span className="inline-block rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] px-1.5 py-0.2 text-[10px] font-extrabold text-[var(--mn-heading)]">Duolingo English Test</span>، و
-                  <span className="inline-block rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] px-1.5 py-0.2 text-[10px] font-extrabold text-[var(--mn-heading)]">Cambridge C1 Advanced</span>، و
-                  <span className="inline-block rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] px-1.5 py-0.2 text-[10px] font-extrabold text-[var(--mn-heading)]">Cambridge C2 Proficiency</span>، و
-                  <span className="inline-block rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] px-1.5 py-0.2 text-[10px] font-extrabold text-[var(--mn-heading)]">Linguaskill</span>، و
-                  <span className="inline-block rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] px-1.5 py-0.2 text-[10px] font-extrabold text-[var(--mn-heading)]">Oxford Test of English</span>، و
-                  <span className="inline-block rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] px-1.5 py-0.2 text-[10px] font-extrabold text-[var(--mn-heading)]">LanguageCert Academic</span>. تختلف طريقة الأداء والدرجات والرسوم والمراكز والقبول المؤسسي بين هذه الاختبارات.
+                  <strong className="text-[var(--mn-heading)]">TOEFL iBT</strong>، و
+                  <strong className="text-[var(--mn-heading)]">PTE Academic</strong>، و
+                  <strong className="text-[var(--mn-heading)]">Duolingo English Test</strong>، و
+                  <strong className="text-[var(--mn-heading)]">Cambridge C1 Advanced</strong>، و
+                  <strong className="text-[var(--mn-heading)]">Cambridge C2 Proficiency</strong>، و
+                  <strong className="text-[var(--mn-heading)]">Linguaskill</strong>، و
+                  <strong className="text-[var(--mn-heading)]">Oxford Test of English</strong>، و
+                  <strong className="text-[var(--mn-heading)]">LanguageCert Academic</strong>. تختلف طريقة الأداء والدرجات والرسوم والمراكز والقبول المؤسسي بين هذه الاختبارات.
                 </p>
               </div>
             </div>
 
-            {/* قاعدة اختيار البديل بزوايا أكسفورد المدمجة */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            {/* قاعدة اختيار البديل */}
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 قبل اختيار بديل، تحقق من قائمة الاختبارات المقبولة لدى جهتك، والدرجة المطلوبة، وطريقة التقديم المتاحة في بلدك، وتكلفة الاختبار، وسرعة النتائج، ومدة القبول، وسياسة الإعادة. الاختبار الأفضل لك هو الذي يستوفي متطلبات الجهة ويوافق ظروفك، لا الذي يحمل الاسم الأكثر شهرة.
               </p>
             </div>
@@ -6229,20 +5586,18 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
 
         <div className="space-y-3.5 text-start w-full">
           {/* الجملة الافتتاحية */}
-          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 pr-3.5 shadow-2xs w-full overflow-hidden">
-            <span
-              aria-hidden="true"
-              className="absolute right-0 top-2 bottom-2 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-            />
-            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
+          <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 shadow-2xs w-full overflow-hidden">
+            <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
               هذه روابط رسمية للرجوع إلى المعلومات التفصيلية وللتأكد من آخر تحديث قبل الحجز:
             </p>
           </div>
 
-          {/* 1. الموقع الرسمي والأنواع — بوابات رقمية */}
-          <div className="space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+          {/* 1. الموقع الرسمي والأنواع */}
+          <div className="space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Globe className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 الموقع الرسمي والأنواع
               </h3>
@@ -6264,22 +5619,13 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] hover:border-[#0E7C86] p-2 pr-3 flex items-center justify-between gap-2 shadow-2xs transition-colors overflow-hidden group"
+                  className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] hover:border-[#0E7C86] p-2.5 flex items-center justify-between gap-2 shadow-2xs transition-colors overflow-hidden group"
                 >
-                  <span
-                    aria-hidden="true"
-                    className="absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                  />
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center shrink-0 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] truncate">
-                      {link.label}
-                    </span>
-                  </div>
-                  <span className="w-5 h-5 rounded-lg bg-[var(--mn-surface)] border border-[var(--mn-border)] group-hover:border-[#0E7C86]/50 flex items-center justify-center shrink-0 transition-colors">
-                    <ExternalLink className="w-3 h-3 text-[#0E7C86] dark:text-[#F2CD78]" />
+                  <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] truncate">
+                    {link.label}
+                  </span>
+                  <span className="w-5 h-5 rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] group-hover:border-[#0E7C86]/50 flex items-center justify-center shrink-0 transition-colors">
+                    <ExternalLink className="w-3 h-3 text-[#0E7C86] dark:text-[#38C6D4]" />
                   </span>
                 </a>
               ))}
@@ -6287,9 +5633,11 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           </div>
 
           {/* 2. الأقسام والدرجات */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#0E7C86] shrink-0" />
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <BarChart3 className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 الأقسام والدرجات
               </h3>
@@ -6311,22 +5659,13 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] hover:border-[#0E7C86] p-2 pr-3 flex items-center justify-between gap-2 shadow-2xs transition-colors overflow-hidden group"
+                  className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] hover:border-[#0E7C86] p-2.5 flex items-center justify-between gap-2 shadow-2xs transition-colors overflow-hidden group"
                 >
-                  <span
-                    aria-hidden="true"
-                    className="absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#142B5F]"
-                  />
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center shrink-0 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] truncate">
-                      {link.label}
-                    </span>
-                  </div>
-                  <span className="w-5 h-5 rounded-lg bg-[var(--mn-surface)] border border-[var(--mn-border)] group-hover:border-[#0E7C86]/50 flex items-center justify-center shrink-0 transition-colors">
-                    <ExternalLink className="w-3 h-3 text-[#0E7C86] dark:text-[#F2CD78]" />
+                  <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] truncate">
+                    {link.label}
+                  </span>
+                  <span className="w-5 h-5 rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] group-hover:border-[#0E7C86]/50 flex items-center justify-center shrink-0 transition-colors">
+                    <ExternalLink className="w-3 h-3 text-[#0E7C86] dark:text-[#38C6D4]" />
                   </span>
                 </a>
               ))}
@@ -6334,9 +5673,11 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           </div>
 
           {/* 3. الحجز والنتائج والتحضير */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <CalendarCheck className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 الحجز والنتائج والتحضير
               </h3>
@@ -6355,58 +5696,42 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] hover:border-[#0E7C86] p-2 pr-3 flex items-center justify-between gap-2 shadow-2xs transition-colors overflow-hidden group"
+                  className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] hover:border-[#0E7C86] p-2.5 flex items-center justify-between gap-2 shadow-2xs transition-colors overflow-hidden group"
                 >
-                  <span
-                    aria-hidden="true"
-                    className="absolute right-0 top-1.5 bottom-1.5 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                  />
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center shrink-0 shadow-2xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                    </span>
-                    <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] truncate">
-                      {link.label}
-                    </span>
-                  </div>
-                  <span className="w-5 h-5 rounded-lg bg-[var(--mn-surface)] border border-[var(--mn-border)] group-hover:border-[#0E7C86]/50 flex items-center justify-center shrink-0 transition-colors">
-                    <ExternalLink className="w-3 h-3 text-[#0E7C86] dark:text-[#F2CD78]" />
+                  <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)] truncate">
+                    {link.label}
+                  </span>
+                  <span className="w-5 h-5 rounded-md bg-[var(--mn-surface)] border border-[var(--mn-border)] group-hover:border-[#0E7C86]/50 flex items-center justify-center shrink-0 transition-colors">
+                    <ExternalLink className="w-3 h-3 text-[#0E7C86] dark:text-[#38C6D4]" />
                   </span>
                 </a>
               ))}
             </div>
           </div>
 
-          {/* 4. أبرز تحديثات 2026 — سجل زمني موحد */}
-          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-gradient-to-b from-[#9E731F] to-[#D6A43B] shrink-0" />
+          {/* 4. أبرز تحديثات 2026 */}
+          <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Info className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
-                أبرز تحديثات{' '}
-                <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">2026</span>
+                أبرز تحديثات 2026
               </h3>
             </div>
 
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden divide-y divide-[var(--mn-border)] shadow-2xs w-full">
-              {/* التحديث 1 */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+            <div className="rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden divide-y divide-[var(--mn-border)] shadow-2xs w-full">
+              <div className="p-2.5 sm:p-3">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   <strong className="text-[var(--mn-heading)]">انتقال الاختبار الورقي إلى الكمبيوتر:</strong> في{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">5 مارس 2026</span>{' '}
+                  <strong className="text-[var(--mn-heading)]">5 مارس 2026</strong>{' '}
                   أعلنت IELTS وقف تقديم الاختبار الورقي المستقل تدريجيًا من{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">منتصف 2026</span>، مع اختلاف التنفيذ بين الأسواق. ويُقدَّم خيار Writing on Paper في دول مختارة دون تغيير المهارات أو أسس التقييم.{' '}
+                  <strong className="text-[var(--mn-heading)]">منتصف 2026</strong>، مع اختلاف التنفيذ بين الأسواق. ويُقدَّم خيار Writing on Paper في دول مختارة دون تغيير المهارات أو أسس التقييم.{' '}
                   <a
                     href="https://ielts.org/news-and-insights/updates-to-ielts-test-delivery"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/35 dark:border-[#D6A43B]/40 px-2 py-0.5 text-[10px] font-extrabold text-[#142B5F] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] hover:border-[#0E7C86] transition-colors align-middle"
+                    className="inline-flex items-center gap-1 rounded-md bg-[#0E7C86]/10 border border-[#0E7C86]/40 px-1.5 py-0.5 text-[10px] font-bold text-[#0E7C86] dark:text-[#38C6D4] hover:border-[#0E7C86] transition-colors align-middle"
                   >
                     <span>الإعلان الرسمي</span>
                     <ExternalLink className="w-2.5 h-2.5 shrink-0" />
@@ -6415,23 +5740,15 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 </p>
               </div>
 
-              {/* التحديث 2 */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5 bg-[var(--mn-surface)]/45">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#0E7C86] to-[#9E731F]"
-                />
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-2.5 sm:p-3 bg-[var(--mn-surface)]/45">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   <strong className="text-[var(--mn-heading)]">تحديث تقرير النتيجة:</strong> بدأ تغيير تصميم Test Report Form في{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">15 يوليو 2026</span>، مع استمرار صلاحية التقارير القديمة.{' '}
+                  <strong className="text-[var(--mn-heading)]">15 يوليو 2026</strong>، مع استمرار صلاحية التقارير القديمة.{' '}
                   <a
                     href="https://ielts.org/news-and-insights/changes-to-test-report-forms"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/35 dark:border-[#D6A43B]/40 px-2 py-0.5 text-[10px] font-extrabold text-[#142B5F] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] hover:border-[#0E7C86] transition-colors align-middle"
+                    className="inline-flex items-center gap-1 rounded-md bg-[#0E7C86]/10 border border-[#0E7C86]/40 px-1.5 py-0.5 text-[10px] font-bold text-[#0E7C86] dark:text-[#38C6D4] hover:border-[#0E7C86] transition-colors align-middle"
                   >
                     <span>تفاصيل تحديث التقرير</span>
                     <ExternalLink className="w-2.5 h-2.5 shrink-0" />
@@ -6440,24 +5757,16 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
                 </p>
               </div>
 
-              {/* التحديث 3 */}
-              <div className="relative p-2.5 sm:p-3 pr-3.5">
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 top-2 bottom-2 w-[2.5px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86]"
-                />
-                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                  <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/20 border border-[#0E7C86]/55 dark:border-[#F2CD78]/55 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                  </span>
+              <div className="p-2.5 sm:p-3">
+                <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                   <strong className="text-[var(--mn-heading)]">إعادة مهارة واحدة:</strong> تسمح One Skill Retake للمرشح المؤهل بإعادة مهارة واحدة خلال{' '}
-                  <span className="text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">60 يومًا</span>{' '}
+                  <strong className="text-[var(--mn-heading)]">60 يومًا</strong>{' '}
                   من الاختبار الأصلي لدى مركز مدعوم، مع ضرورة التحقق من قبول المؤسسة.{' '}
                   <a
                     href="https://ielts.org/take-a-test/booking-your-test/one-skill-retake"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-lg bg-[#142B5F]/10 dark:bg-[#D6A43B]/15 border border-[#0E7C86]/35 dark:border-[#D6A43B]/40 px-2 py-0.5 text-[10px] font-extrabold text-[#142B5F] dark:text-[#F2CD78] mn-dark:text-[#F2CD78] hover:border-[#0E7C86] transition-colors align-middle"
+                    className="inline-flex items-center gap-1 rounded-md bg-[#0E7C86]/10 border border-[#0E7C86]/40 px-1.5 py-0.5 text-[10px] font-bold text-[#0E7C86] dark:text-[#38C6D4] hover:border-[#0E7C86] transition-colors align-middle"
                   >
                     <span>السياسة الرسمية</span>
                     <ExternalLink className="w-2.5 h-2.5 shrink-0" />
@@ -6468,64 +5777,62 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
             </div>
           </div>
 
-          {/* 5. قبل أن تسجل + بطاقة التوثيق الختامية */}
+          {/* 5. قبل أن تسجل + جدول التوثيق الختامي */}
           <div className="pt-3 border-t border-[var(--mn-border)] space-y-2.5 w-full">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-3.5 rounded-full bg-[#142B5F] dark:bg-[#D6A43B] mn-dark:bg-[#D6A43B] shrink-0" />
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <FileText className="w-3.5 h-3.5 text-white" />
+              </span>
               <h3 className="text-[11.5px] sm:text-[12px] font-bold text-[var(--mn-heading)]">
                 قبل أن تسجل
               </h3>
             </div>
 
-            {/* ملخص قبل التسجيل بزوايا أكسفورد المدمجة */}
-            <div className="relative rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-2.5 sm:p-3 pr-3.5 shadow-2xs w-full overflow-hidden">
-              <span aria-hidden="true" className="mn-corner-accent-blended" />
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-heading)] leading-[1.85] text-justify">
-                <span className="inline-flex w-3.5 h-3.5 rounded-full bg-[#142B5F]/12 dark:bg-[#D6A43B]/25 border border-[#9E731F]/65 dark:border-[#F2CD78]/60 items-center justify-center align-middle ml-1.5 -mt-0.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-[#142B5F] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#F2CD78]" />
-                </span>
+            <div className="relative rounded-xl bg-[var(--mn-page)] border border-[var(--mn-border)] p-3 pr-4 shadow-2xs w-full overflow-hidden">
+              <span className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]" />
+              <p className="text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-text)] leading-[1.85] text-justify">
                 تأكد من النسخة الصحيحة، والدرجة الإجمالية وحد كل مهارة، وطريقة التقديم المقبولة، والمركز والسعر والموعد، وصلاحية النتيجة لدى الجهة التي ستقدم إليها. تذكر أن أسعار المراكز والمقاعد وشروط التأشيرات وقبول الجامعات متغيرة؛ فالموقع الرسمي للجهة المستقبلة ونظام الحجز هما المرجع النهائي.
               </p>
             </div>
 
-            {/* بطاقة التوثيق المرجعي الختامية */}
-            <div className="rounded-2xl bg-[var(--mn-page)] border border-[var(--mn-border)] overflow-hidden shadow-2xs w-full">
-              <div className="divide-y divide-[var(--mn-border)]/80">
-                <div className="px-3 py-2 flex flex-wrap items-center justify-between gap-1.5">
-                  <span className="text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)]">
-                    الملف المرجعي الأصلي:
-                  </span>
-                  <span className="text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-heading)]">
-                    <span dir="ltr" className="font-mono font-extrabold text-[#0E7C86] dark:text-[#F2CD78]">
-                      IELTS_2026_Complete_Data_AR.md
-                    </span>{' '}
-                    — مستودع منارتك.
-                  </span>
+            {/* جدول التوثيق المرجعي الختامي — مطابق لجدول الطب والجراحة */}
+            <div className="-mx-2 sm:-mx-2.5 border-y border-[var(--mn-border)] bg-[var(--mn-surface)] overflow-hidden font-['Cairo',sans-serif]">
+              <div className="grid grid-cols-12 bg-gradient-to-l from-[#153B75] to-[#056579] border-b border-[var(--mn-border)]">
+                <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white border-l border-white/15 flex items-center">
+                  البند التوثيقي
                 </div>
-
-                <div className="px-3 py-2 flex flex-wrap items-center justify-between gap-1.5 bg-[var(--mn-surface)]/45">
-                  <span className="text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)]">
-                    آخر تحقق شامل مدوّن في الملف الأصلي:
-                  </span>
-                  <span className="inline-flex items-center rounded-md bg-[#D6A43B]/[0.08] dark:bg-[#D6A43B]/15 border border-[#D6A43B]/35 px-2 py-0.5 text-[10px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">
-                    2 أغسطس 2026.
-                  </span>
-                </div>
-
-                <div className="px-3 py-2 flex flex-wrap items-center justify-between gap-1.5">
-                  <span className="text-[10px] sm:text-[10.5px] font-extrabold text-[var(--mn-heading)]">
-                    مراجعة انتقائية لبعض المصادر الرسمية:
-                  </span>
-                  <span className="inline-flex items-center rounded-md bg-[#D6A43B]/[0.08] dark:bg-[#D6A43B]/15 border border-[#D6A43B]/35 px-2 py-0.5 text-[10px] font-extrabold text-[#8A6214] dark:text-[#F2CD78] mn-dark:text-[#F2CD78]">
-                    31 أكتوبر 2026.
-                  </span>
+                <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10.5px] sm:text-[11.5px] font-bold text-white flex items-center">
+                  التفاصيل المعتمدة
                 </div>
               </div>
 
-              <div className="px-3 py-2.5 bg-gradient-to-r from-[#142B5F]/[0.07] via-[#0E7C86]/[0.09] to-[#D6A43B]/[0.08] border-t border-[var(--mn-border)] text-center">
-                <span className="text-[10.5px] sm:text-[11px] font-extrabold text-[var(--mn-heading)]">
-                  منارتك — دليلك لفهم الاختبارات الدولية والاستعداد لها.
-                </span>
+              <div className="divide-y divide-[var(--mn-border)]">
+                <div className="grid grid-cols-12 items-stretch bg-[var(--mn-surface)]">
+                  <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center">
+                    الملف المرجعي الأصلي
+                  </div>
+                  <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#38C6D4] flex items-center">
+                    IELTS_2026_Complete_Data_AR.md — مستودع منارتك
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 items-stretch bg-[var(--mn-page)]">
+                  <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center">
+                    آخر تحقق شامل مدوّن في الملف الأصلي
+                  </div>
+                  <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] flex items-center">
+                    2 أغسطس 2026
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 items-stretch bg-[var(--mn-surface)]">
+                  <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-heading)] border-l border-[var(--mn-border)] flex items-center">
+                    مراجعة انتقائية لبعض المصادر الرسمية
+                  </div>
+                  <div className="col-span-6 py-2.5 px-2.5 sm:px-3.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] flex items-center">
+                    31 أكتوبر 2026
+                  </div>
+                </div>
               </div>
             </div>
           </div>

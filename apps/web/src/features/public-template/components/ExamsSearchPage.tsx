@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronDown, Award, Search, X, Clock, ShieldCheck, Globe2,
 import { Exam } from '../types';
 import { FavoriteButton } from './FavoriteButton';
 import { ExamVectorLogo } from './FeaturedExams';
-import { PublicFilterSelectModal } from './DetailUi';
+import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
 
 interface ExamsSearchPageProps {
   exams?: Exam[];
@@ -153,6 +153,17 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
     if (dataMode === 'api') return baseList;
     return baseList.sort((a, b) => (priority[a.id] ?? 99) - (priority[b.id] ?? 99));
   }, [exams, searchQuery, selectedCategory, selectedCountry, dataMode]);
+
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    pageItems: paginatedExams,
+  } = usePaginatedCatalog(
+    filteredExams,
+    `${searchQuery}|${selectedCategory}|${selectedCountry}`,
+    30,
+  );
 
   const activeFiltersCount =
     (selectedCategory !== 'الكل' ? 1 : 0) +
@@ -374,8 +385,8 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-col gap-2.5 sm:gap-3 w-full pb-10">
-          {filteredExams.map((exam) => {
+        <div className="flex flex-col gap-2.5 sm:gap-3 w-full pb-2">
+          {paginatedExams.map((exam) => {
             const isFav = favoriteIds.includes(exam.id);
             return (
               <div
@@ -397,11 +408,9 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
                 {/* Top Row: Circular Exam Logo + Exam Names & Category Badge | Favorite Button */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 sm:gap-2.5 text-start min-w-0 flex-1">
-                    {/* Circular Logo Badge */}
-                    <div className="w-9.5 h-9.5 sm:w-10.5 sm:h-10.5 rounded-full p-0.5 bg-gradient-to-tr from-[var(--mn-primary)] via-[var(--mn-hero-secondary)] to-[var(--mn-accent-soft)] shadow-xs shrink-0 flex items-center justify-center mn-inverse">
-                      <div className="w-full h-full rounded-full overflow-hidden bg-[var(--mn-surface)] border border-white flex items-center justify-center p-1 shadow-inner mn-panel">
-                        <ExamVectorLogo name={exam.nameEn || exam.name} className="w-full h-full object-contain" />
-                      </div>
+                    {/* Circular Logo Badge - Full bleed inside circle with light Royal Navy border */}
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden border border-[#142B5F]/30 dark:border-[#D6A43B]/45 shadow-2xs shrink-0 flex items-center justify-center bg-[var(--mn-surface)]">
+                      <ExamVectorLogo name={exam.nameEn || exam.name} className="w-full h-full object-cover" />
                     </div>
 
                     <div className="flex flex-col items-start text-start min-w-0 flex-1">
@@ -437,23 +446,23 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
                   )}
                 </div>
 
-                {/* Bottom Row: 4 Pill Badges (Score • Validity • Fees/Duration • CTA View Details) */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-0.5">
+                {/* Bottom Row: 4 Pill Badges (Score • Validity • Fees/Duration • CTA View Details) in 2x2 Grid with right-aligned parallel icons */}
+                <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-[var(--mn-border)]/50">
                   {/* 1. الدرجة والمقياس */}
-                  <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg px-2 py-1 flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
-                    <Award className="w-3 h-3 text-[#D6A43B] shrink-0" />
+                  <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+                    <Award className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#239BA6] shrink-0" />
                     <span className="truncate">{exam.scoreRange || 'مقياس معتمد'}</span>
                   </div>
 
                   {/* 2. الصلاحية */}
-                  <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg px-2 py-1 flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
-                    <ShieldCheck className="w-3 h-3 text-[var(--mn-link)] shrink-0" />
+                  <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#239BA6] shrink-0" />
                     <span className="truncate">{exam.validity || 'سنتان'}</span>
                   </div>
 
                   {/* 3. الرسوم أو المدة */}
-                  <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg px-2 py-1 flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
-                    <Coins className="w-3 h-3 text-[var(--mn-accent-text)] shrink-0" />
+                  <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel">
+                    <Coins className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#239BA6] shrink-0" />
                     <span className="truncate">{exam.feeSummary || exam.duration || 'رسوم متغيرة'}</span>
                   </div>
 
@@ -476,6 +485,18 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
             );
           })}
         </div>
+
+        {filteredExams.length > 0 && (
+          <PublicCardsPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(nextPage) => {
+              setCurrentPage(nextPage);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            dir={locale === 'en' ? 'ltr' : 'rtl'}
+          />
+        )}
         {dataMode==='api'&&<div><p role="status">{loading?(locale==='en'?'Loading…':publicT('public_loading_2')):total}</p>{error&&<p role="alert">{error}</p>}<button type="button" disabled={loading||page<=1} onClick={()=>setPage(p=>p-1)}>{locale==='en'?'Previous':publicT('public_previous')}</button><span>{page}</span><button type="button" disabled={loading||page*50>=total} onClick={()=>setPage(p=>p+1)}>{locale==='en'?'Next':publicT('public_next')}</button></div>}
         {filteredExams.length === 0 && (
           <div className="bg-[var(--mn-surface)] border border-dashed border-[var(--mn-border)] rounded-2xl p-6 text-center text-xs font-bold text-[var(--mn-text-muted)] mn-panel">{publicT('public_no_exams_match_this_search')}</div>

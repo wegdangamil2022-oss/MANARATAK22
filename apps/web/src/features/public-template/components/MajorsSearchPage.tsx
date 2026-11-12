@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { Major } from '../types';
 import { MajorCard } from './MajorCard';
-import { PublicFilterSelectModal } from './DetailUi';
+import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
 
 interface MajorsSearchPageProps {
   locale?: 'ar'|'en';
@@ -52,6 +52,14 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
   const faculties = useMemo(() => {
     const set = new Set<string>();
     majors.forEach((major) => set.add(getMajorFaculty(major)));
+    [
+      'الهندسة والتكنولوجيا',
+      'العلوم الطبية والصحية',
+      'علوم الحاسوب والذكاء الاصطناعي',
+      'إدارة الأعمال والاقتصاد',
+      'العلوم الإنسانية والاجتماعية',
+      'العلوم الأساسية والطبيعية',
+    ].forEach((f) => set.add(f));
     return ['الكل', ...Array.from(set)];
   }, [majors]);
 
@@ -75,7 +83,7 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
         });
         const offset = cursor === undefined ? 0 : Number(cursor);
         if (!Number.isSafeInteger(offset) || offset < 0) throw new Error('INVALID_PREVIEW_CURSOR');
-        const page = filtered.slice(offset, offset + 20);
+        const page = filtered.slice(offset, offset + 30);
         const nextOffset = offset + page.length;
         return { data: page, total: filtered.length, nextCursor: nextOffset < filtered.length ? String(nextOffset) : null };
       }
@@ -83,6 +91,17 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
     },
   );
   const { rows: filteredMajors, total, cursor: nextCursor, busy: loading, error } = catalog;
+
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    pageItems: paginatedMajors,
+  } = usePaginatedCatalog(
+    filteredMajors,
+    `${searchQuery}|${selectedFaculty}|${selectedDegree}`,
+    30,
+  );
 
   const handleResetFilters = () => {
     setSearchQuery('');
@@ -293,7 +312,7 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
               >{publicT('public_clear_filters_and_view_all')}</button>
             </div>
           ) : (
-            filteredMajors.map((major) => (
+            paginatedMajors.map((major) => (
               <MajorCard
                 key={major.id}
                 major={major}
@@ -305,6 +324,18 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
             ))
           )}
         </div>
+
+        {filteredMajors.length > 0 && (
+          <PublicCardsPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            dir={publicDir}
+          />
+        )}
       </div>
 
       <PublicFilterSelectModal

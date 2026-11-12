@@ -185,55 +185,47 @@ export function StudentCareerWorkspace() {
 
   return (
     <div dir={dir} className="mn-student-career-page mt-0 space-y-5 font-['Cairo',sans-serif]">
-      {notice && (
-        <div
-          role="status"
-          className="flex items-center justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3 text-[12px] leading-[1.8] text-[var(--mn-text)] shadow-xs dark:bg-[var(--mn-surface-elevated)]"
+      {/* Header box attached directly to the 8-tab bar above and stretched edge-to-edge right & left */}
+      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
+        <section
+          aria-label={c('مساري المهني', 'My career')}
+          className="mn-student-career-hero relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel"
         >
-          <div className="flex items-center gap-2">
-            <Info className="h-4 w-4 shrink-0 text-[#D6A43B]" aria-hidden="true" />
-            <span>{notice}</span>
+          {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
+          />
+
+          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
+                  <BriefcaseBusiness className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
+                </span>
+                <h2 className="mn-student-career-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
+                  {c('مساري المهني', 'My career')}
+                </h2>
+              </div>
+
+              <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+                {hasProfile ? c('الملف مُعَدّ', 'Profile set') : c('ملف جديد', 'New profile')} · {applications.length} {c('طلبات', 'applications')} · {savedSkillsCount} {c('مهارات', 'skills')}
+              </span>
+            </div>
+
+            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+              {c(
+                'جهّز ملفك المهني وسيرتك الذاتية، وتابع طلبات التوظيف والتدريب وتواصل مع شبكة الخريجين.',
+                'Build your career profile and CV, track job and internship applications, and connect with alumni.',
+              )}
+            </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setNotice('')}
-            className="text-[11px] font-bold text-[var(--mn-text-muted)] hover:text-[var(--mn-heading)]"
-          >
-            {c('إغلاق', 'Close')}
-          </button>
-        </div>
-      )}
+        </section>
 
-      {/* Compact inline section header + sub-navigation directly below the 8-button navigation */}
-      <section
-        aria-label={c('مساري المهني', 'My career')}
-        className="mn-student-career-hero relative overflow-hidden rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] shadow-2xs mn-panel dark:border-white/10"
-      >
-        {/* Signature gold accent on right edge */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-        />
-
-        <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 pr-4 sm:px-4 sm:py-3">
-          <div className="flex min-w-0 items-center gap-2">
-            <span className="grid h-7 w-7 sm:h-8 sm:w-8 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/35 bg-[#142B5F]">
-              <BriefcaseBusiness className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#F2CD78]" aria-hidden="true" />
-            </span>
-            <h2 className="mn-student-career-heading text-[13.5px] sm:text-[14px] font-bold leading-tight text-[var(--mn-heading)] font-['Cairo',sans-serif]">
-              {c('مساري المهني', 'My career')}
-            </h2>
-          </div>
-
-          <span className="inline-flex shrink-0 items-center rounded-lg border border-[#142B5F]/20 bg-[#142B5F]/5 px-2.5 py-1 text-[11px] font-bold text-[#142B5F] dark:border-[#D6A43B]/30 dark:bg-[#142B5F]/40 dark:text-[#F2CD78]">
-            {hasProfile ? c('الملف مُعَدّ', 'Profile set') : c('ملف جديد', 'New profile')} · {applications.length} {c('طلبات', 'applications')} · {savedSkillsCount} {c('مهارات', 'skills')}
-          </span>
-        </div>
-
-        {/* Sub-Navigation Bar attached to the bottom of the compact header card */}
+        {/* Sub-Navigation Bar outside the header box, attached from the top and stretched edge-to-edge */}
         <nav
           aria-label={c('التنقل السريع في المسار المهني', 'Career quick navigation')}
-          className="border-t border-[var(--mn-border)] grid grid-cols-4 divide-x divide-x-reverse divide-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/10 dark:divide-white/10 overflow-hidden rounded-b-2xl"
+          className="-mt-px grid grid-cols-4 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs"
         >
           {[
             { id: 'mn-career-profile', label: c('الملف المهني', 'Profile'), icon: UserRound, key: 'PROFILE' as const },
@@ -251,17 +243,17 @@ export function StudentCareerWorkspace() {
                   setActiveSection(tabItem.key);
                   scrollToAnchor(tabItem.id);
                 }}
-                className={`flex min-h-10 items-center justify-center gap-1 sm:gap-1.5 px-1 sm:px-2 py-1.5 text-center font-bold transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#E5B54F] ${
+                className={`flex min-h-12 items-center justify-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-2 text-center transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#142B5F] ${
                   active
-                    ? 'bg-[#142B5F] text-[#F2CD78] shadow-inner font-bold'
-                    : 'bg-transparent text-[var(--mn-heading)] hover:bg-[var(--mn-surface)] hover:text-[#0E7C86] dark:hover:bg-white/5'
+                    ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner font-bold'
+                    : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] font-semibold hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
                 }`}
               >
                 <Icon
-                  className={`h-3.5 w-3.5 shrink-0 ${active ? 'text-[#F2CD78]' : 'text-[var(--mn-text-muted)]'}`}
+                  className={`h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 ${active ? 'text-[#F2CD78]' : 'text-[#142B5F] dark:text-[#E5B54F]'}`}
                   aria-hidden="true"
                 />
-                <span className="truncate leading-[1.4] text-[10.5px] xs:text-[11px] sm:text-[11.5px]">
+                <span className="whitespace-normal break-words leading-[1.35] text-[11px] sm:text-[12px]">
                   {tabItem.label}
                   {typeof tabItem.badge === 'number' && tabItem.badge > 0 ? ` (${tabItem.badge})` : ''}
                 </span>
@@ -269,7 +261,26 @@ export function StudentCareerWorkspace() {
             );
           })}
         </nav>
-      </section>
+      </div>
+
+      {notice && (
+        <div
+          role="status"
+          className="flex items-center justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3 text-[12px] leading-[1.8] text-[var(--mn-text)] shadow-xs dark:bg-[var(--mn-surface-elevated)]"
+        >
+          <div className="flex items-center gap-2">
+            <Info className="h-4 w-4 shrink-0 text-[#0E7C86]" aria-hidden="true" />
+            <span>{notice}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setNotice('')}
+            className="text-[11px] font-bold text-[var(--mn-text-muted)] hover:text-[var(--mn-heading)]"
+          >
+            {c('إغلاق', 'Close')}
+          </button>
+        </div>
+      )}
 
       {/* Loading indicator bar if fetching */}
       {loading && (
@@ -496,18 +507,12 @@ export function StudentCareerWorkspace() {
                 return (
                   <article
                     key={row.id}
-                    className="relative overflow-hidden flex flex-col justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3.5 pr-4 shadow-2xs transition-all hover:border-[#D6A43B]/60 dark:bg-[var(--mn-surface-elevated)]"
+                    className="relative overflow-hidden flex flex-col justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3 shadow-2xs transition-all hover:border-[#D6A43B]/60 dark:bg-[var(--mn-surface-elevated)]"
                   >
-                    {/* Golden Accent Line on Right Edge */}
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-y-2.5 right-0 w-[3px] rounded-r-full bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-                    />
-
                     <div>
                       {/* Top Row: Title + Status Badge */}
                       <div className="flex items-start justify-between gap-2">
-                        <h4 className="break-words text-[13.5px] font-bold leading-snug text-[var(--mn-heading)] font-['Cairo',sans-serif]">
+                        <h4 className="break-words text-[12px] sm:text-[12.5px] font-bold leading-snug text-[var(--mn-heading)] font-['Cairo',sans-serif]">
                           {row.jobSnapshot?.title || c('فرصة مهنية', 'Career opportunity')}
                         </h4>
                         <span
@@ -769,20 +774,14 @@ export function StudentCareerWorkspace() {
                 {network.map((row) => (
                   <article
                     key={row.id}
-                    className="relative overflow-hidden rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3.5 pr-4 shadow-2xs font-['Cairo',sans-serif] dark:bg-[var(--mn-surface-elevated)]"
+                    className="relative overflow-hidden rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3 shadow-2xs font-['Cairo',sans-serif] dark:bg-[var(--mn-surface-elevated)]"
                   >
-                    {/* Golden accent line on right edge */}
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-y-2.5 right-0 w-[2.5px] rounded-r-full bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-                    />
-
                     <div className="flex items-center gap-2.5">
-                      <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
-                        <GraduationCap className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />
+                      <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
+                        <GraduationCap className="h-3.5 w-3.5 text-[#E5B54F]" aria-hidden="true" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h4 style={{ fontFamily: "'Cairo', sans-serif" }} className="break-words text-[13.5px] font-bold text-[var(--mn-heading)] leading-snug">
+                        <h4 style={{ fontFamily: "'Cairo', sans-serif" }} className="break-words text-[12px] sm:text-[12.5px] font-bold text-[var(--mn-heading)] leading-snug">
                           {row.displayName}
                         </h4>
                         <div className="mt-1 flex flex-wrap items-center gap-2 text-[12px] text-[var(--mn-text-muted)]">
@@ -855,30 +854,22 @@ function CareerSectionCard({
     <section
       id={id}
       aria-label={title}
-      className="mn-student-career-section relative -mx-[2px] w-[calc(100%+4px)] scroll-mt-6 rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3.5 sm:p-5 shadow-2xs mn-panel dark:border-white/10 sm:mx-0 sm:w-full font-['Cairo',sans-serif]"
+      className="mn-student-career-section relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] scroll-mt-6 rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel dark:border-white/10 font-['Cairo',sans-serif] overflow-hidden"
     >
-      {/* Subtle small vertical gold accent line on the right edge */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-3 right-0 w-[2.5px] rounded-r-full bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622] opacity-85"
-      />
-
-      {/* Header matching Summary, Opportunities, Learning & Vault */}
-      <div className="mb-3.5 border-b border-[var(--mn-border)] dark:border-white/10 pb-3 flex min-w-0 items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
+      {/* Subordinate sub-section header */}
+      <div className="mb-3 border-b border-[var(--mn-border)] dark:border-white/10 pb-2 flex min-w-0 items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F]">
             {icon}
           </span>
           <div className="min-w-0">
-            <h3 className="mn-student-career-heading text-[14px] font-bold leading-[1.22] text-[var(--mn-heading)] font-['Cairo',sans-serif]">
+            <h3 className="text-[12.5px] sm:text-[13px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
               {title}
             </h3>
-            {/* Signature Gold Underline */}
-            <div className="mt-1 h-[2px] w-14 bg-gradient-to-l from-[#D6A43B] to-transparent dark:from-[#E5B54F] rounded-full" />
           </div>
         </div>
         {count && (
-          <span style={{ fontFamily: "'Cairo', sans-serif", fontSize: '12px' }} className="shrink-0 rounded-full border border-[#D6A43B]/30 bg-[#142B5F]/5 dark:bg-[#E5B54F]/10 px-2.5 py-0.5 text-[12px] font-bold text-[#142B5F] dark:text-[#E5B54F]">
+          <span style={{ fontFamily: "'Cairo', sans-serif", fontSize: '10.5px' }} className="shrink-0 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2 py-0.5 text-[10.5px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
             {count}
           </span>
         )}

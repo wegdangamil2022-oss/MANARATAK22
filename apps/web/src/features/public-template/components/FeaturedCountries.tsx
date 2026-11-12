@@ -3,9 +3,8 @@ import React from 'react';
 import { Globe, ArrowUpLeft } from 'lucide-react';
 
 import type { CountryDestination } from '../types';
-import { HomeSectionEmptyCards } from './HomeSectionEmptyCards';
-import { homeCatalogStatus } from '../homeCatalogState';
 import type { PublicLiveDomainStatus } from '../publicLiveDataSource';
+import { CountryFlagImage } from './CountriesSearchPage';
 interface FeaturedCountriesProps {
   countries: CountryDestination[];
   status?: PublicLiveDomainStatus;
@@ -19,15 +18,11 @@ export const FeaturedCountries: React.FC<FeaturedCountriesProps> = ({
   onSelectCountry,
   onViewAllClick,
   countries,
-  status,
-  onRetry,
-  dataMode = 'api',
+  dataMode = 'prototype',
 }) => {
   const { t: publicT } = usePublicTemplateTranslation();
   const featuredCountries = countries.filter(item => dataMode === 'prototype' || item.isFeatured);
-  // Prefer owner-featured countries; otherwise use actual owner-published countries.
   const visibleCountries = (featuredCountries.length ? featuredCountries : countries).slice(0, 8);
-  const displayStatus = homeCatalogStatus(status, visibleCountries.length);
 
   return (
     <section id="featured-countries-section" className="px-0 py-2.5 w-full font-['Cairo',sans-serif]">
@@ -59,9 +54,7 @@ export const FeaturedCountries: React.FC<FeaturedCountriesProps> = ({
 
           {/* Fixed 4x2 Grid with Larger Bubbles & High Contrast Typography */}
           <div className="grid grid-cols-4 gap-y-3 gap-x-2 sm:gap-x-3.5 w-full">
-            {visibleCountries.length === 0 ? (
-              <div className="col-span-4"><HomeSectionEmptyCards kind="countries" status={displayStatus === 'ready' ? 'empty' : displayStatus} onRetry={onRetry} /></div>
-            ) : visibleCountries.map((item) => (
+            {visibleCountries.map((item) => (
                 <div
                   key={item.id}
                   role="button"
@@ -84,7 +77,6 @@ export const FeaturedCountries: React.FC<FeaturedCountriesProps> = ({
                           <img
                             src={item.imageUrl}
                             alt={item.name}
-                            onError={(event) => { const image = event.currentTarget; image.onerror = null; image.src = '/preview-art/countries.svg'; }}
                             className="w-full h-full object-cover group-hover:scale-115 transition-transform duration-500"
                             referrerPolicy="no-referrer"
                             loading="lazy"
@@ -96,15 +88,14 @@ export const FeaturedCountries: React.FC<FeaturedCountriesProps> = ({
                     </div>
 
                     {/* Country Flag Badge Pin (Prominent & Elevated) */}
-                    <div className="absolute -bottom-0.5 -right-0.5 bg-[var(--mn-surface)] rounded-full w-6 h-6 sm:w-6.5 sm:h-6.5 shadow-xs border border-[var(--mn-border)] flex items-center justify-center mn-panel ">
-                      {item.flagEmoji || (item.flag && !/^https?:\/\//i.test(item.flag)) ? (
-                        <span className="text-xs sm:text-sm leading-none">{item.flagEmoji || item.flag}</span>
-                      ) : item.flag && /^https?:\/\//i.test(item.flag) ? (
-                        <img src={item.flag} alt={`علم ${item.name}`} className="h-full w-full rounded-full object-cover" loading="lazy"
-                          onError={(event) => { event.currentTarget.style.display = 'none'; }} />
-                      ) : (
-                        <Globe aria-hidden="true" className="h-3.5 w-3.5 text-[var(--mn-heading)]" />
-                      )}
+                    <div className="absolute -bottom-0.5 -right-0.5 bg-[var(--mn-surface)] rounded-full w-6 h-6 sm:w-6.5 sm:h-6.5 shadow-xs border border-[var(--mn-border)] overflow-hidden p-[1.5px] flex items-center justify-center mn-panel ">
+                      <CountryFlagImage
+                        countryId={item.id}
+                        countryName={item.name}
+                        flagEmoji={item.flagEmoji}
+                        flagUrl={item.flag}
+                        iso2Code={item.iso2Code}
+                      />
                     </div>
                   </div>
 

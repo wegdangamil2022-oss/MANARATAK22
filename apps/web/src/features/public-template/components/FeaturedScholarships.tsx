@@ -2,8 +2,6 @@ import { useTranslation as usePublicTemplateTranslation } from '../../../i18n/I1
 import React from 'react';
 import { ArrowUpLeft, GraduationCap, Heart } from 'lucide-react';
 import { Scholarship } from '../types';
-import { HomeSectionEmptyCards } from './HomeSectionEmptyCards';
-import { homeCatalogStatus } from '../homeCatalogState';
 import type { PublicLiveDomainStatus } from '../publicLiveDataSource';
 
 interface FeaturedScholarshipsProps {
@@ -18,9 +16,8 @@ interface FeaturedScholarshipsProps {
 }
 
 export const FeaturedScholarships: React.FC<FeaturedScholarshipsProps> = ({
-  scholarships, selection = 'featured',
-  status,
-  onRetry,
+  scholarships,
+  selection = 'featured',
   onSelectScholarship,
   onToggleFavorite,
   favoriteIds = [],
@@ -28,9 +25,7 @@ export const FeaturedScholarships: React.FC<FeaturedScholarshipsProps> = ({
 }) => {
   const { t: publicT } = usePublicTemplateTranslation();
 
-  // Only published owner projections supplied by the live/prototype data source.
   const cards = (selection === 'featured' ? (scholarships ?? []).filter(scholarship => scholarship.featured) : scholarships ?? []).slice(0, 2);
-  const displayStatus = homeCatalogStatus(status, cards.length);
 
   const handleCardClick = (scholarship: Scholarship) => {
     if (onSelectScholarship) onSelectScholarship(scholarship);
@@ -65,9 +60,7 @@ export const FeaturedScholarships: React.FC<FeaturedScholarshipsProps> = ({
 
           {/* 2 Featured Cards: Edge-to-edge layout with Square Proportions */}
           <div className="grid grid-cols-2 gap-2 sm:gap-2.5 w-full">
-            {cards.length === 0 ? (
-              <div className="col-span-2"><HomeSectionEmptyCards kind="scholarships" status={displayStatus === 'ready' ? 'empty' : displayStatus} onRetry={onRetry} /></div>
-            ) : cards.map((scholarship) => {
+            {cards.map((scholarship) => {
               const isFav = favoriteIds.includes(scholarship.id);
               return (
                 <div
@@ -85,15 +78,16 @@ export const FeaturedScholarships: React.FC<FeaturedScholarshipsProps> = ({
                 >
                   {/* Image Container with Square (1:1) Proportions */}
                   <div className="relative aspect-square w-full overflow-hidden bg-[var(--mn-primary)] mn-inverse ">
-                    <img
-                      src={scholarship.imageUrl || '/preview-art/scholarships.svg'}
-                      alt={scholarship.title}
-                      onError={(event) => { const image = event.currentTarget; image.onerror = null; image.src = '/preview-art/scholarships.svg'; }}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 filter brightness-95"
-                      referrerPolicy="no-referrer"
-                    />
+                    {scholarship.imageUrl && (
+                      <img
+                        src={scholarship.imageUrl}
+                        alt={scholarship.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 filter brightness-95"
+                        referrerPolicy="no-referrer"
+                      />
+                    )}
 
                     {/* Favorite Heart Button */}
                     <button

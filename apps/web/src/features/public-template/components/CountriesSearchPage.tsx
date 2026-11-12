@@ -20,7 +20,7 @@ import { CountryDestination } from '../types';
 import type { PublicCountryGraphDto } from '../../../api/client';
 import { CountryDetailModal } from './CountryDetailModal';
 import { FavoriteButton } from './FavoriteButton';
-import { PublicFilterSelectModal } from './DetailUi';
+import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
 
 interface CountriesSearchPageProps {
   dataMode?: 'api' | 'prototype';
@@ -43,15 +43,17 @@ interface CountriesSearchPageProps {
 }
 
 // Bulletproof Vector SVG Flag renderer for guaranteed display matching design
-const CountryFlagImage: React.FC<{
+export const CountryFlagImage: React.FC<{
   countryId: string;
   countryName: string;
-  flagEmoji: string;
+  flagEmoji?: string;
   flagUrl?: string;
-}> = ({ countryId, countryName, flagEmoji, flagUrl }) => {
+  iso2Code?: string;
+}> = ({ countryId, countryName, flagEmoji, flagUrl, iso2Code }) => {
   const [imgFailed, setImgFailed] = useState(false);
+  const key = `${countryId} ${countryName} ${iso2Code || ''}`.toLowerCase();
 
-  if (countryId === 'china') {
+  if (key.includes('china') || key.includes('الصين') || iso2Code?.toUpperCase() === 'CN') {
     return (
       <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
         <circle cx="32" cy="32" r="32" fill="#DE2910" />
@@ -64,7 +66,7 @@ const CountryFlagImage: React.FC<{
     );
   }
 
-  if (countryId === 'turkey') {
+  if (key.includes('turkey') || key.includes('تركيا') || iso2Code?.toUpperCase() === 'TR') {
     return (
       <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
         <circle cx="32" cy="32" r="32" fill="#E30A17" />
@@ -78,7 +80,7 @@ const CountryFlagImage: React.FC<{
     );
   }
 
-  if (countryId === 'malaysia') {
+  if (key.includes('malaysia') || key.includes('ماليزيا') || iso2Code?.toUpperCase() === 'MY') {
     return (
       <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
         <clipPath id="circleClipMy">
@@ -105,7 +107,7 @@ const CountryFlagImage: React.FC<{
     );
   }
 
-  if (countryId === 'germany') {
+  if (key.includes('germany') || key.includes('ألمانيا') || iso2Code?.toUpperCase() === 'DE') {
     return (
       <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
         <clipPath id="circleClipDe">
@@ -120,7 +122,13 @@ const CountryFlagImage: React.FC<{
     );
   }
 
-  if (countryId === 'uk') {
+  if (
+    key.includes('uk') ||
+    key.includes('united kingdom') ||
+    key.includes('المملكة المتحدة') ||
+    key.includes('بريطانيا') ||
+    iso2Code?.toUpperCase() === 'GB'
+  ) {
     return (
       <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
         <clipPath id="circleClipUk">
@@ -137,7 +145,7 @@ const CountryFlagImage: React.FC<{
     );
   }
 
-  if (countryId === 'saudi') {
+  if (key.includes('saudi') || key.includes('السعودية') || iso2Code?.toUpperCase() === 'SA') {
     return (
       <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
         <circle cx="32" cy="32" r="32" fill="#006C35" />
@@ -148,7 +156,94 @@ const CountryFlagImage: React.FC<{
     );
   }
 
-  if (flagUrl && !imgFailed) {
+  if (key.includes('france') || key.includes('فرنسا') || iso2Code?.toUpperCase() === 'FR') {
+    return (
+      <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
+        <clipPath id="circleClipFr">
+          <circle cx="32" cy="32" r="32" />
+        </clipPath>
+        <g clipPath="url(#circleClipFr)">
+          <rect x="0" y="0" width="21.34" height="64" fill="#002395" />
+          <rect x="21.33" y="0" width="21.34" height="64" fill="#FFFFFF" />
+          <rect x="42.66" y="0" width="21.34" height="64" fill="#ED2939" />
+        </g>
+      </svg>
+    );
+  }
+
+  if (key.includes('japan') || key.includes('اليابان') || iso2Code?.toUpperCase() === 'JP') {
+    return (
+      <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
+        <circle cx="32" cy="32" r="32" fill="#FFFFFF" />
+        <circle cx="32" cy="32" r="14" fill="#BC002D" />
+      </svg>
+    );
+  }
+
+  if (
+    key.includes('usa') ||
+    key.includes('united states') ||
+    key.includes('الولايات المتحدة') ||
+    key.includes('أمريكا') ||
+    iso2Code?.toUpperCase() === 'US'
+  ) {
+    return (
+      <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
+        <clipPath id="circleClipUs">
+          <circle cx="32" cy="32" r="32" />
+        </clipPath>
+        <g clipPath="url(#circleClipUs)">
+          <rect width="64" height="64" fill="#FFFFFF" />
+          <rect y="0" width="64" height="5" fill="#B22234" />
+          <rect y="10" width="64" height="5" fill="#B22234" />
+          <rect y="20" width="64" height="5" fill="#B22234" />
+          <rect y="30" width="64" height="5" fill="#B22234" />
+          <rect y="40" width="64" height="5" fill="#B22234" />
+          <rect y="50" width="64" height="5" fill="#B22234" />
+          <rect y="59" width="64" height="5" fill="#B22234" />
+          <rect width="30" height="35" fill="#3C3B6E" />
+          <circle cx="10" cy="10" r="2" fill="#FFFFFF" />
+          <circle cx="20" cy="10" r="2" fill="#FFFFFF" />
+          <circle cx="15" cy="17" r="2" fill="#FFFFFF" />
+          <circle cx="10" cy="24" r="2" fill="#FFFFFF" />
+          <circle cx="20" cy="24" r="2" fill="#FFFFFF" />
+        </g>
+      </svg>
+    );
+  }
+
+  if (key.includes('canada') || key.includes('كندا') || iso2Code?.toUpperCase() === 'CA') {
+    return (
+      <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
+        <clipPath id="circleClipCa">
+          <circle cx="32" cy="32" r="32" />
+        </clipPath>
+        <g clipPath="url(#circleClipCa)">
+          <rect x="0" y="0" width="16" height="64" fill="#FF0000" />
+          <rect x="16" y="0" width="32" height="64" fill="#FFFFFF" />
+          <rect x="48" y="0" width="16" height="64" fill="#FF0000" />
+          <polygon points="32,16 35,24 42,23 37,29 41,35 33,35 33,44 31,44 31,35 23,35 27,29 22,23 29,24" fill="#FF0000" />
+        </g>
+      </svg>
+    );
+  }
+
+  if (key.includes('russia') || key.includes('روسيا') || iso2Code?.toUpperCase() === 'RU') {
+    return (
+      <svg viewBox="0 0 64 64" className="w-full h-full rounded-full object-cover">
+        <clipPath id="circleClipRu">
+          <circle cx="32" cy="32" r="32" />
+        </clipPath>
+        <g clipPath="url(#circleClipRu)">
+          <rect x="0" y="0" width="64" height="21.3" fill="#FFFFFF" />
+          <rect x="0" y="21.3" width="64" height="21.3" fill="#0039A6" />
+          <rect x="0" y="42.6" width="64" height="21.4" fill="#D52B1E" />
+        </g>
+      </svg>
+    );
+  }
+
+  if (flagUrl && /^(https?:\/\/|\/)/i.test(flagUrl) && !imgFailed) {
     return (
       <img
         src={flagUrl}
@@ -159,7 +254,7 @@ const CountryFlagImage: React.FC<{
     );
   }
 
-  return <span className="text-xl sm:text-2xl">{flagEmoji}</span>;
+  return <span className="text-xl sm:text-2xl leading-none">{flagEmoji || '🌍'}</span>;
 };
 
 export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
@@ -323,6 +418,17 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
       return matchesSearch && matchesContinent && matchesCountry;
     });
   }, [countries, searchQuery, selectedContinent, selectedCountryId, dataMode, serverResult]);
+
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    pageItems: paginatedCountries,
+  } = usePaginatedCatalog(
+    filteredCountries,
+    `${searchQuery}|${selectedContinent}|${selectedCountryId}`,
+    30,
+  );
 
   const activeFiltersCount =
     (selectedContinent !== 'الكل' ? 1 : 0) +
@@ -670,7 +776,7 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
 
         {/* Country Cards List */}
         <div className="space-y-2.5">
-          {filteredCountries.map((country) => {
+          {paginatedCountries.map((country) => {
             const keyLower = `${country.id} ${country.slug || ''} ${country.iso2Code || ''} ${country.name}`.toLowerCase();
             const fallbackCounts = keyLower.includes('china') || keyLower.includes('cn') || keyLower.includes('الصين')
               ? { universities: 500, scholarships: 260 }
@@ -709,6 +815,7 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
                         countryName={country.name}
                         flagEmoji={country.flagEmoji}
                         flagUrl={country.flag}
+                        iso2Code={country.iso2Code}
                       />
                     </div>
                   </div>
@@ -749,33 +856,33 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
                 </div>
               </div>
 
-              {/* Bottom Row: 4 Pill Boxes (Continent, Living Cost, Universities Count, Scholarships Count) */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1.5 border-t border-[var(--mn-border)]/50">
-                {/* 1. Continent */}
-                <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg px-2 py-1 flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
-                  <Globe2 className="w-3 h-3 text-[var(--mn-link)] shrink-0" />
+              {/* Bottom Row: 4 Pill Boxes in 2x2 Grid with Right-Aligned Icons so Top & Bottom Icons Match Vertically */}
+              <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-[var(--mn-border)]/50">
+                {/* 1. Continent (Top-Right) */}
+                <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
+                  <Globe2 className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#239BA6] shrink-0" />
                   <span className="truncate">{country.continent}</span>
                 </div>
 
-                {/* 2. Living Cost */}
-                <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg px-2 py-1 flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
-                  <Coins className="w-3 h-3 text-[var(--mn-link)] shrink-0" />
+                {/* 2. Living Cost (Top-Left) */}
+                <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
+                  <Coins className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#239BA6] shrink-0" />
                   <span className="truncate">
                     {publicT('public_living_costs')} {country.livingCost}
                   </span>
                 </div>
 
-                {/* 3. Universities Count */}
-                <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg px-2 py-1 flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
-                  <Building2 className="w-3 h-3 text-[var(--mn-link)] shrink-0" />
+                {/* 3. Universities Count (Bottom-Right - Directly aligned under Continent icon) */}
+                <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
+                  <Building2 className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#239BA6] shrink-0" />
                   <span className="truncate">
                     {publicLanguage === 'en' ? `${universitiesCountDisplay} Universities` : `${universitiesCountDisplay} جامعة`}
                   </span>
                 </div>
 
-                {/* 4. Scholarships Count */}
-                <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg px-2 py-1 flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
-                  <GraduationCap className="w-3 h-3 text-[var(--mn-link)] shrink-0" />
+                {/* 4. Scholarships Count (Bottom-Left - Directly aligned under Living Cost icon) */}
+                <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
+                  <GraduationCap className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#239BA6] shrink-0" />
                   <span className="truncate">
                     {publicLanguage === 'en' ? `${scholarshipsCountDisplay} Scholarships` : `${scholarshipsCountDisplay} منحة دراسية`}
                   </span>
@@ -785,6 +892,18 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
             );
           })}
         </div>
+
+        {filteredCountries.length > 0 && (
+          <PublicCardsPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            dir={publicDir}
+          />
+        )}
       </div>
       {dataMode === 'api' && serverResult ? (
         <nav

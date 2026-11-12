@@ -3,10 +3,14 @@
 }
 
 .mn-student-workspace .mn-student-attention-action {
-  font-size: 12px;
-  line-height: 16px;
-  padding-block: 3px;
-  padding-inline: 8px;
+  box-sizing: border-box;
+  min-height: 26px !important;
+  height: 26px;
+  font-family: 'Cairo', sans-serif !important;
+  font-size: 10.5px !important;
+  line-height: 16px !important;
+  padding-block: 3px !important;
+  padding-inline: 9px !important;
 }
 
 .mn-student-workspace .mn-student-summary-meta {
@@ -68,41 +72,54 @@
   color: #ccdfe4;
 }
 .dark .mn-student-attention .mn-student-attention-action {
-  background-color: var(--mn-surface-elevated, #153258);
-  color: #f2fafa;
-  border-color: #55b5b4;
+  background-color: transparent;
+  color: #f2cd78;
+  border-color: rgba(242, 205, 120, 0.65);
 }
 .dark .mn-student-attention .mn-student-attention-action:hover {
-  background-color: #28617a;
+  background-color: rgba(242, 205, 120, 0.1);
 }
 
 /* Exact student navigation contract, shared by preview and real workspace:
  * Selected = solid navy box (#142B5F) + gold text & icon (#F2CD78).
- * Non-selected = white + navy border in light mode, dark surface + gold border in dark mode.
+ * Non-selected = white + soft slate border + soft black text (#1E293B) in light mode.
  */
 .mn-student-workspace .mn-student-nav .mn-student-nav-tile {
   background-color: #ffffff;
-  border: 1px solid rgba(20, 43, 95, 0.55);
-  color: #142B5F;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
   font-family: 'Cairo', sans-serif !important;
+  font-weight: 600;
+  overflow: visible;
+}
+.mn-student-workspace .mn-student-nav .mn-student-nav-tile span {
+  color: #1e293b;
+  font-weight: 600;
+  white-space: nowrap !important;
+  overflow: visible !important;
 }
 .mn-student-workspace .mn-student-nav .mn-student-nav-tile[aria-current='page'] {
   background-color: #142B5F;
   border: 1.5px solid #D6A43B;
   color: #F2CD78;
+  font-weight: 700;
 }
 .mn-student-workspace .mn-student-nav .mn-student-nav-tile[aria-current='page'] span,
 .mn-student-workspace .mn-student-nav .mn-student-nav-tile[aria-current='page'] svg {
   color: #F2CD78;
+  font-weight: 700;
 }
 .mn-student-workspace .mn-student-nav .mn-student-nav-tile:not([aria-current='page']):hover {
-  background-color: #F5F8FA;
-  border-color: #142B5F;
+  background-color: #F8FAFC;
+  border-color: rgba(20, 43, 95, 0.45);
 }
 .dark .mn-student-workspace .mn-student-nav .mn-student-nav-tile {
   background-color: #10264A;
-  border: 1px solid rgba(214, 164, 59, 0.65);
-  color: #EEF4F6;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #F1F5F9;
+}
+.dark .mn-student-workspace .mn-student-nav .mn-student-nav-tile span {
+  color: #F1F5F9;
 }
 .dark .mn-student-workspace .mn-student-nav .mn-student-nav-tile[aria-current='page'] {
   background-color: #142B5F;
@@ -118,6 +135,22 @@
   border-color: #D6A43B;
 }
 
+/* Top inline section header title underline in Gold (#D6A43B) */
+.mn-student-workspace .mn-student-petrol-heading {
+  display: inline-block;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  padding-bottom: 2px;
+  border-bottom: 2px solid #D6A43B;
+  font-family: 'Cairo', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
 /* Compact summary actions: one physical size and one typeface across buttons/links.
  * The site's mobile button reset gives <button> a 44px minimum height,
  * while course actions are <a>; normalise their visual dimensions here.
@@ -126,29 +159,33 @@
 .mn-student-workspace .mn-student-summary-header-link,
 .mn-student-workspace .mn-student-summary-header-link span {
   font-family: 'Cairo', sans-serif !important;
-  font-size: 12px !important;
+  font-size: 10.5px !important;
   font-weight: 700 !important;
-  line-height: 18px !important;
+  line-height: 16px !important;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 .mn-student-workspace .mn-student-summary-header-link {
-  min-height: 34px;
+  box-sizing: border-box;
+  min-height: 26px !important;
+  height: 26px;
   white-space: nowrap;
-  padding: 0 2px;
+  padding: 2px 8px !important;
 }
 .mn-student-workspace .mn-student-summary-primary-action,
 .mn-student-workspace .mn-student-summary-primary-action span {
   font-family: 'Cairo', sans-serif !important;
-  font-size: 11px !important;
-  line-height: 18px !important;
-  font-weight: 600;
+  font-size: 10.5px !important;
+  line-height: 16px !important;
+  font-weight: 700;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 .mn-student-workspace .mn-student-summary-primary-action {
-  min-height: 32px;
-  padding: 6px 12px;
+  box-sizing: border-box;
+  min-height: 27px !important;
+  height: 27px;
+  padding: 4px 10px !important;
   white-space: nowrap;
 }
 
@@ -266,9 +303,9 @@
   text-overflow: clip;
   overflow-wrap: anywhere;
   font-family: 'Cairo', sans-serif !important;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-  line-height: 1.65;
+  line-height: 1.5;
 }
 .mn-student-workspace .mn-student-learning-section a.group :where(span, time) {
   font-family: 'Cairo', sans-serif !important;
@@ -443,39 +480,9 @@
 
 /* Scholarship application document details stay compact and legible with
  * Cairo typography. Only tools within the Opportunities tab are affected. */
-.mn-student-workspace .mn-student-opportunities-page .mn-student-documents-detail :where(p, label) {
-  font-size: 11px;
-  line-height: 1.85;
-}
-.mn-student-workspace .mn-student-opportunities-page .mn-student-documents-detail :where(form > label, div > label) {
-  display: block;
-  font-weight: 600;
-  color: var(--mn-heading);
-}
-.mn-student-workspace .mn-student-opportunities-page .mn-student-documents-detail :where(select, input[type='date'], textarea) {
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 36px;
-  margin-top: 4px;
-  padding: 6px 9px;
-  border: 1px solid var(--mn-border);
-  border-radius: 9px;
-  background: var(--mn-surface);
-  color: var(--mn-text);
-  font-size: 11px;
-}
-.mn-student-workspace .mn-student-opportunities-page .mn-student-documents-detail :where(form > button, p > button, div > button) {
-  min-height: 34px;
-  margin-top: 5px;
-  margin-inline-end: 5px;
-  padding: 5px 9px;
-  border: 1px solid var(--mn-border);
-  border-radius: 8px;
-  background: var(--mn-surface);
-  color: var(--mn-heading);
-  font-size: 11px;
-  font-weight: 700;
+.mn-student-workspace .mn-student-opportunities-page .mn-student-documents-detail,
+.mn-student-workspace .mn-student-opportunities-page .mn-student-documents-detail :where(*) {
+  font-family: 'Cairo', sans-serif !important;
 }
 .mn-student-workspace .mn-student-opportunities-page .mn-student-documents-detail :where(button:disabled) {
   opacity: .6;
@@ -487,8 +494,7 @@
 
 /* Summary section titles: gold line immediately touching the title box,
    following the intrinsic text width rather than spanning the card. */
-.mn-student-workspace .mn-student-summary-heading,
-.mn-student-workspace .mn-student-summary-invoices .mn-card h2 {
+.mn-student-workspace .mn-student-summary-heading {
   font-family: 'Cairo', sans-serif !important;
   font-size: 14px !important;
   font-weight: 700;
@@ -501,11 +507,11 @@
   border-bottom: 2px solid #D6A43B;
 }
 
-/* Invoice summary title uses the same line and 14px Cairo as other headings. */
 .mn-student-workspace .mn-student-summary-invoices .mn-card h2 {
-  font-family: 'Cairo', sans-serif;
-  font-size: 14px;
+  font-family: 'Cairo', sans-serif !important;
+  font-size: 12.5px;
   font-weight: 700;
+  line-height: 1.3;
 }
 
 /* Services and Invoices workspace (طلباتي ومدفوعاتي):

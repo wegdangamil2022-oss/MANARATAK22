@@ -19,7 +19,7 @@ import { ApiClient } from '../../../api/client';
 import { mapService } from '../publicLiveDataSource';
 import { Service, ServiceAudience } from '../types';
 import { FavoriteButton } from './FavoriteButton';
-import { PublicFilterSelectModal } from './DetailUi';
+import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
 
 interface ServicesDirectoryPageProps {
   services: Service[];
@@ -152,6 +152,13 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
       return matchesCategory && matchesSearch;
     });
   }, [audienceServices, searchQuery, selectedCategory, remote]);
+
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: paginatedServices,
+    goToPage,
+  } = usePaginatedCatalog(filteredServices, `${searchQuery}|${selectedCategory}|${audience}`, 30);
 
   const isStudent = audience === 'student';
   const activeFiltersCount =
@@ -333,69 +340,80 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
               </p>
             </div>
           ) : (
-            filteredServices.map((service) => (
-              <article
-                key={service.id}
-                className="relative group overflow-hidden rounded-2xl border border-[#142B5F] dark:border-[#D6A43B]/60 hover:border-[#142B5F] bg-[var(--mn-surface)] p-3 shadow-sm transition-all hover:shadow-md mn-panel "
-              >
-                {onToggleFavorite && (
-                  <FavoriteButton
-                    active={favoriteIds.includes(service.id)}
-                    onToggle={(event) => {
-                      event.stopPropagation();
-                      onToggleFavorite(service.id);
-                    }}
-                    className="absolute left-3 top-3 z-20"
-                  />
-                )}
-                <div className="flex items-start gap-2.5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--mn-accent)]/20 bg-[var(--mn-accent)]/10">
-                    {isStudent ? (
-                      <GraduationCap className="h-5 w-5 text-[var(--mn-heading)]" />
-                    ) : (
-                      <Briefcase className="h-5 w-5 text-[var(--mn-heading)]" />
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-start justify-between gap-1.5">
-                      <div className="min-w-0">
-                        <h3 className="font-['Cairo',sans-serif] text-[12.5px] font-bold leading-5 text-[var(--mn-heading)] sm:text-[13.5px]">
-                          {service.title}
-                        </h3>
-                        <p className="mt-0.5 text-[9px] font-bold text-[var(--mn-accent-text)]">
-                          {serviceCopy(service.category, language)}
-                        </p>
-                      </div>
-                      <span className="rounded-full bg-[var(--mn-primary)]/10 px-2 py-1 text-[8px] font-bold text-[var(--mn-heading)]">
-                        {service.badge}
-                      </span>
+            <>
+              {paginatedServices.map((service) => (
+                <article
+                  key={service.id}
+                  className="relative group overflow-hidden rounded-2xl border border-[#142B5F] dark:border-[#D6A43B]/60 hover:border-[#142B5F] bg-[var(--mn-surface)] p-3 shadow-sm transition-all hover:shadow-md mn-panel "
+                >
+                  {onToggleFavorite && (
+                    <FavoriteButton
+                      active={favoriteIds.includes(service.id)}
+                      onToggle={(event) => {
+                        event.stopPropagation();
+                        onToggleFavorite(service.id);
+                      }}
+                      className="absolute left-3 top-3 z-20"
+                    />
+                  )}
+                  <div className="flex items-start gap-2.5">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--mn-accent)]/20 bg-[var(--mn-accent)]/10">
+                      {isStudent ? (
+                        <GraduationCap className="h-5 w-5 text-[var(--mn-heading)]" />
+                      ) : (
+                        <Briefcase className="h-5 w-5 text-[var(--mn-heading)]" />
+                      )}
                     </div>
-                    <p className="mt-1.5 line-clamp-2 text-[10px] font-semibold leading-4 text-[var(--mn-text-muted)]">
-                      {service.shortDescription}
-                    </p>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-start justify-between gap-1.5">
+                        <div className="min-w-0">
+                          <h3 className="font-['Cairo',sans-serif] text-[12.5px] font-bold leading-5 text-[var(--mn-heading)] sm:text-[13.5px]">
+                            {service.title}
+                          </h3>
+                          <p className="mt-0.5 text-[9px] font-bold text-[var(--mn-accent-text)]">
+                            {serviceCopy(service.category, language)}
+                          </p>
+                        </div>
+                        <span className="rounded-full bg-[var(--mn-primary)]/10 px-2 py-1 text-[8px] font-bold text-[var(--mn-heading)]">
+                          {service.badge}
+                        </span>
+                      </div>
+                      <p className="mt-1.5 line-clamp-2 text-[10px] font-semibold leading-4 text-[var(--mn-text-muted)]">
+                        {service.shortDescription}
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="mt-2.5 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-                  <div className="flex min-h-8 items-center justify-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 text-[9px] font-bold text-[var(--mn-text-muted)] mn-panel ">
-                    <Clock3 className="h-3 w-3 shrink-0 text-[var(--mn-accent-text)]" />
-                    <span className="truncate">{service.turnaround}</span>
+                  <div className="mt-2.5 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+                    <div className="flex min-h-8 items-center justify-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 text-[9px] font-bold text-[var(--mn-text-muted)] mn-panel ">
+                      <Clock3 className="h-3 w-3 shrink-0 text-[var(--mn-accent-text)]" />
+                      <span className="truncate">{service.turnaround}</span>
+                    </div>
+                    <div className="flex min-h-8 items-center justify-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 text-[9px] font-bold text-[var(--mn-text-muted)] mn-panel ">
+                      <Wallet className="h-3 w-3 shrink-0 text-[var(--mn-heading)]" />
+                      <span className="truncate">{service.priceLabel}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => onSelectService?.(service)}
+                      className="col-span-2 flex min-h-8 items-center justify-center gap-1 rounded-lg bg-[var(--mn-primary)] px-2 text-[9.5px] font-bold text-white shadow-2xs transition hover:bg-[var(--mn-primary)] active:scale-95 sm:col-span-1 mn-inverse hover:mn-inverse "
+                    >
+                      {serviceCopy('عرض التفاصيل', language)}
+                      <ChevronLeft className="h-3 w-3" />
+                    </button>
                   </div>
-                  <div className="flex min-h-8 items-center justify-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 text-[9px] font-bold text-[var(--mn-text-muted)] mn-panel ">
-                    <Wallet className="h-3 w-3 shrink-0 text-[var(--mn-heading)]" />
-                    <span className="truncate">{service.priceLabel}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => onSelectService?.(service)}
-                    className="col-span-2 flex min-h-8 items-center justify-center gap-1 rounded-lg bg-[var(--mn-primary)] px-2 text-[9.5px] font-bold text-white shadow-2xs transition hover:bg-[var(--mn-primary)] active:scale-95 sm:col-span-1 mn-inverse hover:mn-inverse "
-                  >
-                    {serviceCopy('عرض التفاصيل', language)}
-                    <ChevronLeft className="h-3 w-3" />
-                  </button>
-                </div>
-              </article>
-            ))
+                </article>
+              ))}
+
+              <PublicCardsPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={filteredServices.length}
+                pageSize={30}
+                onPageChange={goToPage}
+                dir={dir}
+              />
+            </>
           )}
         </div>
       </div>

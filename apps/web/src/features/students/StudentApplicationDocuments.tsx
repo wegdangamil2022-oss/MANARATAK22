@@ -94,33 +94,35 @@ export function StudentApplicationDocuments({
         )
       : null;
   return (
-    <section className="mn-student-application-documents mt-3 overflow-hidden rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] font-['Cairo',sans-serif] w-full max-w-full min-w-0 shadow-2xs transition-all">
+    <section className="mn-student-application-documents mt-3 overflow-hidden rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] font-['Cairo',sans-serif] w-full max-w-full min-w-0 shadow-2xs transition-all">
       <button
         type="button"
-        className="mn-student-documents-toggle flex w-full items-center gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 text-start text-[var(--mn-heading)] transition-colors hover:bg-[var(--mn-surface-muted)] cursor-pointer"
+        className="mn-student-documents-toggle flex w-full items-center gap-2 px-3 py-2.5 text-start text-[#1E293B] dark:text-[#F8FAFC] transition-colors hover:bg-[var(--mn-surface)] cursor-pointer"
         aria-expanded={open}
         aria-controls={detailsId}
         onClick={() => setOpen((v) => !v)}
       >
-        <div className="w-8 h-8 rounded-xl bg-[#0E7C86]/10 text-[#0E7C86] flex items-center justify-center shrink-0">
-          <FileCheck2 className="h-4.5 w-4.5" aria-hidden="true" />
-        </div>
+        <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+          <FileCheck2 className="h-3.5 w-3.5 text-white" aria-hidden="true" />
+        </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[13px] sm:text-[13.5px] leading-snug font-bold font-['Cairo',sans-serif]">
+          <span className="block text-[11px] sm:text-[11.5px] leading-snug font-bold text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
             {text('مستندات ودورة التقديم', 'Documents and application cycle')}
           </span>
-          <span className="mt-0.5 block text-[11px] leading-[1.6] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-            {text('مراجعة المتطلبات، رفع المستندات، ومعرفة دورة التقديم.', 'Review requirements, upload documents, and view the application cycle.')}
+          <span className="mt-0.5 block text-[9.5px] sm:text-[10px] leading-[1.55] font-medium text-[#64748B] dark:text-[#94A3B8] font-['Cairo',sans-serif]">
+            {text('مراجعة المتطلبات الرسمية، رفع الوثائق الخاصة، ومتابعة دورة التقديم.', 'Review requirements, upload documents, and view the application cycle.')}
           </span>
         </span>
-        <ChevronDown className={`h-4.5 w-4.5 shrink-0 text-[#D6A43B] transition-transform duration-200 ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
+        <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg border border-[var(--mn-border)] dark:border-white/15 bg-[var(--mn-surface)] text-[#142B5F] dark:text-[#F2CD78]">
+          <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
+        </span>
       </button>
 
       {open && (
-        <div id={detailsId} className="mn-student-documents-detail space-y-4 border-t border-[var(--mn-border)] p-3 sm:p-4 text-[12px] leading-[1.8] text-[var(--mn-text)] font-['Cairo',sans-serif] w-full max-w-full min-w-0 overflow-hidden">
+        <div id={detailsId} className="mn-student-documents-detail space-y-3 border-t border-[var(--mn-border)] dark:border-white/10 p-3 text-[11px] leading-[1.7] text-[#1E293B] dark:text-[#F1F5F9] font-['Cairo',sans-serif] w-full max-w-full min-w-0 overflow-hidden">
           {/* Informative Guidance Banner */}
-          <div className="flex items-start gap-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 p-3 text-[11.5px] text-amber-900 dark:text-amber-200 leading-relaxed">
-            <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+          <div className="flex items-start gap-2 rounded-xl bg-[#0E7C86]/[0.07] dark:bg-[#0E7C86]/15 border border-[#0E7C86]/25 p-2.5 text-[10.5px] font-medium text-[#1E293B] dark:text-[#F1F5F9] leading-[1.7]">
+            <Info className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#55CBC5] shrink-0 mt-0.5" />
             <span>
               {text(
                 'هذه متابعة تنظيمية خاصة بملفك الطلابي لتجهيز مستنداتك دون إرسالها للجهة المانحة؛ الربط يسهل مراجعتها والتحقق منها بخصوصية كاملة.',
@@ -129,107 +131,141 @@ export function StudentApplicationDocuments({
             </span>
           </div>
 
-          {/* Cycle & Scholarship Snapshot Pills */}
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 w-full max-w-full min-w-0">
-            <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] text-[11px] font-bold text-[var(--mn-heading)]">
-              <Calendar className="w-3.5 h-3.5 text-[#0E7C86] shrink-0" />
-              <span>{text('الدورة:', 'Cycle:')}</span>
-              <span className="font-semibold text-[var(--mn-text-muted)]">
-                {applicationCycleLabel(
-                  tracker.ownerSnapshot?.cycleKey,
-                  language === 'en' ? 'en' : 'ar',
-                )}
+          {/* Section 1: Cycle & Scholarship Snapshot Info Boxes */}
+          <div className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3 space-y-2 shadow-2xs">
+            <div className="flex items-center gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-1.5">
+              <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                <Calendar className="w-3 h-3 text-white" />
               </span>
+              <h5 className="text-[11px] sm:text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+                {text('بيانات الدورة والموعد المرجعي', 'Cycle & Reference Info')}
+              </h5>
             </div>
 
-            {typeof tracker.ownerSnapshot?.displayName === 'string' && (
-              <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] text-[11px] font-bold text-[var(--mn-heading)] max-w-full min-w-0">
-                <Sparkles className="w-3.5 h-3.5 text-[#D6A43B] shrink-0" />
-                <span className="truncate max-w-[160px] sm:max-w-xs">{tracker.ownerSnapshot.displayName}</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="flex items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2">
+                <div className="min-w-0">
+                  <span className="block text-[10.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+                    {text('الدورة الأكاديمية', 'Cycle')}
+                  </span>
+                  <span className="mt-0.5 block text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] break-words">
+                    {applicationCycleLabel(
+                      tracker.ownerSnapshot?.cycleKey,
+                      language === 'en' ? 'en' : 'ar',
+                    )}
+                  </span>
+                </div>
+                <Calendar className="w-4 h-4 text-[#0E7C86] shrink-0" />
               </div>
-            )}
 
-            {snapshotDeadline && (
-              <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-[var(--mn-surface)] border border-[var(--mn-border)] text-[11px] font-semibold text-[var(--mn-text-muted)]">
-                <span>{text('الموعد المرجعي:', 'Reference deadline:')}</span>
-                <strong className="text-[var(--mn-heading)]">{snapshotDeadline}</strong>
-              </div>
-            )}
+              {snapshotDeadline ? (
+                <div className="flex items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2">
+                  <div className="min-w-0">
+                    <span className="block text-[10.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+                      {text('الموعد المرجعي', 'Reference deadline')}
+                    </span>
+                    <strong className="mt-0.5 block text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+                      {snapshotDeadline}
+                    </strong>
+                  </div>
+                  <FileCheck2 className="w-4 h-4 text-[#0E7C86] shrink-0" />
+                </div>
+              ) : (
+                typeof tracker.ownerSnapshot?.displayName === 'string' && (
+                  <div className="flex items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2">
+                    <div className="min-w-0">
+                      <span className="block text-[10.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+                        {text('الفرصة المرتبطة', 'Linked Scholarship')}
+                      </span>
+                      <span className="mt-0.5 block text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] break-words">
+                        {tracker.ownerSnapshot.displayName}
+                      </span>
+                    </div>
+                    <Sparkles className="w-4 h-4 text-[#0E7C86] shrink-0" />
+                  </div>
+                )
+              )}
+            </div>
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-300 border border-rose-200 text-xs" role="alert">
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-300 border border-rose-200 text-[12px] font-bold" role="alert">
               <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
               <span>{error}</span>
             </div>
           )}
 
-          {/* Upload Document Box */}
+          {/* Section 2: Upload Document Box */}
           {tracker.status === 'ACTIVE' && (
-            <div className="rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3 sm:p-3.5 w-full max-w-full min-w-0 overflow-hidden">
-              <StudentDocumentUpload
-                key={tracker.id}
-                onUploaded={(item) => {
-                  setAssets((previous) => [item, ...previous.filter((a) => a.id !== item.id)]);
-                  setAsset(item.id);
-                  setConsent(false);
-                }}
-              />
-            </div>
+            <StudentDocumentUpload
+              key={tracker.id}
+              onUploaded={(item) => {
+                setAssets((previous) => [item, ...previous.filter((a) => a.id !== item.id)]);
+                setAsset(item.id);
+                setConsent(false);
+              }}
+            />
           )}
 
-          {/* Readiness Requirements Section */}
+          {/* Section 3: Readiness Requirements Section */}
           {readiness && (
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs font-bold text-[var(--mn-heading)] pt-1">
-                <span>
-                  {readiness.ownerState === 'AVAILABLE'
-                    ? text('قائمة المستندات والمتطلبات الرسمية', 'Official documents and requirements')
-                    : text('حالة متطلبات الجهة المانحة', 'Donor requirements state')}
-                </span>
-                <span className="text-[11px] text-[var(--mn-text-muted)] font-normal">
-                  {readiness.entries.length} {text('متطلبات', 'requirements')}
-                </span>
-              </div>
+              <div className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3 space-y-2.5 shadow-2xs">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#D6A43B]/40 bg-[#142B5F]">
+                      <FileCheck2 className="w-3 h-3 text-[#F2CD78]" />
+                    </span>
+                    <h5 className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+                      {readiness.ownerState === 'AVAILABLE'
+                        ? text('قائمة المستندات والمتطلبات الرسمية', 'Official documents and requirements')
+                        : text('حالة متطلبات الجهة المانحة', 'Donor requirements state')}
+                    </h5>
+                  </div>
+                  <span className="rounded-lg border border-[var(--mn-border)] dark:border-white/15 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2 py-0.5 text-[10.5px] font-bold text-[#334155] dark:text-[#E2E8F0]">
+                    {readiness.entries.length} {text('متطلبات', 'requirements')}
+                  </span>
+                </div>
 
-              <div className="space-y-2">
-                {readiness.entries.map((r) => {
-                  const stateLabel = labels[r.state]?.[language === 'en' ? 1 : 0] ?? r.state;
-                  const isLinked = r.linked;
-                  return (
-                    <div
-                      key={r.requirementId}
-                      className="rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3.5 shadow-2xs space-y-2 transition-all hover:border-[#D6A43B]/40"
-                    >
-                      <div className="flex items-center justify-between gap-3 flex-wrap">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isLinked ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'}`}>
-                            <FileCheck2 className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <span className="font-bold text-[12.5px] text-[var(--mn-heading)]">{r.displayName}</span>
-                            <div className="text-[10.5px] text-[var(--mn-text-muted)] flex items-center gap-1.5 mt-0.5">
-                              <span className={`px-2 py-0.5 rounded-md font-semibold ${isLinked ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' : 'bg-slate-500/10 text-slate-600 dark:text-slate-400'}`}>
-                                {stateLabel}
+                <div className="space-y-2.5">
+                  {readiness.entries.map((r) => {
+                    const stateLabel = labels[r.state]?.[language === 'en' ? 1 : 0] ?? r.state;
+                    const isLinked = r.linked;
+                    return (
+                      <div
+                        key={r.requirementId}
+                        className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 space-y-2.5 transition-all hover:border-[#0E7C86]/40"
+                      >
+                        <div className="flex items-start justify-between gap-2.5 flex-wrap">
+                          <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border ${isLinked ? 'bg-[#0E7C86]/10 text-[#0E7C86] border-[#0E7C86]/25' : 'bg-[var(--mn-surface)] text-[#64748B] border-[var(--mn-border)]'}`}>
+                              <FileCheck2 className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <span className="block font-bold text-[12.5px] text-[#1E293B] dark:text-[#F8FAFC] break-words leading-snug">
+                                {r.displayName}
                               </span>
-                              {r.verification && (
-                                <span className="px-2 py-0.5 rounded-md font-semibold bg-[#0E7C86]/10 text-[#0E7C86]">
-                                  {({
-                                    VERIFIED: text('تم التدقيق الأكاديمي', 'Academically verified'),
-                                    REJECTED: text('مرفوض', 'Rejected'),
-                                    STALE: text('بحاجة لتحديث', 'Update needed'),
-                                    NOT_ATTESTED: text('غير مصدق', 'Not attested'),
-                                  } as Record<string, string>)[r.verification] ?? r.verification}
+                              <div className="text-[10.5px] flex flex-wrap items-center gap-1.5 mt-1">
+                                <span className={`px-2 py-0.5 rounded-md font-bold border ${isLinked ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25' : 'bg-[var(--mn-surface)] text-[#64748B] dark:text-[#94A3B8] border-[var(--mn-border)]'}`}>
+                                  {stateLabel}
                                 </span>
-                              )}
+                                {r.verification && (
+                                  <span className="px-2 py-0.5 rounded-md font-bold bg-[#0E7C86]/10 text-[#0E7C86] dark:text-[#55CBC5] border border-[#0E7C86]/25">
+                                    {({
+                                      VERIFIED: text('تم التدقيق الأكاديمي', 'Academically verified'),
+                                      REJECTED: text('مرفوض', 'Rejected'),
+                                      STALE: text('بحاجة لتحديث', 'Update needed'),
+                                      NOT_ATTESTED: text('غير مصدق', 'Not attested'),
+                                    } as Record<string, string>)[r.verification] ?? r.verification}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        {/* Action buttons per requirement */}
-                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {/* Action buttons per requirement */}
                           {r.linked && (
-                            <>
+                            <div className="flex items-center gap-1.5 flex-wrap shrink-0">
                               <button
                                 type="button"
                                 disabled={busy || (!r.reviewConsentGranted && (!r.bindable || r.state !== 'ASSET_AVAILABLE_UNVERIFIED'))}
@@ -245,7 +281,7 @@ export function StudentApplicationDocuments({
                                     if (current === generation.current) setBusy(false);
                                   });
                                 }}
-                                className="px-2.5 py-1.5 rounded-xl border border-[#0E7C86]/30 bg-[#0E7C86]/8 hover:bg-[#0E7C86] hover:text-white text-[#0E7C86] text-[11px] font-bold transition cursor-pointer disabled:opacity-50"
+                                className="px-2.5 py-1 rounded-lg border border-[#0E7C86]/35 bg-[#0E7C86]/10 hover:bg-[#0E7C86] hover:text-white text-[#0E7C86] dark:text-[#55CBC5] text-[11px] font-bold transition cursor-pointer disabled:opacity-50"
                               >
                                 {r.reviewConsentGranted ? text('سحب المراجعة', 'Withdraw review') : text('طلب مراجعة أكاديمية', 'Request review')}
                               </button>
@@ -262,20 +298,20 @@ export function StudentApplicationDocuments({
                                     if (current === generation.current) setError(text('تعذر إلغاء الربط؛ حدّث الملف.', 'Could not unlink; refresh the tracker.'));
                                   }).finally(() => setBusy(false));
                                 }}
-                                className="px-2.5 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/30 bg-rose-50/50 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-[11px] font-bold transition cursor-pointer disabled:opacity-50"
+                                className="px-2.5 py-1 rounded-lg border border-rose-200 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-[11px] font-bold transition cursor-pointer disabled:opacity-50"
                               >
                                 {text('إلغاء الربط', 'Unlink')}
                               </button>
-                            </>
+                            </div>
                           )}
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
 
-              {/* Linking Form Container */}
+              {/* Section 4: Linking Form Container */}
               {tracker.status === 'ACTIVE' && tracker.cycleReferenceId && tracker.cycleReferenceId !== 'LEGACY' && (
                 <form
                   onSubmit={(e) => {
@@ -299,22 +335,26 @@ export function StudentApplicationDocuments({
                       if (current === generation.current) setError(text('تعذر الربط؛ حدّث الملف وتحقق من صلاحية الأصل.', 'Could not link; refresh the tracker and check asset access.'));
                     }).finally(() => setBusy(false));
                   }}
-                  className="rounded-2xl border border-[#D6A43B]/30 bg-[var(--mn-surface)] p-4 space-y-3.5 shadow-xs"
+                  className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3 space-y-2.5 shadow-2xs"
                 >
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#142B5F] dark:text-[#E5B54F]">
-                    <Link2 className="w-4 h-4 text-[#D6A43B]" />
-                    <span>{text('ربط مستند بمتطلب رسمي للمنحة', 'Link document to an official requirement')}</span>
+                  <div className="flex items-center gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
+                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#D6A43B]/40 bg-[#142B5F]">
+                      <Link2 className="w-3 h-3 text-[#F2CD78]" />
+                    </span>
+                    <h5 className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+                      {text('ربط مستند بمتطلب رسمي للمنحة', 'Link document to an official requirement')}
+                    </h5>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label className="block space-y-1">
-                      <span className="text-[11px] font-semibold text-[var(--mn-heading)]">{text('اختر المتطلب المطلوب', 'Requirement')}</span>
+                      <span className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">{text('١. اختر المتطلب المطلوب', 'Requirement')}</span>
                       <select
                         value={requirement}
                         onChange={(e) => setRequirement(e.target.value)}
-                        className="w-full h-10 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 text-xs font-semibold text-[var(--mn-heading)] outline-none focus:border-[#D6A43B]"
+                        className="w-full min-h-10 rounded-xl border border-[var(--mn-border)] dark:border-white/15 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 text-[12px] font-semibold text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
                       >
-                        <option value="">— {text('حدد المتطلب', 'Select requirement')} —</option>
+                        <option value="">— {text('حدد المتطلب الرسمي', 'Select requirement')} —</option>
                         {readiness.entries.filter((r) => r.bindable).map((r) => (
                           <option key={r.requirementId} value={r.requirementId}>
                             {r.displayName}
@@ -324,13 +364,13 @@ export function StudentApplicationDocuments({
                     </label>
 
                     <label className="block space-y-1">
-                      <span className="text-[11px] font-semibold text-[var(--mn-heading)]">{text('اختر المستند من أصولك', 'Asset file')}</span>
+                      <span className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">{text('٢. اختر المستند من أصولك', 'Asset file')}</span>
                       <select
                         value={asset}
                         onChange={(e) => setAsset(e.target.value)}
-                        className="w-full h-10 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 text-xs font-semibold text-[var(--mn-heading)] outline-none focus:border-[#D6A43B]"
+                        className="w-full min-h-10 rounded-xl border border-[var(--mn-border)] dark:border-white/15 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 text-[12px] font-semibold text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
                       >
-                        <option value="">— {text('حدد الملف', 'Select file')} —</option>
+                        <option value="">— {text('حدد الملف المرفوع', 'Select file')} —</option>
                         {assets.map((a) => (
                           <option key={a.id} value={a.id}>
                             {a.metadata?.originalFilename ?? a.reference}
@@ -341,21 +381,21 @@ export function StudentApplicationDocuments({
                   </div>
 
                   <label className="block space-y-1">
-                    <span className="text-[11px] font-semibold text-[var(--mn-heading)]">{text('تاريخ انتهاء صلاحية المستند (اختياري)', 'Document expiry date (optional)')}</span>
+                    <span className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">{text('٣. تاريخ انتهاء صلاحية المستند (اختياري)', 'Document expiry date (optional)')}</span>
                     <input
                       type="date"
                       value={expiry}
                       onChange={(e) => setExpiry(e.target.value)}
-                      className="w-full h-10 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 text-xs font-semibold text-[var(--mn-heading)] outline-none focus:border-[#D6A43B]"
+                      className="w-full min-h-10 rounded-xl border border-[var(--mn-border)] dark:border-white/15 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 text-[12px] font-semibold text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
                     />
                   </label>
 
-                  <label className="flex items-start gap-2.5 pt-1 text-[11.5px] text-[var(--mn-text-muted)] cursor-pointer">
+                  <label className="flex items-start gap-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-2.5 text-[11.5px] font-medium text-[#334155] dark:text-[#E2E8F0] cursor-pointer leading-[1.7]">
                     <input
                       type="checkbox"
                       checked={consent}
                       onChange={(e) => setConsent(e.target.checked)}
-                      className="mt-0.5 rounded border-slate-300 text-[#0E7C86] focus:ring-[#0E7C86]"
+                      className="mt-1 w-4 h-4 rounded border-slate-300 accent-[#142B5F] focus:ring-[#D6A43B] shrink-0"
                     />
                     <span>
                       {text(
@@ -367,28 +407,34 @@ export function StudentApplicationDocuments({
 
                   <button
                     disabled={busy || !requirement || !asset || !consent}
-                    className="w-full h-10 rounded-xl bg-[#0E7C86] hover:bg-[#0c6b74] text-white text-xs font-bold shadow-xs transition cursor-pointer disabled:opacity-50"
+                    className="w-full sm:w-auto min-h-10 px-5 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] text-white text-[12px] font-bold shadow-xs transition cursor-pointer disabled:opacity-50 border border-[#D6A43B]/35"
                   >
-                    {text('ربط المستند الآن', 'Link document now')}
+                    {text('ربط المستند بالمتطلب الآن', 'Link document now')}
                   </button>
                 </form>
               )}
             </div>
           )}
 
-          {/* Separate Cycle Tracking */}
+          {/* Section 5: Separate Cycle Tracking */}
           {cycles.length > 0 && (
-            <div className="rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3.5 space-y-2.5">
-              <span className="block text-xs font-bold text-[var(--mn-heading)]">
-                {text('بدء متابعة دورة منشورة مستقلة', 'Track a separate published cycle')}
-              </span>
-              <div className="flex items-center gap-2">
+            <div className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3 space-y-2.5 shadow-2xs">
+              <div className="flex items-center gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-1.5">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#0E7C86]/35 bg-[#0E7C86]/10">
+                  <Calendar className="w-3 h-3 text-[#0E7C86] dark:text-[#55CBC5]" />
+                </span>
+                <h5 className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+                  {text('بدء متابعة دورة منشورة مستقلة', 'Track a separate published cycle')}
+                </h5>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <select
                   value={cycle}
                   onChange={(e) => setCycle(e.target.value)}
-                  className="flex-1 h-10 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 text-xs font-semibold text-[var(--mn-heading)] outline-none focus:border-[#D6A43B]"
+                  className="flex-1 min-h-10 rounded-xl border border-[var(--mn-border)] dark:border-white/15 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 text-[12px] font-semibold text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
                 >
-                  <option value="">— {text('اختر الدورة', 'Select cycle')} —</option>
+                  <option value="">— {text('اختر الدورة الأكاديمية', 'Select cycle')} —</option>
                   {cycles.map((c) => (
                     <option key={c.id} value={c.id}>
                       {applicationCycleLabel(c.cycleKey, language === 'en' ? 'en' : 'ar')}
@@ -411,7 +457,7 @@ export function StudentApplicationDocuments({
                       if (current === generation.current) setError(text('تعذر بدء الدورة', 'Could not start this cycle'));
                     }).finally(() => setBusy(false));
                   }}
-                  className="h-10 px-4 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] text-white text-xs font-bold shadow-xs transition cursor-pointer disabled:opacity-50 shrink-0"
+                  className="min-h-10 px-4 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] text-white text-[12px] font-bold shadow-xs transition cursor-pointer disabled:opacity-50 shrink-0 border border-[#D6A43B]/35"
                 >
                   {text('متابعة الدورة', 'Track cycle')}
                 </button>

@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import type { Course } from '../types';
 import { FavoriteButton } from './FavoriteButton';
-import { PublicFilterSelectModal } from './DetailUi';
+import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
 
 interface CourseTrackPreviewProps {
   track: 'native' | 'paid';
@@ -50,12 +50,20 @@ export const CourseTrackPreview: React.FC<CourseTrackPreviewProps> = ({
   const [selectedLevel, setSelectedLevel] = useState('الكل');
   const [openFilterModal, setOpenFilterModal] = useState<'category' | 'level' | null>(null);
 
-  // Extract available categories dynamically
+  // Extract available categories dynamically + standard domains for smooth scrolling
   const categories = useMemo(() => {
     const set = new Set<string>();
     rawCourses.forEach((c) => {
       if (c.category) set.add(c.category);
     });
+    [
+      'المنح والقبولات الجامعية',
+      'الإعداد اللغوي والأكاديمي',
+      'الكتابة الأكاديمية والبحثية',
+      'تطوير المهارات المهنية',
+      'التحضير للاختبارات الدولية',
+      'السيرة الذاتية وخطاب الدافع',
+    ].forEach((cat) => set.add(cat));
     return ['الكل', ...Array.from(set)];
   }, [rawCourses]);
 
@@ -65,6 +73,7 @@ export const CourseTrackPreview: React.FC<CourseTrackPreviewProps> = ({
     rawCourses.forEach((c) => {
       if (c.level) set.add(c.level);
     });
+    ['مبتدئ', 'متوسط', 'متقدم', 'جميع المستويات'].forEach((lvl) => set.add(lvl));
     return ['الكل', ...Array.from(set)];
   }, [rawCourses]);
 
@@ -93,6 +102,17 @@ export const CourseTrackPreview: React.FC<CourseTrackPreviewProps> = ({
       return matchesQuery && matchesCategory && matchesLevel;
     });
   }, [rawCourses, searchQuery, selectedCategory, selectedLevel]);
+
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    pageItems: paginatedCourses,
+  } = usePaginatedCatalog(
+    filteredCourses,
+    `${searchQuery}|${selectedCategory}|${selectedLevel}|${track}`,
+    30,
+  );
 
   const handleResetFilters = () => {
     setSearchQuery('');
@@ -310,7 +330,7 @@ export const CourseTrackPreview: React.FC<CourseTrackPreviewProps> = ({
       {/* COURSES LIST / CARDS */}
       {/* ========================================================================= */}
       <div className="max-w-xl mx-auto px-3 sm:px-4 mt-2.5 space-y-2.5">
-        {filteredCourses.map((course) => {
+        {paginatedCourses.map((course) => {
           const isFavorited = favoriteIds.includes(course.id);
           return (
             <div
@@ -354,12 +374,8 @@ export const CourseTrackPreview: React.FC<CourseTrackPreviewProps> = ({
                         {course.title}
                       </h3>
 
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="px-1.5 py-0.5 rounded-md bg-[var(--mn-page)] border border-[var(--mn-border)] text-[#142B5F] dark:text-[#F2CD78] font-bold text-[8.5px] sm:text-[9px] truncate">
-                          {course.category || publicT('public_academic_preparation')}
-                        </span>
-                        <span className="text-[var(--mn-border)] font-bold text-[9px]">•</span>
-                        <span className="text-[9px] sm:text-[9.5px] text-[var(--mn-text-muted)] font-bold truncate">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9.5px] sm:text-[10px] text-[var(--mn-text-muted)] font-bold truncate">
                           {publicT('public_presented_by')} {course.instructor || course.provider}
                         </span>
                       </div>
@@ -379,12 +395,19 @@ export const CourseTrackPreview: React.FC<CourseTrackPreviewProps> = ({
                   )}
                 </div>
 
-                {/* Footer: Lecture Count ONLY on Right & Continue Button on Left */}
-                <div className="flex items-center justify-between pt-1.5 border-t border-[var(--mn-border)]/60 text-[9.5px] sm:text-[10.5px]">
-                  <div className="flex items-center gap-1.5 text-[var(--mn-heading)] font-bold">
-                    <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#142B5F] dark:text-[#E5B54F] shrink-0" />
-                    <span>
-                      {course.lessonsCount || 8} {publicT('public_lectures')}
+                {/* Footer: Category Box + Lecture Count Box on Right & Continue Button on Left */}
+                <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-[var(--mn-border)]/60 text-[9.5px] sm:text-[10.5px]">
+                  <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--mn-page)] border border-[var(--mn-border)] text-[var(--mn-heading)] font-bold text-[9px] sm:text-[9.5px] truncate">
+                      <GraduationCap className="w-3 h-3 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+                      <span className="truncate">{course.category || publicT('public_academic_preparation')}</span>
+                    </span>
+
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--mn-page)] border border-[var(--mn-border)] text-[var(--mn-heading)] font-bold text-[9px] sm:text-[9.5px] shrink-0">
+                      <BookOpen className="w-3 h-3 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+                      <span>
+                        {course.lessonsCount || 8} {publicT('public_lectures')}
+                      </span>
                     </span>
                   </div>
 
@@ -394,7 +417,7 @@ export const CourseTrackPreview: React.FC<CourseTrackPreviewProps> = ({
                       e.stopPropagation();
                       handleCardClick(course);
                     }}
-                    className="flex items-center gap-1 px-2.5 py-0.5 sm:px-3 sm:py-1 bg-[var(--mn-primary)] hover:bg-[#1a3777] text-white rounded-lg sm:rounded-xl text-[9.5px] sm:text-[10.5px] font-bold active:scale-95 transition-all shadow-2xs mn-inverse cursor-pointer"
+                    className="shrink-0 flex items-center gap-1 px-2.5 py-0.5 sm:px-3 sm:py-1 bg-[var(--mn-primary)] hover:bg-[#1a3777] text-white rounded-lg sm:rounded-xl text-[9.5px] sm:text-[10.5px] font-bold active:scale-95 transition-all shadow-2xs mn-inverse cursor-pointer"
                     data-mn-design="26ecd1db9e"
                   >
                     <PlayCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#E5B54F]" />
@@ -405,6 +428,18 @@ export const CourseTrackPreview: React.FC<CourseTrackPreviewProps> = ({
             </div>
           );
         })}
+
+        {filteredCourses.length > 0 && (
+          <PublicCardsPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            dir={publicDir}
+          />
+        )}
 
         {/* Empty State */}
         {filteredCourses.length === 0 && (

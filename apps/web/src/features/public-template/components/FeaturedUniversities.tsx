@@ -1,8 +1,5 @@
 import { useTranslation as usePublicTemplateTranslation } from '../../../i18n/I18nProvider';
 import React from 'react';
-import { FeaturedCatalogImage } from './FeaturedCatalogImage';
-import { FeaturedCatalogStateCards } from './FeaturedCatalogStateCards';
-import { homeCatalogStatus } from '../homeCatalogState';
 import type { PublicLiveDomainStatus } from '../publicLiveDataSource';
 import { University } from '../types';
 import { Landmark, ChevronLeft, ArrowUpLeft } from 'lucide-react';
@@ -17,8 +14,6 @@ interface FeaturedUniversitiesProps {
 
 export const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({
   universities,
-  status,
-  onRetry,
   onSelectUniversity,
   onViewAllClick,
 }) => {
@@ -26,8 +21,6 @@ export const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({
 
   // Top 3 universities by the ranking value supplied by the template data.
   const topRanked = [...universities].sort((a, b) => (a.globalRank ?? Number.POSITIVE_INFINITY) - (b.globalRank ?? Number.POSITIVE_INFINITY)).slice(0, 3);
-
-  const displayStatus = homeCatalogStatus(status, topRanked.length);
 
   return (
     <section id="featured-universities-section" className="px-0 py-2.5 w-full">
@@ -57,9 +50,7 @@ export const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({
 
           {/* Leaderboard Ranking Cards List */}
           <div className="space-y-2 w-full font-['Cairo',sans-serif]">
-            {displayStatus !== 'ready' ? (
-              <FeaturedCatalogStateCards kind="universities" status={displayStatus} onRetry={onRetry} />
-            ) : topRanked.map((uni, idx) => {
+            {topRanked.map((uni, idx) => {
               const srScholarshipLabel = uni.scholarshipCount == null
                 ? publicT('public_scholarships_unavailable')
                 : publicT('public_scholarship_count', { v0: uni.scholarshipCount });
@@ -88,8 +79,12 @@ export const FeaturedUniversities: React.FC<FeaturedUniversitiesProps> = ({
                   {/* Right Side: University Crest/Image + Names */}
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     {/* University Campus Thumbnail */}
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl overflow-hidden shrink-0 border border-[var(--mn-border)] bg-[var(--mn-primary)] mn-inverse ">
-                      <FeaturedCatalogImage src={uni.imageUrl} alt={uni.name} kind="universities" />
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl overflow-hidden shrink-0 border border-[var(--mn-border)] bg-[var(--mn-primary)] flex items-center justify-center mn-inverse ">
+                      {uni.imageUrl ? (
+                        <img src={uni.imageUrl} alt={uni.name} className="w-full h-full object-cover" loading="lazy" />
+                      ) : (
+                        <Landmark className="w-5 h-5 text-white" />
+                      )}
                     </div>
 
                     {/* Name & Location Info */}

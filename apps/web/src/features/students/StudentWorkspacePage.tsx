@@ -12,7 +12,7 @@ import './student-workspace.css';
 import { StudentWorkspaceShell } from './StudentWorkspaceShell';
 import React, { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Award, Bell, BookOpen, Bookmark, CheckCircle2, ClipboardList, Compass, Folder, Heart, Home, LockKeyhole, RefreshCw, Route, Settings2, Star, X, User, ListChecks, GraduationCap, CalendarClock, Sparkles, Clock3, Languages, Moon, Sun, LogIn, ShieldCheck, ChevronLeft, History as HistoryIcon, Archive, Trash2, ExternalLink, ChevronDown, ChevronUp, FileText, Check, AlertTriangle, CreditCard, Receipt, Info, LogOut, Shield, RotateCcw, Save, Eye, Search, Plus, Layers, Filter, SlidersHorizontal, ArrowUpLeft, Camera, Upload } from 'lucide-react';
+import { ArrowLeft, Award, Bell, BookOpen, Bookmark, CheckCircle2, ClipboardList, Compass, Folder, Heart, Home, LayoutGrid, LockKeyhole, RefreshCw, Route, Settings2, Star, X, User, ListChecks, GraduationCap, CalendarClock, Sparkles, Clock3, Languages, Moon, Sun, LogIn, ShieldCheck, ChevronLeft, History as HistoryIcon, Archive, Trash2, ExternalLink, ChevronDown, ChevronUp, FileText, Check, AlertTriangle, CreditCard, Receipt, Info, LogOut, Shield, RotateCcw, Save, Eye, Search, Plus, Layers, Filter, SlidersHorizontal, ArrowUpLeft, Camera, Upload } from 'lucide-react';
 import {
   ApiClient as LiveApiClient,
   HydratedStudentSavedItemDto,
@@ -747,7 +747,7 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
       previewMode={import.meta.env.VITE_PUBLIC_TEMPLATE_DATA_MODE === 'prototype'}
       accessibility={accessibility}
     >
-      <div className="w-full max-w-4xl mx-auto space-y-4 mt-3.5 sm:mt-4">
+      <div className="w-full max-w-4xl mx-auto space-y-4 mt-0">
         {error && <Alert tone="error" message={error} onClose={() => setError(null)} />}
         {notice && <Alert tone="success" message={import.meta.env.VITE_PUBLIC_TEMPLATE_DATA_MODE === 'prototype' ? 'تم تنفيذ الإجراء داخل المعاينة فقط؛ لم يتم حفظ أي بيانات حقيقية.' : notice} onClose={() => setNotice(null)} />}
         {sectionFailures.length > 0 && <div role="alert" className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">تعذر تحميل: {sectionFailures.join('، ')}. <button type="button" onClick={() => setRetryKey(value => value + 1)} className="font-bold underline">إعادة التحميل</button></div>}
@@ -803,7 +803,7 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
         )}
         {tab === 'CAREERS' && <StudentCareerWorkspace />}
         {tab === 'SERVICES' && (
-          <div className="mn-student-services-page space-y-5 font-['Cairo',sans-serif]">
+          <div className="mn-student-services-page space-y-4 font-['Cairo',sans-serif]">
 
             <ServiceRequestsView
                 requests={serviceError ? [] : serviceRequests}
@@ -868,7 +868,6 @@ function SummaryView({
   paymentsByInvoice,
   onTogglePayments,
   setTab,
-  identity,
   applicationTrackers,
 }: {
   dashboard: StudentDashboardSummaryDto;
@@ -881,8 +880,6 @@ function SummaryView({
 }) {
   const [showAllActivities, setShowAllActivities] = useState(false);
 
-  // Combine the timeline and recent activity for the full log, removing duplicates.
-  // Keep the compact summary to three events until the user opens "كل السجلات".
   const activityLog = useMemo(() => {
     const seen = new Set<string>();
     return [...dashboard.timeline, ...dashboard.recentActivity]
@@ -899,8 +896,6 @@ function SummaryView({
     [applicationTrackers],
   );
 
-  // Surface only the most recently accessed unfinished course in the summary.
-  // Completed courses (including those at 100%) remain in the full Learning tab.
   const activeCourse = useMemo(
     () => dashboard.courseEnrollments
       .filter((item) => ['ACTIVE', 'ENROLLED', 'IN_PROGRESS'].includes(item.status) && item.progressPercentage < 100)
@@ -938,243 +933,366 @@ function SummaryView({
   );
 
   const attentionPanel = urgentAlerts.hasUrgent ? (
-      <section
-        aria-label="أمور تحتاج انتباه الطالب"
-        className="mn-student-attention relative -mx-[2px] w-[calc(100%+4px)] sm:mx-0 sm:w-full overflow-hidden rounded-2xl border border-[var(--mn-border)] bg-white dark:bg-[#09152F] text-[#142B5F] dark:text-[#F4F9FC] text-right font-['Cairo',sans-serif]"
-      >
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-transparent via-[#D6A43B] to-transparent" />
-        <div className="relative z-10 px-3 py-3.5 sm:px-5 sm:py-4">
-          <div className="flex items-center gap-2.5 font-bold text-[#142B5F] dark:text-[#F4F9FC]">
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/60 bg-[#142B5F]"><Bell className="h-4 w-4 text-[#EAC775]" /></span>
-            <h2 className="mn-student-summary-heading text-[14px] font-bold font-['Cairo',sans-serif] text-[#142B5F] dark:text-[#F4F9FC]">يحتاج انتباهك</h2>
-          </div>
-          <div className="mt-3 space-y-3.5">
-            {urgentAlerts.criticalDeadlines.slice(0, 2).map((tracker) => (
-              <div key={tracker.id} className="mn-student-attention-card flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[#0E7C86]/50 dark:border-[#55B5B4]/65 border-r-[3px] border-r-[#0E7C86] dark:border-r-[#55CBC5] bg-white dark:bg-[#142B4E] px-2.5 py-2 shadow-2xs">
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-[13px] sm:text-[14px] font-bold leading-5 text-[#142B5F] dark:text-[#F2F7FA]">موعد تقديم قريب</h3>
-                  <p className="mt-0.5 text-[11px] sm:text-xs leading-4 text-[#526A71] dark:text-[#CCDFE4]">
-                    {trackerDisplayName(tracker)} — {formatDate(tracker.deadlineAt)}
-                  </p>
-                </div>
-                <button type="button" onClick={() => setTab('OPPORTUNITIES')}
-                  className="mn-student-attention-action shrink-0 whitespace-nowrap rounded-md border border-[#0E7C86]/35 dark:border-[#55B5B4]/65 bg-[#EEF7F7] dark:bg-[#1D4461] px-2 py-0.5 text-[12px] leading-4 font-semibold text-[#142B5F] dark:text-[#F2FAFA] hover:bg-[#DDEFEF] dark:hover:bg-[#28617A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0E7C86] cursor-pointer font-['Cairo',sans-serif]">
-                  متابعة
-                </button>
-              </div>
-            ))}
-            {urgentAlerts.pendingInvoices.slice(0, 1).map((inv) => (
-              <div key={inv.id} className="mn-student-attention-card flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[#0E7C86]/50 dark:border-[#55B5B4]/65 border-r-[3px] border-r-[#0E7C86] dark:border-r-[#55CBC5] bg-white dark:bg-[#142B4E] px-2.5 py-2 shadow-2xs">
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-[13px] sm:text-[14px] font-bold leading-5 text-[#142B5F] dark:text-[#F2F7FA]">
-                    {inv.status === 'OVERDUE' ? 'فاتورة متأخرة' : 'فاتورة مستحقة'}
-                  </h3>
-                  <p className="mt-0.5 text-[11px] sm:text-xs leading-4 text-[#526A71] dark:text-[#CCDFE4]">
-                    {inv.invoiceNumber} ({formatMoney(inv.amountDue)})
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => onTogglePayments(inv.id)}
-                  className="mn-student-attention-action shrink-0 whitespace-nowrap rounded-md border border-[#0E7C86]/35 dark:border-[#55B5B4]/65 bg-[#EEF7F7] dark:bg-[#1D4461] px-2 py-0.5 text-[12px] leading-4 font-semibold text-[#142B5F] dark:text-[#F2FAFA] hover:bg-[#DDEFEF] dark:hover:bg-[#28617A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0E7C86] cursor-pointer font-['Cairo',sans-serif]"
-                >
-                  تفاصيل الفاتورة
-                </button>
-              </div>
-            ))}
-            {urgentAlerts.unread.slice(0, 2).map((n) => (
-              <div key={n.id} className="mn-student-attention-card flex min-w-0 items-center justify-between gap-2 rounded-lg border border-[#0E7C86]/50 dark:border-[#55B5B4]/65 border-r-[3px] border-r-[#0E7C86] dark:border-r-[#55CBC5] bg-white dark:bg-[#142B4E] px-2.5 py-2 shadow-2xs">
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-[13px] sm:text-[14px] font-bold leading-5 text-[#142B5F] dark:text-[#F2F7FA]">{n.title}</h3>
-                  <p className="mt-0.5 text-[11px] sm:text-xs leading-4 text-[#526A71] dark:text-[#CCDFE4]">{n.message}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setTab('NOTIFICATIONS')}
-                  className="mn-student-attention-action shrink-0 whitespace-nowrap rounded-md border border-[#0E7C86]/35 dark:border-[#55B5B4]/65 bg-[#EEF7F7] dark:bg-[#1D4461] px-2 py-0.5 text-[12px] leading-4 font-semibold text-[#142B5F] dark:text-[#F2FAFA] hover:bg-[#DDEFEF] dark:hover:bg-[#28617A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0E7C86] cursor-pointer font-['Cairo',sans-serif]"
-                >
-                  عرض
-                </button>
-              </div>
-            ))}
-          </div>
+    <section
+      aria-label="أمور تحتاج انتباه الطالب"
+      className="mn-student-attention relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] text-[#1E293B] dark:text-[#F8FAFC] text-right font-['Cairo',sans-serif] shadow-2xs"
+    >
+      <div className="relative z-10 py-3 sm:py-3.5">
+        {/* Edge-to-edge table header divider without right/left gap */}
+        <div className="flex items-center gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3 sm:px-4">
+          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
+            <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
+            <Bell className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" />
+          </span>
+          <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
+            يحتاج انتباهك
+          </h3>
         </div>
-      </section>
+        <div className="mt-2.5 space-y-2 px-2.5 sm:px-4">
+          {urgentAlerts.criticalDeadlines.slice(0, 2).map((tracker) => (
+            <div
+              key={tracker.id}
+              className="mn-student-attention-card relative overflow-hidden flex min-w-0 items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-2.5 py-2"
+            >
+              {/* Authentic Manaratak Geometric Corner Line from top-right to middle-bottom */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]"
+              />
+              <div className="min-w-0 flex-1">
+                <h4 className="text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words font-['Cairo',sans-serif]">
+                  موعد تقديم قريب
+                </h4>
+                <p className="mt-0.5 text-[9.5px] sm:text-[10px] font-bold leading-snug text-[var(--mn-text-muted)] break-words font-['Cairo',sans-serif]">
+                  {trackerDisplayName(tracker)} — {formatDate(tracker.deadlineAt)}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTab('OPPORTUNITIES')}
+                className="mn-student-attention-action shrink-0 whitespace-nowrap rounded-lg border border-[#142B5F] bg-transparent hover:bg-[#142B5F]/5 dark:border-[#F2CD78]/65 dark:text-[#F2CD78] px-2.5 py-1 text-[10px] font-bold text-[#142B5F] cursor-pointer font-['Cairo',sans-serif] transition-colors"
+              >
+                متابعة
+              </button>
+            </div>
+          ))}
+          {urgentAlerts.pendingInvoices.slice(0, 1).map((inv) => (
+            <div
+              key={inv.id}
+              className="mn-student-attention-card relative overflow-hidden flex min-w-0 items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-2.5 py-2"
+            >
+              {/* Authentic Manaratak Geometric Corner Line from top-right to middle-bottom */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]"
+              />
+              <div className="min-w-0 flex-1">
+                <h4 className="text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
+                  {inv.status === 'OVERDUE' ? 'فاتورة متأخرة' : 'فاتورة مستحقة'}
+                </h4>
+                <p className="mt-0.5 text-[9.5px] sm:text-[10px] font-bold leading-snug text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+                  {inv.invoiceNumber} ({formatMoney(inv.amountDue)})
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => onTogglePayments(inv.id)}
+                className="mn-student-attention-action shrink-0 whitespace-nowrap rounded-lg border border-[#142B5F] bg-transparent hover:bg-[#142B5F]/5 dark:border-[#F2CD78]/65 dark:text-[#F2CD78] px-2.5 py-1 text-[10px] font-bold text-[#142B5F] cursor-pointer font-['Cairo',sans-serif] transition-colors"
+              >
+                تفاصيل الفاتورة
+              </button>
+            </div>
+          ))}
+          {urgentAlerts.unread.slice(0, 2).map((n) => (
+            <div
+              key={n.id}
+              className="mn-student-attention-card relative overflow-hidden flex min-w-0 items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-2.5 py-2"
+            >
+              {/* Authentic Manaratak Geometric Corner Line from top-right to middle-bottom */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]"
+              />
+              <div className="min-w-0 flex-1">
+                <h4 className="text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words font-['Cairo',sans-serif]">
+                  {n.title}
+                </h4>
+                <p className="mt-0.5 text-[9.5px] sm:text-[10px] font-bold leading-snug text-[var(--mn-text-muted)] break-words font-['Cairo',sans-serif]">
+                  {n.message}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTab('NOTIFICATIONS')}
+                className="mn-student-attention-action shrink-0 whitespace-nowrap rounded-lg border border-[#142B5F] bg-transparent hover:bg-[#142B5F]/5 dark:border-[#F2CD78]/65 dark:text-[#F2CD78] px-2.5 py-1 text-[10px] font-bold text-[#142B5F] cursor-pointer font-['Cairo',sans-serif] transition-colors"
+              >
+                عرض
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   ) : null;
 
   return (
-    <div className="mt-3.5 space-y-6 sm:space-y-7 font-['Cairo',sans-serif]">
-      {/* Critical deadline or overdue invoice first; otherwise metrics first. */}
-      {urgentAlerts.hasCritical && attentionPanel}
-      {/* 2. Quick Stat Counters (Only meaningful numbers, clickable to respective tabs) */}
-      {!isNewStudent && (
-        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2">
-          <button
-            type="button"
-            onClick={() => setTab('OPPORTUNITIES')}
-            className="group flex min-w-0 flex-col items-center justify-center rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] px-1.5 py-1.5 sm:px-2 sm:py-2 text-center shadow-2xs transition-all hover:border-[#142B5F]/50 hover:shadow-xs mn-panel cursor-pointer"
-          >
-            <Route className="w-4 h-4 mx-auto text-[#142B5F] dark:text-[#E5B54F] mb-0 group-hover:scale-110 transition-transform" />
-            <div className="text-[15px] sm:text-base leading-5 font-bold text-[var(--mn-heading)]">{activeMilestones.length}</div>
-            <div className="text-[10px] sm:text-[11px] font-bold leading-4 text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">تقديمات نشطة</div>
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab('LEARNING')}
-            className="group flex min-w-0 flex-col items-center justify-center rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] px-1.5 py-1.5 sm:px-2 sm:py-2 text-center shadow-2xs transition-all hover:border-[#142B5F]/50 hover:shadow-xs mn-panel cursor-pointer"
-          >
-            <BookOpen className="w-4 h-4 mx-auto text-[#142B5F] dark:text-[#E5B54F] mb-0 group-hover:scale-110 transition-transform" />
-            <div className="text-[15px] sm:text-base leading-5 font-bold text-[var(--mn-heading)]">{dashboard.statistics.activeCourses}</div>
-            <div className="text-[10px] sm:text-[11px] font-bold leading-4 text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">دورات جارية</div>
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab('VAULT')}
-            className="group flex min-w-0 flex-col items-center justify-center rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] px-1.5 py-1.5 sm:px-2 sm:py-2 text-center shadow-2xs transition-all hover:border-[#142B5F]/50 hover:shadow-xs mn-panel cursor-pointer"
-          >
-            <Heart className="w-4 h-4 mx-auto text-[#142B5F] dark:text-[#E5B54F] mb-0 group-hover:scale-110 transition-transform" />
-            <div className="text-[15px] sm:text-base leading-5 font-bold text-[var(--mn-heading)]">{dashboard.statistics.savedItems}</div>
-            <div className="text-[10px] sm:text-[11px] font-bold leading-4 text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">عناصر محفوظة</div>
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab('LEARNING')}
-            className="group flex min-w-0 flex-col items-center justify-center rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] px-1.5 py-1.5 sm:px-2 sm:py-2 text-center shadow-2xs transition-all hover:border-[#142B5F]/50 hover:shadow-xs mn-panel cursor-pointer"
-          >
-            <Award className="w-4 h-4 mx-auto text-[#142B5F] dark:text-[#E5B54F] mb-0 group-hover:scale-110 transition-transform" />
-            <div className="text-[15px] sm:text-base leading-5 font-bold text-[var(--mn-heading)]">{dashboard.statistics.certificates}</div>
-            <div className="text-[10px] sm:text-[11px] font-bold leading-4 text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">شهادات صادرة</div>
-          </button>
-        </div>
-      )}
+    <div className="mt-0 space-y-4 font-['Cairo',sans-serif]">
+      {/* Unified Header Box + Connected 4-Stat Bar attached directly to the 8-tab bar above */}
+      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
+        <section
+          aria-label="ملخصي ونظرة عامة"
+          className="relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
+        >
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
+          />
+          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
+                  <LayoutGrid className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
+                </span>
+                <h2 className="mn-student-summary-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
+                  ملخصي ونظرة عامة
+                </h2>
+              </div>
+              <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+                {activeMilestones.length} تقديم نشط · {dashboard.statistics.activeCourses} دورة
+              </span>
+            </div>
+            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-semibold leading-[1.8] text-[#334155] dark:text-[#E2E8F0] font-['Cairo',sans-serif]">
+              نظرة شاملة على آخر مستجدات ملفات تقديمك للمنح الدراسية، تقدمك في الدورات التدريبية، والتنبيهات العاجلة في حسابك.
+            </p>
+          </div>
+        </section>
 
+        {!isNewStudent && (
+          <div className="-mt-px grid grid-cols-2 sm:grid-cols-4 divide-x divide-x-reverse divide-y sm:divide-y-0 divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setTab('OPPORTUNITIES')}
+              className="group flex min-w-0 items-center justify-start gap-2 pr-3 pl-2.5 py-2.5 text-right transition-colors hover:bg-[var(--mn-surface)] cursor-pointer font-['Cairo',sans-serif]"
+            >
+              <Route className="w-4 h-4 shrink-0 text-[#0E7C86] group-hover:scale-110 transition-transform" />
+              <div className="min-w-0 flex items-baseline gap-1.5 truncate">
+                <span className="text-[13px] sm:text-[13.5px] leading-none font-bold tabular-nums text-[#1E293B] dark:text-[#F8FAFC]">
+                  {activeMilestones.length}
+                </span>
+                <span className="text-[11px] sm:text-[11.5px] font-bold leading-tight text-[#334155] dark:text-[#CBD5E1] truncate">
+                  تقديمات نشطة
+                </span>
+              </div>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab('LEARNING')}
+              className="group flex min-w-0 items-center justify-start gap-2 pr-3 pl-2.5 py-2.5 text-right transition-colors hover:bg-[var(--mn-surface)] cursor-pointer font-['Cairo',sans-serif]"
+            >
+              <BookOpen className="w-4 h-4 shrink-0 text-[#0E7C86] group-hover:scale-110 transition-transform" />
+              <div className="min-w-0 flex items-baseline gap-1.5 truncate">
+                <span className="text-[13px] sm:text-[13.5px] leading-none font-bold tabular-nums text-[#1E293B] dark:text-[#F8FAFC]">
+                  {dashboard.statistics.activeCourses}
+                </span>
+                <span className="text-[11px] sm:text-[11.5px] font-bold leading-tight text-[#334155] dark:text-[#CBD5E1] truncate">
+                  دورات جارية
+                </span>
+              </div>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab('VAULT')}
+              className="group flex min-w-0 items-center justify-start gap-2 pr-3 pl-2.5 py-2.5 text-right transition-colors hover:bg-[var(--mn-surface)] cursor-pointer font-['Cairo',sans-serif]"
+            >
+              <Heart className="w-4 h-4 shrink-0 text-[#0E7C86] group-hover:scale-110 transition-transform" />
+              <div className="min-w-0 flex items-baseline gap-1.5 truncate">
+                <span className="text-[13px] sm:text-[13.5px] leading-none font-bold tabular-nums text-[#1E293B] dark:text-[#F8FAFC]">
+                  {dashboard.statistics.savedItems}
+                </span>
+                <span className="text-[11px] sm:text-[11.5px] font-bold leading-tight text-[#334155] dark:text-[#CBD5E1] truncate">
+                  عناصر محفوظة
+                </span>
+              </div>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab('LEARNING')}
+              className="group flex min-w-0 items-center justify-start gap-2 pr-3 pl-2.5 py-2.5 text-right transition-colors hover:bg-[var(--mn-surface)] cursor-pointer font-['Cairo',sans-serif]"
+            >
+              <Award className="w-4 h-4 shrink-0 text-[#0E7C86] group-hover:scale-110 transition-transform" />
+              <div className="min-w-0 flex items-baseline gap-1.5 truncate">
+                <span className="text-[13px] sm:text-[13.5px] leading-none font-bold tabular-nums text-[#1E293B] dark:text-[#F8FAFC]">
+                  {dashboard.statistics.certificates}
+                </span>
+                <span className="text-[11px] sm:text-[11.5px] font-bold leading-tight text-[#334155] dark:text-[#CBD5E1] truncate">
+                  شهادات صادرة
+                </span>
+              </div>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Critical deadline or overdue invoice */}
+      {urgentAlerts.hasCritical && attentionPanel}
       {!urgentAlerts.hasCritical && attentionPanel}
 
-      {/* 3. New Student Welcome / Starting State (Clean consolidated starter card) */}
+      {/* 3. New Student Welcome / Starting State */}
       {isNewStudent && (
-        <div className="rounded-2xl border border-[#D6A43B]/40 bg-gradient-to-br from-[#142B5F]/10 via-[#D6A43B]/5 to-transparent p-4 sm:p-5 text-right mn-panel">
-          <div className="flex items-start gap-3 sm:gap-3.5">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/40 flex items-center justify-center text-[#E5B54F] shrink-0 shadow-xs">
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[#E5B54F]" />
+        <section className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 text-right mn-panel shadow-2xs">
+          <div className="flex items-start gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-[#142B5F] border border-[#D6A43B]/40 flex items-center justify-center shrink-0">
+              <Sparkles className="w-3.5 h-3.5 text-[#F2CD78]" />
             </div>
             <div className="min-w-0 flex-1">
-              <h2 className="mn-student-summary-heading text-[14px] font-bold font-['Cairo',sans-serif] text-[var(--mn-heading)]">مرحبًا بك في مساحتك في منارتك</h2>
-              <p className="text-[11px] sm:text-xs text-[var(--mn-text-muted)] mt-1 leading-relaxed">
+              <h3 className="text-[12.5px] sm:text-[13px] font-bold font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
+                مرحبًا بك في مساحتك في منارتك
+              </h3>
+              <p className="text-[11px] sm:text-[11.5px] text-[#475569] dark:text-[#CBD5E1] mt-1.5 leading-[1.75]">
                 مساحتك جاهزة لتتبع طلبات المنح، التسجيل في الدورات، واستكشاف الجامعات والتخصصات وحفظ ما يهمك.
               </p>
-              <div className="mt-3.5 flex flex-wrap items-center gap-2">
+              <div className="mt-3.5 grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2">
                 <Link
                   to="/scholarships"
-                  className="rounded-xl bg-[var(--mn-primary)] px-3 py-1.5 text-xs font-bold text-white hover:bg-[var(--mn-primary-hover)] transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+                  className="rounded-xl bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 px-3 py-2 text-[12px] font-bold text-white transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
                 >
-                  <Route className="w-3.5 h-3.5 text-[#E5B54F]" />
+                  <Route className="w-3.5 h-3.5 text-[#F2CD78]" />
                   <span>المنح الدراسية</span>
                 </Link>
                 <Link
                   to="/courses"
-                  className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3 py-1.5 text-xs font-bold text-[var(--mn-heading)] hover:border-[#D6A43B] transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+                  className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
                 >
-                  <BookOpen className="w-3.5 h-3.5 text-[var(--mn-primary)] dark:text-[#E5B54F]" />
+                  <BookOpen className="w-3.5 h-3.5 text-[#0E7C86]" />
                   <span>الدورات التدريبية</span>
                 </Link>
                 <Link
                   to="/universities"
-                  className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3 py-1.5 text-xs font-bold text-[var(--mn-heading)] hover:border-[#D6A43B] transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+                  className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
                 >
-                  <Compass className="w-3.5 h-3.5 text-[var(--mn-primary)] dark:text-[#E5B54F]" />
+                  <Compass className="w-3.5 h-3.5 text-[#0E7C86]" />
                   <span>دليل الجامعات</span>
                 </Link>
                 <Link
                   to="/majors"
-                  className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3 py-1.5 text-xs font-bold text-[var(--mn-heading)] hover:border-[#D6A43B] transition-colors inline-flex items-center gap-1.5 shadow-2xs"
+                  className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
                 >
-                  <GraduationCap className="w-3.5 h-3.5 text-[var(--mn-primary)] dark:text-[#E5B54F]" />
+                  <GraduationCap className="w-3.5 h-3.5 text-[#0E7C86]" />
                   <span>التخصصات</span>
                 </Link>
-                <button
-                  type="button"
-                  onClick={() => setTab('PROFILE')}
-                  className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--mn-text-muted)] hover:text-[var(--mn-heading)] transition-colors inline-flex items-center gap-1.5"
-                >
-                  <User className="w-3.5 h-3.5" />
-                  <span>إعداد الملف</span>
-                </button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 4. Continue learning: one recent unfinished course, optimized for mobile. */}
-      {activeCourse && (
-        <section aria-label="متابعة التعلم" className="relative -mx-[2px] w-[calc(100%+4px)] sm:mx-0 sm:w-full rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3.5 sm:p-4 shadow-2xs mn-panel">
-          <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
-                <BookOpen className="h-4 w-4 text-[#E5B54F]" />
-              </span>
-              <h2 className="mn-student-summary-heading text-[14px] font-bold font-['Cairo',sans-serif] text-[var(--mn-heading)]">متابعة التعلم</h2>
-            </div>
-            <button
-              type="button"
-              onClick={() => setTab('LEARNING')}
-              className="mn-student-summary-header-link inline-flex shrink-0 items-center gap-1 text-[11px] font-bold leading-[18px] text-[#142B5F] dark:text-[#E5B54F] hover:underline cursor-pointer font-['Cairo',sans-serif]"
-            >
-              <span>جميع الدورات</span>
-              <ChevronLeft className="h-3.5 w-3.5" />
-            </button>
-          </div>
-
-          <div className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3">
-            <div className="flex min-w-0 items-start justify-between gap-2">
-              <div className="min-w-0 flex-1">
-                <span className="text-[10px] sm:text-[11px] font-medium text-[var(--mn-text-muted)]">آخر دورة تتابعها</span>
-                <h3 className="mt-0.5 text-xs sm:text-sm font-bold leading-5 text-[var(--mn-heading)] break-words">{activeCourse.courseName}</h3>
-              </div>
-              <span className="shrink-0 text-sm font-bold tabular-nums text-[#0E7C86] dark:text-[#72DED1]" dir="ltr">
-                {Math.min(100, Math.max(0, activeCourse.progressPercentage))}%
-              </span>
-            </div>
-
-            <progress
-              className="mn-native-progress mn-native-progress-secondary mt-2.5 h-1.5 w-full"
-              value={Math.min(100, Math.max(0, activeCourse.progressPercentage))}
-              max={100}
-              aria-label={`نسبة إنجاز الدورة: ${activeCourse.progressPercentage}%`}
-            />
-
-            <div className="mt-2.5 flex justify-end">
-              <Link
-                to={`../student/courses/${encodeURIComponent(activeCourse.courseId)}`}
-                className="mn-student-summary-primary-action inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#142B5F] px-3 py-1.5 text-[11px] font-medium text-white dark:bg-[#D6A43B] dark:text-[#142B5F] hover:bg-[#203D74] dark:hover:bg-[#E5B54F] transition-colors font-['Cairo',sans-serif]"
-              >
-                <span>متابعة التعلم</span>
-                <ArrowLeft className="h-3.5 w-3.5" />
-              </Link>
             </div>
           </div>
         </section>
       )}
 
-      {/* 5. Active application trackers: last two updates, with complete details in Opportunities. */}
-      {activeMilestones.length > 0 && (
-        <section aria-label="ملفات التقديم النشطة" className="relative -mx-[2px] w-[calc(100%+4px)] sm:mx-0 sm:w-full rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3.5 sm:p-4 shadow-2xs mn-panel font-['Cairo',sans-serif]">
-          <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
+      {/* 4. Continue learning: one recent unfinished course, stretched edge-to-edge */}
+      {activeCourse && (
+        <section
+          aria-label="متابعة التعلم"
+          className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3 sm:py-3.5 shadow-2xs mn-panel"
+        >
+          <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3 sm:px-4">
             <div className="flex min-w-0 items-center gap-2">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
-                <Route className="h-4 w-4 text-[#E5B54F]" />
+              <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
+                <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
+                <BookOpen className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" />
               </span>
-              <h2 className="mn-student-summary-heading text-[14px] font-bold font-['Cairo',sans-serif] text-[var(--mn-heading)]">ملفات التقديم النشطة</h2>
+              <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
+                متابعة التعلم
+              </h3>
             </div>
-            <button type="button" onClick={() => setTab('OPPORTUNITIES')}
-              className="mn-student-summary-header-link inline-flex shrink-0 items-center gap-1 text-[11px] font-bold leading-[18px] text-[#142B5F] dark:text-[#E5B54F] hover:underline cursor-pointer font-['Cairo',sans-serif]"
+            <button
+              type="button"
+              onClick={() => setTab('LEARNING')}
+              className="mn-student-summary-header-link inline-flex shrink-0 items-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 py-0.5 text-[10px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] cursor-pointer font-['Cairo',sans-serif]"
             >
-              <span>عرض الكل</span>
-              <ChevronLeft className="h-3.5 w-3.5" />
+              <span>جميع الدورات</span>
+              <ChevronLeft className="h-3 w-3 text-[#0E7C86]" />
             </button>
           </div>
 
-          <div className="space-y-3.5">
+          <div className="px-2.5 sm:px-4">
+            {/* Stretched Course Card with Authentic Manaratak Geometric Corner Line */}
+            <div className="relative overflow-hidden rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-3 py-2.5 shadow-2xs">
+              {/* Geometric Corner Line from top-right down the right edge to middle-bottom */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute top-0 right-0 w-4 sm:w-5 h-[68%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]"
+              />
+
+              <div className="flex min-w-0 items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <span className="inline-flex items-center gap-1 text-[9.5px] sm:text-[10px] font-semibold text-[#475569] dark:text-[#94A3B8]">
+                    <Clock3 className="h-3 w-3 text-[#0E7C86]" />
+                    <span>آخر دورة تتابعها</span>
+                  </span>
+                  <div className="mt-1 flex items-center gap-2 min-w-0">
+                    {/* Official Oxford Sub-Item Icon (MIX-10: Horizon Petrol bg + Royal Navy border & ring + white icon) */}
+                    <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                      <BookOpen className="h-3.5 w-3.5 text-white" />
+                    </span>
+                    <h4 className="min-w-0 text-[11px] sm:text-[11.5px] font-bold leading-snug text-[#0E7C86] dark:text-[#55CBC5] break-words font-['Cairo',sans-serif]">
+                      {activeCourse.courseName}
+                    </h4>
+                  </div>
+                </div>
+                <span className="shrink-0 rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10px] font-bold tabular-nums text-[#0E7C86] dark:text-[#55CBC5]" dir="ltr">
+                  {Math.min(100, Math.max(0, activeCourse.progressPercentage))}%
+                </span>
+              </div>
+
+              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200/80 dark:bg-slate-800" dir="rtl">
+                <div
+                  className="h-full rounded-full bg-gradient-to-l from-[#142B5F] via-[#163D76] to-[#0E7C86] transition-all duration-300"
+                  style={{ width: `${Math.min(100, Math.max(0, activeCourse.progressPercentage))}%` }}
+                />
+              </div>
+
+              <div className="mt-2 flex items-center justify-between gap-2 border-t border-[var(--mn-border)] dark:border-white/10 pt-2">
+                <span className="text-[10px] sm:text-[10.5px] font-bold text-[#334155] dark:text-[#E2E8F0]">
+                  {activeCourse.lastAccessedAt ? `آخر وصول: ${formatDate(activeCourse.lastAccessedAt)}` : `تاريخ التسجيل: ${formatDate(activeCourse.enrolledAt)}`}
+                </span>
+                <Link
+                  to={`../student/courses/${encodeURIComponent(activeCourse.courseId)}`}
+                  className="mn-student-summary-primary-action inline-flex items-center justify-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 px-2.5 py-1 text-[10px] font-bold text-white transition-colors font-['Cairo',sans-serif]"
+                >
+                  <span>متابعة التعلم</span>
+                  <ArrowLeft className="h-3 w-3 text-[#F2CD78]" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 5. Active application trackers: stretched edge-to-edge */}
+      {activeMilestones.length > 0 && (
+        <section
+          aria-label="ملفات التقديم النشطة"
+          className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3 sm:py-3.5 shadow-2xs mn-panel font-['Cairo',sans-serif]"
+        >
+          <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3 sm:px-4">
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
+                <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
+                <Route className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" />
+              </span>
+              <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
+                ملفات التقديم النشطة
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => setTab('OPPORTUNITIES')}
+              className="mn-student-summary-header-link inline-flex shrink-0 items-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 py-0.5 text-[10px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] cursor-pointer font-['Cairo',sans-serif]"
+            >
+              <span>عرض الكل</span>
+              <ChevronLeft className="h-3 w-3 text-[#0E7C86]" />
+            </button>
+          </div>
+
+          <div className="space-y-2.5 px-2.5 sm:px-4">
             {[...activeMilestones]
               .sort((first, second) => (Date.parse(second.updatedAt) || 0) - (Date.parse(first.updatedAt) || 0))
               .slice(0, 2)
@@ -1182,31 +1300,57 @@ function SummaryView({
                 const completed = item.checklist.filter((task) => task.completed).length;
                 const progress = item.checklist.length ? Math.round((completed / item.checklist.length) * 100) : 0;
                 return (
-                  <div key={item.id} className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2.5">
-                    <div className="flex min-w-0 items-start justify-between gap-2">
-                      <h3 className="min-w-0 flex-1 text-xs sm:text-sm font-bold leading-5 text-[var(--mn-heading)] break-words">
-                        {trackerDisplayName(item)}
-                      </h3>
-                      <span className="shrink-0 text-[11px] font-bold tabular-nums text-[#0E7C86] dark:text-[#72DED1]" dir="ltr" title="نسبة إنجاز مهام الملف">
+                  <div
+                    key={item.id}
+                    className="relative overflow-hidden rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-3 py-2.5 shadow-2xs"
+                  >
+                    {/* Authentic Manaratak Geometric Corner Line from top-right down the right edge to middle-bottom */}
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute top-0 right-0 w-4 sm:w-5 h-[68%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]"
+                    />
+
+                    <div className="flex min-w-0 items-center justify-between gap-2">
+                      <div className="flex min-w-0 flex-1 items-center gap-2">
+                        {/* Official Oxford Sub-Item Icon (MIX-10: Horizon Petrol bg + Royal Navy border & ring + white icon) */}
+                        <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                          <GraduationCap className="h-3.5 w-3.5 text-white" />
+                        </span>
+                        <h4 className="min-w-0 flex-1 text-[11px] sm:text-[11.5px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words font-['Cairo',sans-serif]">
+                          {trackerDisplayName(item)}
+                        </h4>
+                      </div>
+                      <span className="shrink-0 rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10px] font-bold tabular-nums text-[#0E7C86] dark:text-[#55CBC5]" dir="ltr">
                         {progress}%
                       </span>
                     </div>
-                    <p className="mn-student-summary-meta mt-0.5 truncate text-[10px] font-semibold leading-[18px] text-[#526A71] dark:text-[#C8D5DD] font-['Cairo',sans-serif]" title={item.stage}>
-                      {item.stage}
-                    </p>
-                    <div className="mt-1.5 flex min-w-0 items-center justify-between gap-2">
-                      {item.deadlineAt ? (
-                        <span className="mn-student-summary-meta inline-flex min-w-0 items-center gap-1 text-[10px] font-semibold leading-[18px] text-[#526A71] dark:text-[#C8D5DD] font-['Cairo',sans-serif]">
-                          <CalendarClock className="h-3 w-3 shrink-0" />
-                          <span className="mn-student-summary-meta truncate">{formatDate(item.deadlineAt)}</span>
+
+                    <div className="mt-2 grid grid-cols-2 gap-1.5">
+                      <div className="flex items-center justify-start gap-1.5 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] pr-2.5 pl-2 py-1.5">
+                        <Sparkles className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" />
+                        <span className="text-[9.5px] sm:text-[10px] font-bold text-[#1E293B] dark:text-[#F8FAFC] truncate leading-tight">
+                          {item.stage}
                         </span>
-                      ) : (
-                        <span className="mn-student-summary-meta text-[10px] font-semibold text-[#526A71] dark:text-[#C8D5DD] font-['Cairo',sans-serif]">لا يوجد موعد محدد</span>
-                      )}
-                      <button type="button" onClick={() => setTab('OPPORTUNITIES')}
-                        className="mn-student-summary-primary-action inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#142B5F] px-3 py-1.5 text-[11px] font-medium text-white dark:bg-[#D6A43B] dark:text-[#142B5F] hover:bg-[#203D74] dark:hover:bg-[#E5B54F] transition-colors font-['Cairo',sans-serif]">
-                        <span className="font-['Cairo',sans-serif]">متابعة الملف</span>
-                        <ArrowLeft className="h-3 w-3" />
+                      </div>
+                      <div className="flex items-center justify-start gap-1.5 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] pr-2.5 pl-2 py-1.5">
+                        <CalendarClock className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" />
+                        <span className="text-[9.5px] sm:text-[10px] font-bold text-[#1E293B] dark:text-[#F8FAFC] truncate leading-tight">
+                          {item.deadlineAt ? formatDate(item.deadlineAt) : 'مفتوح / متجدد'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-2 flex min-w-0 items-center justify-between gap-2 border-t border-[var(--mn-border)] dark:border-white/10 pt-2">
+                      <span className="text-[10px] font-semibold text-[#475569] dark:text-[#CBD5E1]">
+                        إنجاز المهام: {completed} من {item.checklist.length}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setTab('OPPORTUNITIES')}
+                        className="mn-student-summary-primary-action inline-flex items-center justify-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 px-2.5 py-1 text-[10px] font-bold text-white transition-colors font-['Cairo',sans-serif] cursor-pointer"
+                      >
+                        <span>متابعة الملف</span>
+                        <ArrowLeft className="h-3 w-3 text-[#F2CD78]" />
                       </button>
                     </div>
                   </div>
@@ -1216,29 +1360,35 @@ function SummaryView({
         </section>
       )}
 
-      {/* 6. Recent activities: compact timeline, expanded history only on demand. */}
+      {/* 6. Recent activities: stretched edge-to-edge */}
       {activityLog.length > 0 && (
-        <section aria-label="آخر الأنشطة والخطوات" className="relative -mx-[2px] w-[calc(100%+4px)] sm:mx-0 sm:w-full rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3.5 sm:p-4 shadow-2xs mn-panel font-['Cairo',sans-serif]">
-          <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
+        <section
+          aria-label="آخر الأنشطة والخطوات"
+          className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3 sm:py-3.5 shadow-2xs mn-panel font-['Cairo',sans-serif]"
+        >
+          <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3 sm:px-4">
             <div className="flex min-w-0 items-center gap-2">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
-                <HistoryIcon className="h-4 w-4 text-[#E5B54F]" />
+              <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
+                <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
+                <HistoryIcon className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" />
               </span>
-              <h2 className="mn-student-summary-heading text-[14px] font-bold font-['Cairo',sans-serif] text-[var(--mn-heading)]">آخر الأنشطة والخطوات</h2>
+              <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
+                آخر الأنشطة والخطوات
+              </h3>
             </div>
             <button
               type="button"
               onClick={() => setShowAllActivities((previous) => !previous)}
               aria-expanded={showAllActivities}
               aria-controls="student-summary-activity-timeline"
-              className="inline-flex min-h-8 shrink-0 items-center gap-1 rounded-lg border border-[#142B5F]/30 bg-[var(--mn-surface)] px-2 py-1 text-[11px] font-bold leading-5 text-[#142B5F] dark:border-[#D6A43B]/50 dark:bg-[#10264A] dark:text-[#E5B54F] hover:bg-[#F5F8FB] dark:hover:bg-[#1B365A] cursor-pointer font-['Cairo',sans-serif]"
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 py-0.5 text-[10px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] cursor-pointer font-['Cairo',sans-serif]"
             >
               <span>{showAllActivities ? 'إخفاء السجلات' : 'كل السجلات'}</span>
-              <ChevronLeft className={`h-3.5 w-3.5 transition-transform ${showAllActivities ? '-rotate-90' : ''}`} />
+              <ChevronLeft className={`h-3 w-3 text-[#0E7C86] transition-transform ${showAllActivities ? '-rotate-90' : ''}`} />
             </button>
           </div>
 
-          <ol id="student-summary-activity-timeline" className="mr-2.5 space-y-3 border-r-2 border-[#0E7C86]/35 pr-4 dark:border-[#5BC6C0]/45">
+          <ol id="student-summary-activity-timeline" className="mr-5 ml-3 sm:mr-6 sm:ml-4 space-y-2 border-r-2 border-[#0E7C86]/35 pr-4 dark:border-[#5BC6C0]/45">
             {(showAllActivities
               ? activityLog
               : (dashboard.timeline.length > 0
@@ -1246,9 +1396,9 @@ function SummaryView({
                 : activityLog.slice(0, 3)))
               .map((item) => (
                 <li key={item.id} className="relative min-w-0">
-                  <span aria-hidden="true" className="absolute -right-[22px] top-1 h-2.5 w-2.5 rounded-full border-2 border-[var(--mn-surface)] bg-[#0E7C86] dark:bg-[#5BC6C0]" />
-                  <h3 className="text-xs sm:text-sm font-medium leading-5 text-[var(--mn-heading)] break-words">{item.title}</h3>
-                  <time className="mt-0.5 block text-[10px] leading-4 text-[var(--mn-text-muted)]">
+                  <span aria-hidden="true" className="absolute -right-[22px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--mn-surface)] bg-[#0E7C86] dark:bg-[#5BC6C0]" />
+                  <h4 className="text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words">{item.title}</h4>
+                  <time className="mt-0.5 block text-[9.5px] sm:text-[10px] font-bold leading-4 text-[var(--mn-text-muted)]">
                     {formatDate(item.occurredAt)}
                   </time>
                 </li>
@@ -1258,7 +1408,6 @@ function SummaryView({
       )}
 
       {/* 7. Invoices (If any exist) */}
-
       {invoices.length > 0 && (
         <div className="mn-student-summary-invoices">
           <InvoicePanel
@@ -1328,167 +1477,164 @@ function OpportunitiesView({
 
   return (
     <div className="mn-student-opportunities-page mt-0 space-y-4 font-['Cairo',sans-serif]">
-      {/* Compact inline section header + filter bar directly below the 8-button navigation */}
-      <section
-        aria-label="فرصي وملفات التقديم"
-        className="relative overflow-hidden rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] shadow-2xs mn-panel dark:border-white/10"
-      >
-        {/* Signature gold accent on right edge */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-        />
+      {/* Header box attached directly to the 8-tab bar above and stretched edge-to-edge right & left */}
+      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
+        <section
+          aria-label="فرصي وملفات التقديم"
+          className="relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
+        >
+          {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
+          />
 
-        <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 pr-4 sm:px-4 sm:py-3">
-          <div className="flex min-w-0 items-center gap-2">
-            <span className="grid h-7 w-7 sm:h-8 sm:w-8 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/35 bg-[#142B5F]">
-              <Route className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#F2CD78]" aria-hidden="true" />
-            </span>
-            <h2 className="mn-student-opportunities-heading text-[13.5px] sm:text-[14px] font-bold leading-tight text-[var(--mn-heading)]">
-              فرصي وملفات التقديم
-            </h2>
+          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
+                  <Route className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
+                </span>
+                <h2 className="mn-student-opportunities-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
+                  فرصي وملفات التقديم
+                </h2>
+              </div>
+              <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0] font-['Cairo',sans-serif]">
+                {trackers.length} ملف تقديم
+              </span>
+            </div>
+
+            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+              تابع ملفات تقديمك على المنح الدراسية والقبولات الجامعية، ونظّم متطلباتك ومواعيدك النهائية خطوة بخطوة حتى القبول.
+            </p>
           </div>
-          <span className="inline-flex shrink-0 items-center rounded-lg border border-[#142B5F]/20 bg-[#142B5F]/5 px-2.5 py-1 text-[11px] font-bold text-[#142B5F] dark:border-[#D6A43B]/30 dark:bg-[#142B5F]/40 dark:text-[#F2CD78]">
-            {trackers.length} ملف تقديم
-          </span>
-        </div>
+        </section>
 
-        {/* Three filter buttons attached to the bottom of the compact header card */}
-        {hasTrackers && (
-          <nav
-            aria-label="تصفية ملفات التقديم"
-            className="grid grid-cols-3 divide-x divide-x-reverse divide-[var(--mn-border)] border-t border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:divide-white/10 dark:border-white/10 overflow-hidden rounded-b-2xl"
-          >
-            {([
-              { value: 'ACTIVE' as const, label: 'النشطة حاليًا', count: activeTrackers.length, icon: CheckCircle2 },
-              { value: 'ARCHIVED' as const, label: 'المؤرشفة', count: archivedTrackers.length, icon: Archive },
-              { value: 'ALL' as const, label: 'الكل', count: trackers.length, icon: ListChecks },
-            ]).map(({ value, label, count, icon: Icon }) => {
-              const active = filter === value;
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  aria-pressed={active}
-                  onClick={() => setFilter(value)}
-                  className={`flex min-h-10 items-center justify-center gap-1.5 px-2 py-1.5 text-center font-['Cairo',sans-serif] font-bold transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#E5B54F] ${
-                    active
-                      ? 'bg-[#142B5F] text-[#F2CD78] shadow-inner font-bold'
-                      : 'bg-transparent text-[var(--mn-heading)] hover:bg-[var(--mn-surface)] hover:text-[#0E7C86] dark:hover:bg-white/5'
-                  }`}
-                >
-                  <Icon className={`h-3.5 w-3.5 shrink-0 ${active ? 'text-[#F2CD78]' : 'text-[var(--mn-text-muted)]'}`} aria-hidden="true" />
-                  <span className="text-[11.5px] sm:text-[12px] leading-[1.4]">{label} ({count})</span>
-                </button>
-              );
-            })}
-          </nav>
-        )}
-      </section>
+        {/* Filter bar outside the header box, attached from the top and stretched edge-to-edge */}
+        <nav
+          aria-label="تصفية ملفات التقديم"
+          className="-mt-px grid grid-cols-3 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs font-['Cairo',sans-serif]"
+        >
+          {([
+            { value: 'ACTIVE' as const, label: 'النشطة حاليًا', count: activeTrackers.length, icon: CheckCircle2 },
+            { value: 'ARCHIVED' as const, label: 'المؤرشفة', count: archivedTrackers.length, icon: Archive },
+            { value: 'ALL' as const, label: 'الكل', count: trackers.length, icon: ListChecks },
+          ]).map(({ value, label, count, icon: Icon }) => {
+            const active = filter === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setFilter(value)}
+                className={`flex min-h-12 items-center justify-center gap-1.5 px-2 py-2 text-center font-['Cairo',sans-serif] transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#142B5F] ${
+                  active
+                    ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner font-bold'
+                    : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] font-semibold hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
+                }`}
+              >
+                <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 ${active ? 'text-[#F2CD78]' : 'text-[#142B5F] dark:text-[#E5B54F]'}`} aria-hidden="true" />
+                <span className="whitespace-normal break-words text-[11px] sm:text-[12px] leading-[1.35]">{label} ({count})</span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
 
       {/* 3. Main Trackers or Single Clean Starter State */}
       {!hasTrackers ? (
-        <div className="rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-6 sm:p-8 text-center mn-panel shadow-2xs">
-          <div className="w-12 h-12 rounded-2xl bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/40 flex items-center justify-center text-[#E5B54F] mx-auto mb-3.5 shadow-xs">
-            <Route className="w-6 h-6 text-[#E5B54F]" />
+        <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 sm:p-7 text-center mn-panel shadow-2xs overflow-hidden">
+          <div className="w-10 h-10 rounded-xl bg-[#142B5F] border border-[#D6A43B]/45 flex items-center justify-center text-[#F2CD78] mx-auto mb-3 shadow-xs">
+            <Route className="w-5 h-5 text-[#F2CD78]" />
           </div>
-          <h3 className="text-sm sm:text-base font-bold text-[var(--mn-heading)]">ابدأ متابعة تقديماتك خطوة بخطوة</h3>
-          <p className="text-xs text-[var(--mn-text-muted)] mt-2 leading-relaxed max-w-lg mx-auto">
-            <strong>ما الفرق؟</strong> حفظ المنحة في <span className="font-semibold text-[var(--mn-heading)]">«محفوظاتي»</span> يتيح لك الرجوع إليها في أي وقت، بينما فتح <span className="font-semibold text-[var(--mn-heading)]">«ملف تقديم»</span> هنا يمكّنك من إدارة المواعيد النهائية، إنجاز المتطلبات وقوائم المهام خطوة بخطوة حتى القبول.
+          <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">ابدأ متابعة تقديماتك خطوة بخطوة</h3>
+          <p className="text-[11px] sm:text-[11.5px] text-[#475569] dark:text-[#CBD5E1] mt-1.5 leading-[1.8] max-w-lg mx-auto">
+            <strong>ما الفرق؟</strong> حفظ المنحة في <span className="font-bold text-[#1E293B] dark:text-[#F8FAFC]">«محفوظاتي»</span> يتيح لك الرجوع إليها في أي وقت، بينما فتح <span className="font-bold text-[#1E293B] dark:text-[#F8FAFC]">«ملف تقديم»</span> هنا يمكّنك من إدارة المواعيد النهائية، إنجاز المتطلبات وقوائم المهام خطوة بخطوة حتى القبول.
           </p>
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/scholarships"
-              className="px-4 py-2 rounded-xl bg-[var(--mn-primary)] text-white text-xs font-bold hover:bg-[var(--mn-primary-hover)] transition-all shadow-2xs inline-flex items-center gap-2"
+              className="px-3.5 py-2 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 text-white text-[11.5px] font-bold transition-all shadow-2xs inline-flex items-center gap-2"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#E5B54F]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#F2CD78]" />
               <span>استكشف دليل المنح الدراسية</span>
             </Link>
           </div>
         </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[1.45fr_1fr] min-w-0 max-w-full">
-          <div className="space-y-4 min-w-0 max-w-full">
-            <ApplicationTrackersPanel
-              trackers={displayedTrackers}
-              filter={filter}
-              saving={saving}
-              onStageChange={onStageChange}
-              onChecklistToggle={onChecklistToggle}
-              onNotesUpdate={onNotesUpdate}
-              onArchive={onArchive}
-              onRemove={onRemove}
-              onDocumentsChanged={onDocumentsChanged}
-            />
-          </div>
+        <div className="space-y-4 min-w-0 max-w-full">
+          <ApplicationTrackersPanel
+            trackers={displayedTrackers}
+            filter={filter}
+            saving={saving}
+            onStageChange={onStageChange}
+            onChecklistToggle={onChecklistToggle}
+            onNotesUpdate={onNotesUpdate}
+            onArchive={onArchive}
+            onRemove={onRemove}
+            onDocumentsChanged={onDocumentsChanged}
+          />
 
-          <div className="space-y-6">
-            {/* Upcoming Deadlines Panel */}
-            {upcomingDeadlines.length > 0 && (
-              <OpportunitiesSectionCard
-                title="المواعيد النهائية القريبة"
-                icon={<CalendarClock className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />}
-                description="مواعيد إغلاق تقديمات المنح المتابعة"
-              >
-
-                <div className="space-y-3">
-                  {upcomingDeadlines.slice(0, 4).map((tracker) => {
-                    const deadlineStr = tracker.deadlineAt || tracker.owner?.deadlineAt;
-                    const title = trackerDisplayName(tracker);
-                    return (
-                      <div
-                        key={tracker.id}
-                        className="p-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] flex items-center justify-between gap-3 text-xs"
-                      >
-                        <div className="min-w-0">
-                          <div className="text-[12px] sm:text-[13px] font-bold leading-5 text-[var(--mn-heading)] break-words">{title}</div>
-                          <div className="text-[11px] text-[var(--mn-text-muted)] mt-0.5">{tracker.stage}</div>
-                        </div>
-                        <div className="shrink-0 text-right">
-                          <div className="inline-flex items-center gap-1 font-semibold text-[var(--mn-text-muted)] text-[11px] font-['Cairo',sans-serif]">
-                            <span>{formatDate(deadlineStr)}</span>
-                          </div>
-                        </div>
+          {/* Upcoming Deadlines Panel */}
+          {upcomingDeadlines.length > 0 && (
+            <OpportunitiesSectionCard
+              title="المواعيد النهائية القريبة"
+              icon={<CalendarClock className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}
+              description="مواعيد إغلاق تقديمات المنح المتابعة في حسابك"
+            >
+              <div className="grid gap-2 sm:grid-cols-2">
+                {upcomingDeadlines.slice(0, 4).map((tracker) => {
+                  const deadlineStr = tracker.deadlineAt || tracker.owner?.deadlineAt;
+                  const title = trackerDisplayName(tracker);
+                  return (
+                    <div
+                      key={tracker.id}
+                      className="p-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] flex items-center justify-between gap-2.5"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[11.5px] sm:text-[12px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words">{title}</div>
+                        <div className="text-[10.5px] font-medium text-[#64748B] dark:text-[#94A3B8] mt-0.5">{tracker.stage}</div>
                       </div>
-                    );
-                  })}
-                </div>
-              </OpportunitiesSectionCard>
-            )}
-
-            {/* Application Progress Summary */}
-            <OpportunitiesSectionCard title="حصيلة التقديم" icon={<ClipboardList className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />}>
-              <div className="space-y-4">
-                <ProgressRow label="إنجاز مهام التقديم النشطة" value={activeTaskProgress} />
-                <ProgressRow
-                  label="نسبة الملفات المؤرشفة"
-                  value={trackers.length ? Math.round((archivedTrackers.length / trackers.length) * 100) : 0}
-                />
-              </div>
-              <div className="mt-4 flex items-start gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2.5 text-[11px] leading-[1.85] text-[var(--mn-text-muted)]">
-                <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#0E7C86] dark:text-[#6AD2D1]" aria-hidden="true" />
-                <p><strong className="font-bold text-[var(--mn-heading)]">تنبيه دقة البيانات:</strong> حفظ المنحة في «محفوظاتي» يتيح الرجوع إليها لاحقًا، بينما فتح «ملف تقديم» هنا يمكّنك من متابعة المهام ومراحل التقديم خطوة بخطوة.</p>
+                      <div className="shrink-0 inline-flex items-center gap-1 rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-1 text-[10.5px] font-bold text-[#0E7C86] dark:text-[#55CBC5]">
+                        <CalendarClock className="h-3.5 w-3.5 shrink-0" />
+                        <span>{formatDate(deadlineStr)}</span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </OpportunitiesSectionCard>
+          )}
 
-            {/* Timeline of activity */}
-            {dashboard.timeline.length > 0 && (
-              <OpportunitiesSectionCard title="سجل الأنشطة والمواعيد" icon={<HistoryIcon className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />}>
-                <div className="mn-student-opportunities-activity">
-                  <ActivityList items={dashboard.timeline} />
-                </div>
-              </OpportunitiesSectionCard>
-            )}
-          </div>
+          {/* Application Progress Summary */}
+          <OpportunitiesSectionCard title="حصيلة التقديم" icon={<ClipboardList className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}>
+            <div className="grid gap-3.5 sm:grid-cols-2">
+              <ProgressRow label="إنجاز مهام التقديم النشطة" value={activeTaskProgress} />
+              <ProgressRow
+                label="نسبة الملفات المؤرشفة"
+                value={trackers.length ? Math.round((archivedTrackers.length / trackers.length) * 100) : 0}
+              />
+            </div>
+            <div className="mt-3 flex items-start gap-2 rounded-xl border border-[#0E7C86]/25 bg-[#0E7C86]/[0.07] dark:bg-[#0E7C86]/15 px-3 py-2 text-[11px] leading-[1.7] text-[#1E293B] dark:text-[#F1F5F9]">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#55CBC5]" aria-hidden="true" />
+              <p><strong className="font-bold">تنبيه دقة البيانات:</strong> حفظ المنحة في «محفوظاتي» يتيح الرجوع إليها لاحقًا، بينما فتح «ملف تقديم» هنا يمكّنك من متابعة المهام ومراحل التقديم خطوة بخطوة.</p>
+            </div>
+          </OpportunitiesSectionCard>
+
+          {/* Timeline of activity */}
+          {dashboard.timeline.length > 0 && (
+            <OpportunitiesSectionCard title="سجل الأنشطة والمواعيد" icon={<HistoryIcon className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}>
+              <div className="mn-student-opportunities-activity">
+                <ActivityList items={dashboard.timeline} />
+              </div>
+            </OpportunitiesSectionCard>
+          )}
         </div>
       )}
     </div>
   );
 }
 
-/** Matches the icon, Cairo 14px title, gold underline and spacing in ملخصي.
- * Kept separate from the generic Panel to avoid changing other student tabs.
- */
 function OpportunitiesSectionCard({
   title,
   icon,
@@ -1503,22 +1649,23 @@ function OpportunitiesSectionCard({
   return (
     <section
       aria-label={title}
-      className="mn-student-opportunities-section relative -mx-[2px] w-[calc(100%+4px)] sm:mx-0 sm:w-full rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3.5 sm:p-4 shadow-2xs mn-panel font-['Cairo',sans-serif]"
+      className="mn-student-opportunities-section relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3.5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif] overflow-hidden"
     >
-      <div className="mb-3">
+      <div className="mb-2.5 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3.5 sm:px-5">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
-            {icon}
+          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
+            <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
+            <span className="relative z-10">{icon}</span>
           </span>
-          <h3 className="mn-student-opportunities-heading min-w-0 text-[14px] font-bold leading-[1.22] text-[var(--mn-heading)]">
+          <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 min-w-0 text-[14px] sm:text-[15px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC]">
             {title}
           </h3>
         </div>
         {description && (
-          <p className="mt-1.5 text-[11px] leading-[1.7] text-[var(--mn-text-muted)]">{description}</p>
+          <p className="mt-1 text-[10.5px] font-medium leading-[1.65] text-[#64748B] dark:text-[#94A3B8]">{description}</p>
         )}
       </div>
-      {children}
+      <div className="px-3.5 sm:px-5">{children}</div>
     </section>
   );
 }
@@ -1557,23 +1704,25 @@ function ApplicationTrackersPanel({
   if (!trackers.length) {
     if (filter === 'ARCHIVED') {
       return (
-        <div className="rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-6 text-center mn-panel">
-          <Archive className="w-8 h-8 mx-auto text-[var(--mn-text-muted)] mb-2" />
-          <h3 className="font-bold text-sm text-[var(--mn-heading)]">لا توجد ملفات تقديم مؤرشفة</h3>
-          <p className="text-xs text-[var(--mn-text-muted)] mt-1 max-w-sm mx-auto">
+        <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 text-center mn-panel overflow-hidden">
+          <Archive className="w-7 h-7 mx-auto text-[#0E7C86] mb-1.5" />
+          <h3 className="font-bold text-[12.5px] sm:text-[13px] text-[#1E293B] dark:text-[#F8FAFC]">لا توجد ملفات تقديم مؤرشفة</h3>
+          <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] mt-1 max-w-sm mx-auto">
             عند إتمام تقديماتك أو أرشفتها ستظهر هنا للاحتفاظ بسجلك الأكاديمي.
           </p>
         </div>
       );
     }
     return (
-      <EmptyState
-        icon={<Route className="h-8 w-8 text-[#E5B54F]" />}
-        title="لا توجد ملفات تقديم نشطة بعد"
-        text="تصفح دليل المنح الدراسية واختر «متابعة التقديم» على المنحة التي ترغب بالتقديم عليها لتوليد ملف تتبع مخصص خطوة بخطوة."
-        href="/scholarships"
-        action="استكشف دليل المنح الآن"
-      />
+      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 text-center mn-panel overflow-hidden">
+        <EmptyState
+          icon={<Route className="h-7 w-7 text-[#E5B54F]" />}
+          title="لا توجد ملفات تقديم نشطة بعد"
+          text="تصفح دليل المنح الدراسية واختر «متابعة التقديم» على المنحة التي ترغب بالتقديم عليها لتوليد ملف تتبع مخصص خطوة بخطوة."
+          href="/scholarships"
+          action="استكشف دليل المنح الآن"
+        />
+      </div>
     );
   }
 
@@ -1623,9 +1772,10 @@ function ApplicationTrackerCard({
   const total = tracker.checklist.length;
   const progress = total ? Math.round((completed / total) * 100) : 0;
   const displayName = trackerDisplayName(tracker);
-  const slug = tracker.owner?.available===true ? tracker.owner.slug : null;
+  const slug = tracker.owner?.available === true ? tracker.owner.slug : null;
   const isArchived = tracker.status === 'ARCHIVED';
   const deadlineStr = tracker.deadlineAt || tracker.owner?.deadlineAt;
+  const nextTask = tracker.checklist.find((item) => !item.completed);
 
   function handleSaveNotes() {
     onNotesUpdate(tracker, notesDraft);
@@ -1633,122 +1783,148 @@ function ApplicationTrackerCard({
   }
 
   return (
-    <article className="relative overflow-hidden w-full max-w-full min-w-0 rounded-3xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3.5 sm:p-6 shadow-sm mn-panel font-['Cairo',sans-serif] transition-all hover:border-[#D6A43B]/60 hover:shadow-md">
-      {/* Signature Top Accent Line */}
-      <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-[#D6A43B] to-transparent" />
+    <article className="relative overflow-hidden -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif] transition-all">
+      <OwnerReferenceNotice reference={tracker.owner?.referenceState} />
 
-      <OwnerReferenceNotice reference={tracker.owner?.referenceState}/>
-      {/* Row 1: Emblem + Full Horizontal Scholarship Title */}
-      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 w-full">
-        {/* Rounded Emblem Icon */}
-        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#142B5F] to-[#0A1633] dark:from-[#0c1a3b] dark:to-[#071126] border border-[#D6A43B]/40 flex items-center justify-center text-[#D6A43B] shrink-0 shadow-xs">
-          <GraduationCap className="w-5 h-5 text-[#D6A43B]" />
+      {/* Row 1: Oxford Sub-Item Icon (MIX-10) + Subordinate Scholarship Title + Status Badge */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 -mx-3.5 sm:-mx-5 px-3.5 sm:px-5">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+            <GraduationCap className="w-3.5 h-3.5 text-white" />
+          </span>
+
+          <div className="min-w-0 flex-1">
+            <h3 className="text-[11.5px] sm:text-[12px] leading-[1.4] font-bold text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif] break-words">
+              {displayName}
+            </h3>
+          </div>
         </div>
 
-        <h3 className="text-[15px] sm:text-[16.5px] leading-snug font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif] min-w-0 flex-1 truncate">
-          {displayName}
-        </h3>
+        {isArchived ? (
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-500/10 text-slate-600 dark:text-slate-300 border border-slate-500/20 shrink-0">
+            مؤرشف تنظيمياً
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg bg-[#0E7C86]/10 text-[#0E7C86] dark:text-[#55CBC5] border border-[#0E7C86]/25 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0E7C86] dark:bg-[#55CBC5]" />
+            تقديم نشط
+          </span>
+        )}
       </div>
 
-      {/* Row 2: Deadline on the right, Readiness indicator on the left directly opposite it */}
-      <div className="mt-2.5 flex items-center justify-between gap-2.5 font-['Cairo',sans-serif]">
-        <div className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] font-medium text-[var(--mn-text-muted)] min-w-0">
-          <CalendarClock className="h-3.5 w-3.5 shrink-0 text-[#D6A43B]" aria-hidden="true" />
-          <span>موعد التقديم:</span>
-          <strong className="font-bold text-[var(--mn-heading)]">{formatDate(deadlineStr)}</strong>
+      {/* Row 2: 2x2 Info Boxes on Mobile (4 cols on desktop) with Horizon Petrol (#0E7C86) Icons on the Right */}
+      <div className="mt-2.5 grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+        <div className="flex items-center justify-start gap-2 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-2.5 pl-2 py-1.5">
+          <Compass className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
+          <div className="min-w-0">
+            <span className="block text-[9px] sm:text-[9.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+              الدولة / الوجهة
+            </span>
+            <span className="mt-0.5 block text-[10px] sm:text-[10.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] break-words leading-tight">
+              {tracker.owner?.country || 'منحة دولية'}
+            </span>
+          </div>
         </div>
 
-        {/* Readiness Dial brought down opposite the deadline */}
-        <div className="shrink-0 text-center">
-          <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 rounded-xl bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] border border-[#D6A43B]/30 shadow-2xs">
-            <span className="text-[13px] sm:text-[14px] font-black text-[#142B5F] dark:text-[#D6A43B] leading-none">
-              {progress}%
+        <div className="flex items-center justify-start gap-2 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-2.5 pl-2 py-1.5">
+          <CalendarClock className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
+          <div className="min-w-0">
+            <span className="block text-[9px] sm:text-[9.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+              موعد التقديم
             </span>
-            <span className="text-[9.5px] sm:text-[10px] font-bold text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-              الجاهزية
+            <span className="mt-0.5 block text-[10px] sm:text-[10.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] break-words leading-tight">
+              {deadlineStr ? formatDate(deadlineStr) : 'مفتوح / متجدد'}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-start gap-2 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-2.5 pl-2 py-1.5">
+          <Sparkles className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
+          <div className="min-w-0">
+            <span className="block text-[9px] sm:text-[9.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+              المرحلة الحالية
+            </span>
+            <span className="mt-0.5 block text-[10px] sm:text-[10.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] break-words leading-tight">
+              {tracker.stage}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-start gap-2 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-2.5 pl-2 py-1.5">
+          <ListChecks className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
+          <div className="min-w-0">
+            <span className="block text-[9px] sm:text-[9.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+              نسبة الجاهزية
+            </span>
+            <span className="mt-0.5 block text-[10px] sm:text-[10.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+              {progress}% ({completed}/{total})
             </span>
           </div>
         </div>
       </div>
 
-      {/* Row 3: Metadata Badges (بعد موعد التقديم وقبل المهام المنجزة) */}
-      <div className="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2 font-['Cairo',sans-serif]">
-        {isArchived ? (
-          <span className="text-[11px] sm:text-[11.5px] font-bold px-2.5 sm:px-3 py-1 rounded-xl bg-slate-500/10 text-slate-500 border border-slate-500/20 shrink-0">
-            مؤرشف تنظيمياً
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-[11.5px] font-bold px-2.5 sm:px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 shrink-0">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            تقديم نشط
-          </span>
-        )}
-
-        {tracker.owner?.country && (
-          <span className="text-[11px] sm:text-[11.5px] font-bold text-[var(--mn-text-muted)] bg-[var(--mn-page)] px-2.5 sm:px-3 py-1 rounded-xl border border-[var(--mn-border)] shrink-0">
-            {tracker.owner.country}
-          </span>
-        )}
-
-        <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-[11.5px] font-bold text-[#142B5F] dark:text-[#E5B54F] bg-[#142B5F]/8 dark:bg-[#E5B54F]/15 px-2.5 sm:px-3 py-1 rounded-xl border border-[#142B5F]/15 dark:border-[#D6A43B]/25 shrink-0">
-          <span className="text-[var(--mn-text-muted)] font-medium">المرحلة:</span>
-          <span>{tracker.stage}</span>
-        </span>
-      </div>
-
-      {/* Unified Progress Bar with KPI */}
-      <div className="mt-3.5 space-y-1.5">
-        <div className="flex items-center justify-between text-[11.5px] text-[var(--mn-text-muted)] px-0.5">
-          <span className="inline-flex items-center gap-1.5 font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
-            <ListChecks className="h-4 w-4 text-[#0E7C86] dark:text-[#D6A43B]" aria-hidden="true" />
+      {/* Row 3: Unified Progress Bar + Next Actionable Requirement */}
+      <div className="mt-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-2.5 space-y-1.5">
+        <div className="flex items-center justify-between gap-2 text-[11px]">
+          <span className="inline-flex items-center gap-1.5 font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+            <CheckCircle2 className="h-3.5 w-3.5 text-[#0E7C86]" aria-hidden="true" />
             <span>المهام المنجزة: {completed} من {total}</span>
           </span>
-          <span className="text-[10.5px] font-['Cairo',sans-serif]">آخر تحديث: {formatDate(tracker.updatedAt)}</span>
+          <span className="text-[10.5px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+            آخر تحديث: {formatDate(tracker.updatedAt)}
+          </span>
         </div>
-        <div className="w-full h-2 rounded-full bg-slate-200/80 dark:bg-slate-800 overflow-hidden">
+
+        <div className="w-full h-1.5 rounded-full bg-slate-200/80 dark:bg-slate-800 overflow-hidden" dir="rtl">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[#0E7C86] via-[#21A7B4] to-[#D6A43B] transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-l from-[#142B5F] via-[#163D76] to-[#0E7C86] transition-all duration-500"
             style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
           />
         </div>
+
+        {nextTask && (
+          <div className="pt-0.5 flex items-center justify-between gap-2 text-[11px] text-[#475569] dark:text-[#CBD5E1]">
+            <span className="min-w-0 flex-1 break-words">
+              <strong className="text-[#1E293B] dark:text-[#F8FAFC]">الخطوة القادمة:</strong> {nextTask.label}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Source Unavailability Notice */}
       {tracker.owner && !tracker.owner.available && (
-        <div className="mt-3.5 rounded-2xl bg-[var(--mn-warning-soft)] p-3 text-xs font-medium text-[var(--mn-warning-text)] flex items-center gap-2 border border-amber-500/20">
-          <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600" />
+        <div className="mt-2.5 rounded-xl bg-[var(--mn-warning-soft)] p-2.5 text-[11px] font-bold text-[var(--mn-warning-text)] flex items-center gap-2 border border-amber-500/20">
+          <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-600" />
           <span>غير معروضة حاليًا لدى المصدر؛ وسجلك محفوظ بحسابك.</span>
         </div>
       )}
 
-      {/* Documents and application cycle accordions */}
-      <div className="mt-4 w-full max-w-full min-w-0">
+      {/* Row 4: Documents and application cycle accordion */}
+      <div className="mt-3 w-full max-w-full min-w-0">
         <StudentApplicationDocuments tracker={tracker} onChanged={onDocumentsChanged} />
       </div>
 
-      {/* Bottom Bar: Clean Unified Action Buttons (نفس حجم المربع المتناسق h-11) */}
-      <div className="mt-4 pt-3.5 border-t border-[var(--mn-border)] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 font-['Cairo',sans-serif]">
-        {/* Main Details Button - 12px Cairo, h-11 متناسق تماماً */}
+      {/* Row 5: Clean Unified Action Buttons */}
+      <div className="mt-3 pt-2.5 border-t border-[var(--mn-border)] dark:border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 font-['Cairo',sans-serif]">
         <button
           type="button"
           aria-expanded={expanded}
           onClick={() => setExpanded((value) => !value)}
-          className="cairo-12 font-cairo w-full sm:flex-1 inline-flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] text-white text-[12px] font-bold shadow-xs transition-all cursor-pointer"
+          className="w-full sm:flex-1 inline-flex items-center justify-center gap-1.5 min-h-9 px-3.5 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 text-white text-[11px] sm:text-[11.5px] font-bold shadow-xs transition-all cursor-pointer"
         >
-          <span className="cairo-12 font-bold">{expanded ? 'إخفاء تفاصيل الملف' : 'عرض تفاصيل الملف'}</span>
-          {expanded ? <ChevronUp className="h-4 w-4 text-[#D6A43B]" aria-hidden="true" /> : <ChevronDown className="h-4 w-4 text-[#D6A43B]" aria-hidden="true" />}
+          <span>{expanded ? 'إخفاء تفاصيل الملف والمهام' : 'عرض تفاصيل الملف والمهام'}</span>
+          {expanded ? <ChevronUp className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" /> : <ChevronDown className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}
         </button>
 
-        {/* Secondary Action Buttons Row - 12px Cairo, h-11 */}
-        <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
+        <div className="grid grid-cols-3 sm:flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
           {slug && (
             <Link
               to={`/scholarships/${encodeURIComponent(slug)}`}
-              className="cairo-12 font-cairo flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 h-11 px-3.5 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] text-[12px] font-bold text-[var(--mn-heading)] hover:border-[#D6A43B] hover:text-[#142B5F] dark:hover:text-[#D6A43B] transition-all cursor-pointer shadow-2xs text-center"
+              className="inline-flex items-center justify-center gap-1 min-h-9 px-2.5 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] text-[11px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] transition-all cursor-pointer shadow-2xs text-center"
               title="صفحة المنحة"
             >
               <ExternalLink className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
-              <span className="truncate cairo-12 font-bold">صفحة المنحة</span>
+              <span>صفحة المنحة</span>
             </Link>
           )}
 
@@ -1756,42 +1932,47 @@ function ApplicationTrackerCard({
             type="button"
             disabled={saving}
             onClick={() => onArchive(tracker)}
-            className="cairo-12 font-cairo flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 h-11 px-3.5 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] text-[12px] font-bold text-[var(--mn-text-muted)] hover:text-[#B88626] hover:border-[#D6A43B]/40 hover:bg-[#D6A43B]/10 transition-all cursor-pointer disabled:opacity-50 shadow-2xs text-center"
+            className="inline-flex items-center justify-center gap-1 min-h-9 px-2.5 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] text-[11px] font-bold text-[#334155] dark:text-[#E2E8F0] hover:border-[#D6A43B] transition-all cursor-pointer disabled:opacity-50 shadow-2xs text-center"
             title={isArchived ? 'إلغاء الأرشفة' : 'أرشفة'}
           >
-            <Archive className="h-3.5 w-3.5 text-[#B88626] shrink-0" aria-hidden="true" />
-            <span className="cairo-12 font-bold">{isArchived ? 'إلغاء' : 'أرشفة'}</span>
+            <Archive className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
+            <span>{isArchived ? 'إلغاء الأرشفة' : 'أرشفة'}</span>
           </button>
 
           <button
             type="button"
             disabled={saving}
             onClick={() => onRemove(tracker)}
-            className="cairo-12 font-cairo flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 h-11 px-3.5 rounded-xl border border-rose-200 dark:border-rose-900/30 bg-rose-50/60 dark:bg-rose-950/20 text-[12px] font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-all cursor-pointer disabled:opacity-50 shadow-2xs text-center"
+            className="inline-flex items-center justify-center gap-1 min-h-9 px-2.5 rounded-xl border border-rose-200 dark:border-rose-900/30 bg-rose-50/70 dark:bg-rose-950/20 text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-all cursor-pointer disabled:opacity-50 shadow-2xs text-center"
             title="إزالة"
           >
             <Trash2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span className="cairo-12 font-bold">إزالة</span>
+            <span>إزالة</span>
           </button>
         </div>
       </div>
 
       {/* Expanded Details: Stage selector, Checklist, Notes */}
       {expanded && (
-        <div className="mt-4 space-y-4 rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3.5 shadow-2xs animate-in fade-in duration-200 dark:bg-[var(--mn-surface-elevated)] sm:p-4">
-          {/* Stage Selector */}
-          <div className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3 sm:p-3.5">
-            <label className="block text-[13px] font-bold leading-5 text-[var(--mn-heading)]">
-              المرحلة الحالية للتقديم
-            </label>
-            <p className="mb-2 mt-0.5 text-[12px] leading-5 text-[var(--mn-text-muted)]">
+        <div className="mt-3 space-y-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] p-3 shadow-2xs animate-in fade-in duration-200 dark:bg-[var(--mn-surface-elevated)]">
+          {/* Sub-section 1: Stage Selector */}
+          <div className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3">
+            <div className="flex items-center gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2 mb-2">
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#D6A43B]/40 bg-[#142B5F]">
+                <Sparkles className="h-3 w-3 text-[#F2CD78]" />
+              </span>
+              <label className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+                المرحلة الحالية للتقديم
+              </label>
+            </div>
+            <p className="mb-2 text-[11px] font-medium leading-relaxed text-[#64748B] dark:text-[#94A3B8]">
               اختر الخطوة التي وصلت إليها لتسهيل متابعة ملفك.
             </p>
             <select
               disabled={saving}
               value={tracker.stage}
               onChange={(event) => onStageChange(tracker, event.target.value)}
-              className="min-h-11 w-full rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[12px] font-semibold leading-5 text-[var(--mn-heading)] outline-none transition-colors focus:border-[#D6A43B] focus:ring-2 focus:ring-[#D6A43B]/20 disabled:opacity-60 dark:bg-[var(--mn-surface-elevated)]"
+              className="min-h-9 w-full rounded-xl border border-[var(--mn-border)] dark:border-white/15 bg-[var(--mn-page)] px-3 py-1.5 text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] outline-none transition-colors focus:border-[#0E7C86] disabled:opacity-60 dark:bg-[var(--mn-surface-elevated)]"
             >
               {APPLICATION_STAGES.map((stage) => (
                 <option key={stage} value={stage}>
@@ -1801,25 +1982,32 @@ function ApplicationTrackerCard({
             </select>
           </div>
 
-          {/* Checklist Items */}
-          <div className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3 sm:p-3.5">
-            <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
-              <span className="text-[13px] font-bold leading-5 text-[var(--mn-heading)]">قائمة المهام والمتطلبات</span>
-              <span className="rounded-full border border-[#D6A43B]/35 bg-[#D6A43B]/[0.08] px-2.5 py-1 text-[11px] font-bold leading-4 text-[var(--mn-heading)]">
+          {/* Sub-section 2: Checklist Items */}
+          <div className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
+              <div className="flex items-center gap-2">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#D6A43B]/40 bg-[#142B5F]">
+                  <ListChecks className="h-3 w-3 text-[#F2CD78]" />
+                </span>
+                <span className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+                  قائمة المهام والمتطلبات
+                </span>
+              </div>
+              <span className="rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10.5px] font-bold text-[#0E7C86] dark:text-[#55CBC5]">
                 {completed} من {total} مكتمل
               </span>
             </div>
-            <p className="mb-2.5 text-[12px] leading-5 text-[var(--mn-text-muted)]">
+            <p className="mb-2 text-[11px] font-medium leading-relaxed text-[#64748B] dark:text-[#94A3B8]">
               علّم على المتطلبات التي أنجزتها، وستُحفظ متابعتك في ملف التقديم.
             </p>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {tracker.checklist.map((item) => (
                 <label
                   key={item.id}
-                  className={`flex min-h-[52px] items-center gap-3 rounded-xl border px-3 py-2.5 text-[12px] leading-5 transition-colors cursor-pointer ${
+                  className={`flex min-h-[42px] items-center gap-2.5 rounded-xl border px-2.5 py-2 text-[11.5px] leading-5 transition-colors cursor-pointer ${
                     item.completed
-                      ? 'border-[var(--mn-success-border)] bg-[var(--mn-success-soft)] text-[var(--mn-text-muted)]'
-                      : 'border-[var(--mn-border)] bg-[var(--mn-page)] text-[var(--mn-heading)] font-medium dark:bg-[var(--mn-surface-elevated)]'
+                      ? 'border-emerald-500/25 bg-emerald-500/[0.06] text-[#64748B]'
+                      : 'border-[var(--mn-border)] bg-[var(--mn-page)] text-[#1E293B] dark:text-[#F8FAFC] font-bold dark:bg-[var(--mn-surface-elevated)]'
                   }`}
                 >
                   <input
@@ -1829,11 +2017,11 @@ function ApplicationTrackerCard({
                     onChange={(event) => onChecklistToggle(tracker, item.id, event.target.checked)}
                     className="h-4 w-4 shrink-0 rounded accent-[#142B5F] dark:accent-[#E5B54F]"
                   />
-                  <span className={`min-w-0 flex-1 font-['Cairo',sans-serif] text-[12px] leading-5 ${item.completed ? 'line-through opacity-75' : ''}`}>
+                  <span className={`min-w-0 flex-1 font-['Cairo',sans-serif] text-[11.5px] leading-snug break-words ${item.completed ? 'line-through opacity-75' : ''}`}>
                     {item.label}
                   </span>
                   {item.completedAt && (
-                    <span className="shrink-0 text-[10px] leading-4 text-[var(--mn-text-muted)]">
+                    <span className="shrink-0 text-[10px] font-medium text-[#0E7C86]">
                       {formatDate(item.completedAt)}
                     </span>
                   )}
@@ -1842,34 +2030,38 @@ function ApplicationTrackerCard({
             </div>
           </div>
 
-          {/* Notes Section */}
-          <div className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3.5 sm:p-4">
-            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          {/* Sub-section 3: Notes Section */}
+          <div className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
               <div className="flex min-w-0 items-center gap-2">
-                <FileText className="h-4 w-4 shrink-0 text-[#D6A43B]" aria-hidden="true" />
-                <span className="text-[13px] font-bold leading-5 text-[var(--mn-heading)]">ملاحظاتي على ملف التقديم</span>
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#D6A43B]/40 bg-[#142B5F]">
+                  <FileText className="h-3 w-3 text-[#F2CD78]" aria-hidden="true" />
+                </span>
+                <span className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+                  ملاحظاتي على ملف التقديم
+                </span>
               </div>
               {!editingNotes && (
                 <button
                   type="button"
                   onClick={() => setEditingNotes(true)}
-                  className="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-[#142B5F]/20 bg-[var(--mn-page)] px-3 text-[12px] font-bold leading-5 text-[var(--mn-primary)] transition-colors hover:border-[#D6A43B] hover:bg-[#D6A43B]/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0E7C86]"
+                  className="inline-flex min-h-7 shrink-0 items-center justify-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2.5 text-[11px] font-bold text-[#1E293B] dark:text-[#F8FAFC] transition-colors hover:border-[#0E7C86] cursor-pointer"
                 >
-                  <FileText className="h-3.5 w-3.5" aria-hidden="true" />
+                  <FileText className="h-3 w-3 text-[#0E7C86]" aria-hidden="true" />
                   {tracker.notes ? 'تعديل الملاحظة' : 'إضافة ملاحظة'}
                 </button>
               )}
             </div>
 
             {editingNotes ? (
-              <div className="space-y-2 mt-2">
+              <div className="space-y-2 mt-1.5">
                 <textarea
                   value={notesDraft}
                   onChange={(e) => setNotesDraft(e.target.value)}
                   placeholder="سجّل أي تفاصيل مهمة (مثل اسم المشرف، تاريخ المقابلة، الملاحظات المطلوبة)..."
                   rows={3}
                   maxLength={500}
-                  className="min-h-24 w-full resize-y rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2.5 text-[12px] leading-6 text-[var(--mn-heading)] outline-none transition-colors placeholder:text-[var(--mn-text-muted)] focus:border-[#D6A43B] focus:ring-2 focus:ring-[#D6A43B]/20"
+                  className="min-h-20 w-full resize-y rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[11.5px] leading-6 text-[#1E293B] dark:text-[#F8FAFC] outline-none transition-colors placeholder:text-[#64748B] focus:border-[#0E7C86]"
                 />
                 <div className="flex items-center justify-end gap-2">
                   <button
@@ -1878,7 +2070,7 @@ function ApplicationTrackerCard({
                       setNotesDraft(tracker.notes || '');
                       setEditingNotes(false);
                     }}
-                  className="inline-flex min-h-9 items-center justify-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3 text-[12px] font-bold text-[var(--mn-text-muted)] transition-colors hover:bg-[var(--mn-page)]"
+                    className="inline-flex min-h-8 items-center justify-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] px-2.5 text-[11px] font-bold text-[#64748B] transition-colors hover:bg-[var(--mn-page)] cursor-pointer"
                   >
                     إلغاء
                   </button>
@@ -1886,14 +2078,14 @@ function ApplicationTrackerCard({
                     type="button"
                     disabled={saving}
                     onClick={handleSaveNotes}
-                    className="inline-flex min-h-9 items-center justify-center rounded-lg bg-[var(--mn-primary)] px-3 text-[12px] font-bold text-white transition-colors hover:bg-[var(--mn-primary-hover)] disabled:opacity-50"
+                    className="inline-flex min-h-8 items-center justify-center rounded-lg bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 px-3 text-[11px] font-bold text-white transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     حفظ الملاحظة
                   </button>
                 </div>
               </div>
             ) : (
-              <p className="mt-1 rounded-lg bg-[var(--mn-page)] px-3 py-2.5 text-[12px] leading-6 text-[var(--mn-text-muted)] dark:bg-[var(--mn-surface-elevated)]">
+              <p className="mt-1 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] px-3 py-2 text-[11.5px] font-medium leading-6 text-[#475569] dark:text-[#CBD5E1] dark:bg-[var(--mn-surface-elevated)]">
                 {tracker.notes || 'لا توجد ملاحظات مسجلة لهذا الملف حتى الآن.'}
               </p>
             )}
@@ -1930,62 +2122,68 @@ function LearningView({ dashboard }: { dashboard: StudentDashboardSummaryDto }) 
 
   return (
     <div className="mn-student-learning-page mt-0 space-y-4 font-['Cairo',sans-serif]">
+      {/* Header box attached directly to the 8-tab bar above and stretched edge-to-edge right & left */}
+      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
+        <section
+          aria-label="تعليمي وإنجازاتي"
+          className="mn-student-learning-hero relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
+        >
+          {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
+          />
+
+          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
+                  <BookOpen className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
+                </span>
+                <h2 className="mn-student-learning-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC]">
+                  تعليمي وإنجازاتي
+                </h2>
+              </div>
+              <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+                {dashboard.courseEnrollments.length} دورة · {certificates.length} شهادة
+              </span>
+            </div>
+
+            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+              استكمل دوراتك التدريبية المسجلة، وتابع نسب تقدمك في المحاضرات وحمّل شهادات الإنجاز الصادرة لك.
+            </p>
+          </div>
+        </section>
+
+        {/* Four filter buttons outside the header box, attached from the top and stretched edge-to-edge */}
+        <nav
+          aria-label="تصفية الدورات والشهادات"
+          className="-mt-px grid grid-cols-4 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs"
+        >
+          {learningFilterItems.map(({ value, label, count, icon: Icon }) => {
+            const active = filter === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setFilter(value)}
+                className={`flex min-h-12 items-center justify-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-2 text-center transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#142B5F] ${
+                  active
+                    ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner font-bold'
+                    : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] font-semibold hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
+                }`}
+              >
+                <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 ${active ? 'text-[#F2CD78]' : 'text-[#142B5F] dark:text-[#E5B54F]'}`} aria-hidden="true" />
+                <span className="whitespace-normal break-words leading-[1.35] text-[11px] sm:text-[12px]">{label} ({count})</span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
       {dashboard.capabilityStatus?.learning === 'DEGRADED' && <Alert tone="warning" message="تعذر تحميل الدورات حالياً؛ القائمة الحالية لا تعني عدم وجود تسجيلات." />}
       {dashboard.capabilityStatus?.certificates === 'DEGRADED' && <Alert tone="warning" message="تعذر تحميل الشهادات حالياً. أعد تحديث الحساب." />}
-
-      {/* Compact inline section header + filter bar directly below the 8-button navigation */}
-      <section
-        aria-label="تعليمي وإنجازاتي"
-        className="mn-student-learning-hero relative overflow-hidden rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] shadow-2xs mn-panel dark:border-white/10"
-      >
-        {/* Signature gold accent on right edge */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-        />
-
-        <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 pr-4 sm:px-4 sm:py-3">
-          <div className="flex min-w-0 items-center gap-2">
-            <span className="grid h-7 w-7 sm:h-8 sm:w-8 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/35 bg-[#142B5F]">
-              <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#F2CD78]" aria-hidden="true" />
-            </span>
-            <h2 className="mn-student-learning-heading text-[13.5px] sm:text-[14px] font-bold leading-tight text-[var(--mn-heading)]">
-              تعليمي وإنجازاتي
-            </h2>
-          </div>
-          <span className="inline-flex shrink-0 items-center rounded-lg border border-[#142B5F]/20 bg-[#142B5F]/5 px-2.5 py-1 text-[11px] font-bold text-[#142B5F] dark:border-[#D6A43B]/30 dark:bg-[#142B5F]/40 dark:text-[#F2CD78]">
-            {dashboard.courseEnrollments.length} دورة · {certificates.length} شهادة
-          </span>
-        </div>
-
-        {/* Four filter buttons attached to the bottom of the compact header card */}
-        {hasAnyLearningData && (
-          <nav
-            aria-label="تصفية الدورات والشهادات"
-            className="grid grid-cols-4 divide-x divide-x-reverse divide-[var(--mn-border)] border-t border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:divide-white/10 dark:border-white/10 overflow-hidden rounded-b-2xl"
-          >
-            {learningFilterItems.map(({ value, label, count, icon: Icon }) => {
-              const active = filter === value;
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  aria-pressed={active}
-                  onClick={() => setFilter(value)}
-                  className={`flex min-h-10 items-center justify-center gap-1 sm:gap-1.5 px-1 sm:px-2 py-1.5 text-center font-bold transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#E5B54F] ${
-                    active
-                      ? 'bg-[#142B5F] text-[#F2CD78] shadow-inner font-bold'
-                      : 'bg-transparent text-[var(--mn-heading)] hover:bg-[var(--mn-surface)] hover:text-[#0E7C86] dark:hover:bg-white/5'
-                  }`}
-                >
-                  <Icon className={`h-3.5 w-3.5 shrink-0 ${active ? 'text-[#F2CD78]' : 'text-[var(--mn-text-muted)]'}`} aria-hidden="true" />
-                  <span className="truncate leading-[1.4] text-[10.5px] xs:text-[11px] sm:text-[11.5px]">{label} ({count})</span>
-                </button>
-              );
-            })}
-          </nav>
-        )}
-      </section>
 
       {!hasAnyLearningData ? (
         <LearningSectionCard title="ابدأ رحلتك التعليمية" icon={<BookOpen className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />}>
@@ -2000,37 +2198,31 @@ function LearningView({ dashboard }: { dashboard: StudentDashboardSummaryDto }) 
           {(filter === 'ALL' || filter === 'IN_PROGRESS') && (
             <LearningSectionCard
               title="دورات قيد التعلم"
-              icon={<Clock3 className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />}
+              icon={<Clock3 className="h-3.5 w-3.5 text-[#E5B54F]" aria-hidden="true" />}
               count={`${inProgressCourses.length} دورة`}
             >
               {inProgressCourses.length === 0 ? (
-                <p className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-4 text-center text-[12px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+                <p className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3.5 text-center text-[11.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
                   لا توجد دورات قيد التعلم حاليًا.
                 </p>
               ) : (
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-2.5 sm:grid-cols-2">
                   {inProgressCourses.map((course) => (
                     <article
                       key={course.enrollmentId || course.courseId}
-                      className="mn-student-learning-course relative overflow-hidden flex min-w-0 flex-col justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 pr-4 shadow-xs transition-all hover:border-[#D6A43B]/60 font-['Cairo',sans-serif]"
+                      className="mn-student-learning-course relative overflow-hidden flex min-w-0 flex-col justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 shadow-xs transition-all hover:border-[#D6A43B]/60 font-['Cairo',sans-serif]"
                     >
-                      {/* Golden Accent Line on the Right Edge */}
-                      <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-                      />
-
                       <div>
                         <div className="flex items-center justify-between gap-2">
-                          <span className="rounded-full border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10.5px] sm:text-[11px] font-bold text-[#0E7C86] dark:text-[#E5B54F] dark:border-[#E5B54F]/30 dark:bg-[#E5B54F]/10">
+                          <span className="rounded-full border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10px] sm:text-[10.5px] font-bold text-[#0E7C86] dark:text-[#E5B54F] dark:border-[#E5B54F]/30 dark:bg-[#E5B54F]/10">
                             قيد التعلم
                           </span>
-                          <span className="text-[13px] font-extrabold text-[#142B5F] dark:text-[#E5B54F]">
+                          <span className="text-[12px] font-extrabold text-[#142B5F] dark:text-[#E5B54F]">
                             {course.progressPercentage}%
                           </span>
                         </div>
 
-                        <h4 className="mt-1.5 text-[12.5px] sm:text-[13px] font-bold leading-snug text-[var(--mn-heading)] break-words">
+                        <h4 className="mt-1.5 text-[12px] sm:text-[12.5px] font-bold leading-snug text-[var(--mn-heading)] break-words">
                           {course.courseName}
                         </h4>
 
@@ -2041,7 +2233,7 @@ function LearningView({ dashboard }: { dashboard: StudentDashboardSummaryDto }) 
                           />
                         </div>
 
-                        <p className="mt-1.5 text-[11px] font-medium text-[var(--mn-text-muted)]">
+                        <p className="mt-1.5 text-[10.5px] font-medium text-[var(--mn-text-muted)]">
                           {course.lastAccessedAt
                             ? `آخر وصول: ${formatDate(course.lastAccessedAt)}`
                             : `تاريخ التسجيل: ${formatDate(course.enrolledAt)}`}
@@ -2049,10 +2241,10 @@ function LearningView({ dashboard }: { dashboard: StudentDashboardSummaryDto }) 
                       </div>
 
                       <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-[var(--mn-border)] pt-2">
-                        <span className="text-[11px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">متابعة تقدم الدورة</span>
+                        <span className="text-[10.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">متابعة تقدم الدورة</span>
                         <Link
                           to={`../student/courses/${encodeURIComponent(course.courseId)}`}
-                          className="ms-auto inline-flex min-h-8 items-center justify-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#163D76] dark:bg-[#D6A43B] dark:text-[#142B5F] dark:hover:bg-[#E5B54F] px-3 py-1 text-[11px] sm:text-[12px] font-bold text-white transition-all shadow-xs"
+                          className="ms-auto inline-flex min-h-8 items-center justify-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#163D76] dark:bg-[#D6A43B] dark:text-[#142B5F] dark:hover:bg-[#E5B54F] px-3 py-1 text-[11px] font-bold text-white transition-all shadow-xs"
                         >
                           <span>متابعة التعلم</span>
                           <ArrowLeft className="h-3 w-3" aria-hidden="true" />
@@ -2068,48 +2260,42 @@ function LearningView({ dashboard }: { dashboard: StudentDashboardSummaryDto }) 
           {(filter === 'ALL' || filter === 'COMPLETED') && (
             <LearningSectionCard
               title="الدورات المكتملة"
-              icon={<CheckCircle2 className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />}
+              icon={<CheckCircle2 className="h-3.5 w-3.5 text-[#E5B54F]" aria-hidden="true" />}
               count={`${completedCourses.length} دورة`}
             >
               {completedCourses.length === 0 ? (
-                <p className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-4 text-center text-[12px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+                <p className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3.5 text-center text-[11.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
                   لا توجد دورات مكتملة حتى الآن.
                 </p>
               ) : (
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-2.5 sm:grid-cols-2">
                   {completedCourses.map((course) => (
                     <article
                       key={course.enrollmentId || course.courseId}
-                      className="mn-student-learning-course relative overflow-hidden flex min-w-0 flex-col justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 pr-4 shadow-xs transition-all hover:border-[#D6A43B]/60 font-['Cairo',sans-serif]"
+                      className="mn-student-learning-course relative overflow-hidden flex min-w-0 flex-col justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 shadow-xs transition-all hover:border-[#D6A43B]/60 font-['Cairo',sans-serif]"
                     >
-                      {/* Teal / Emerald Accent Line on the Right Edge for Completed */}
-                      <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#0E7C86] via-[#10B981] to-[#047857] dark:from-[#E5B54F] dark:to-[#D6A43B]"
-                      />
-
                       <div>
                         <div className="flex items-center justify-between gap-2">
-                          <span className="rounded-full border border-[var(--mn-success-border)] bg-[var(--mn-success-soft)] px-2 py-0.5 text-[10.5px] sm:text-[11px] font-bold text-[var(--mn-success-text)] font-['Cairo',sans-serif]">
+                          <span className="rounded-full border border-[var(--mn-success-border)] bg-[var(--mn-success-soft)] px-2 py-0.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-success-text)] font-['Cairo',sans-serif]">
                             مكتملة بنجاح
                           </span>
-                          <span className="text-[13px] font-extrabold text-[var(--mn-success-text)] font-['Cairo',sans-serif]">
+                          <span className="text-[12px] font-extrabold text-[var(--mn-success-text)] font-['Cairo',sans-serif]">
                             100%
                           </span>
                         </div>
-                        <h4 className="mt-1.5 text-[12.5px] sm:text-[13px] font-bold leading-snug text-[var(--mn-heading)] break-words font-['Cairo',sans-serif]">
+                        <h4 className="mt-1.5 text-[12px] sm:text-[12.5px] font-bold leading-snug text-[var(--mn-heading)] break-words font-['Cairo',sans-serif]">
                           {course.courseName}
                         </h4>
-                        <div className="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+                        <div className="mt-1.5 flex items-center gap-1.5 text-[10.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
                           <Check className="h-3.5 w-3.5 shrink-0 text-[var(--mn-success-text)]" aria-hidden="true" />
                           <span>{course.completedAt ? `تاريخ الإتمام: ${formatDate(course.completedAt)}` : 'تاريخ الإتمام غير متاح'}</span>
                         </div>
                       </div>
                       <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-[var(--mn-border)] pt-2">
-                        <span className="text-[11px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">مراجعة محتوى الدورة</span>
+                        <span className="text-[10.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">مراجعة محتوى الدورة</span>
                         <Link
                           to={`../student/courses/${encodeURIComponent(course.courseId)}`}
-                          className="ms-auto inline-flex min-h-8 items-center justify-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#163D76] dark:bg-[#D6A43B] dark:text-[#142B5F] dark:hover:bg-[#E5B54F] px-3 py-1 text-[11px] sm:text-[12px] font-bold text-white transition-all shadow-xs"
+                          className="ms-auto inline-flex min-h-8 items-center justify-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#163D76] dark:bg-[#D6A43B] dark:text-[#142B5F] dark:hover:bg-[#E5B54F] px-3 py-1 text-[11px] font-bold text-white transition-all shadow-xs"
                         >
                           <span>مراجعة المواد</span>
                           <ArrowLeft className="h-3 w-3" aria-hidden="true" />
@@ -2125,10 +2311,10 @@ function LearningView({ dashboard }: { dashboard: StudentDashboardSummaryDto }) 
           {filter === 'ALL' && otherCourses.length > 0 && (
             <LearningSectionCard
               title="تسجيلات معلقة أو سابقة"
-              icon={<ClipboardList className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />}
+              icon={<ClipboardList className="h-3.5 w-3.5 text-[#E5B54F]" aria-hidden="true" />}
               count={`${otherCourses.length} تسجيل`}
             >
-              <div className="grid gap-3.5 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 {otherCourses.map((course) => (
                   <CourseCard key={course.enrollmentId || course.courseId} course={course} />
                 ))}
@@ -2141,48 +2327,39 @@ function LearningView({ dashboard }: { dashboard: StudentDashboardSummaryDto }) 
       {(filter === 'ALL' || filter === 'CERTIFICATES') && (
         <LearningSectionCard
           title="إنجازاتي وشهاداتي"
-          icon={<Award className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />}
+          icon={<Award className="h-3.5 w-3.5 text-[#E5B54F]" aria-hidden="true" />}
         >
           <StudentCertificatesPanel initial={certificates} compactLearning />
         </LearningSectionCard>
       )}
 
-      {/* Dedicated End Section: Motivational Courses Discovery Card */}
+      {/* Dedicated End Section: Motivational Courses Discovery Section stretched edge-to-edge */}
       <section
         aria-label="استكشاف الدورات التدريبية"
-        className="relative overflow-hidden rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-4 sm:p-5 shadow-2xs mn-panel font-['Cairo',sans-serif]"
+        className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif]"
       >
-        {/* Signature Top Accent Line */}
-        <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-transparent via-[#D6A43B] to-transparent" />
-
-        {/* Signature Right Accent Line */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#142B5F] via-[#163D76] to-[#D6A43B]"
-        />
-
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-1.5 max-w-xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="space-y-1 max-w-xl">
             <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] text-[#E5B54F]">
-                <GraduationCap className="h-4 w-4" aria-hidden="true" />
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F] text-[#F2CD78]">
+                <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
               </span>
-              <h3 className="text-[14px] sm:text-[15px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
+              <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
                 طوّر مهاراتك وانطلق نحو مستقبلك الأكاديمي والمهني
               </h3>
             </div>
-            <p className="text-[11.5px] sm:text-[12px] font-medium leading-[1.8] text-[var(--mn-text-muted)] pr-10">
+            <p className="text-[11px] sm:text-[11.5px] font-medium leading-[1.75] text-[var(--mn-text-muted)]">
               استكشف باقة متميزة من الدورات المتخصصة في التحضير للقبول الجامعي، كتابة السيرة الذاتية، واجتياز اختبارات اللغة والمقابلات الشخصية لتحقيق طموحاتك بثقة.
             </p>
           </div>
 
           <Link
             to="/courses"
-            className="w-full sm:w-auto shrink-0 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] px-5 py-2.5 text-[12.5px] font-bold text-white shadow-xs transition-all cursor-pointer border border-[#D6A43B]/30"
+            className="w-full sm:w-auto shrink-0 inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] px-3.5 py-1.5 text-[11.5px] font-bold text-white shadow-2xs transition-all cursor-pointer border border-[#D6A43B]/40"
           >
-            <Sparkles className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />
+            <Sparkles className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
             <span>تصفح دليل الدورات المتاحة</span>
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            <ArrowLeft className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
           </Link>
         </div>
       </section>
@@ -2190,7 +2367,7 @@ function LearningView({ dashboard }: { dashboard: StudentDashboardSummaryDto }) 
   );
 }
 
-/** Matches the typography and card identity of ملخصي without altering other tabs. */
+/** Stretched edge-to-edge section matching ملخصي and فرصي. */
 function LearningSectionCard({
   title,
   icon,
@@ -2205,20 +2382,25 @@ function LearningSectionCard({
   return (
     <section
       aria-label={title}
-      className="mn-student-learning-section relative -mx-[2px] w-[calc(100%+4px)] sm:mx-0 sm:w-full rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3.5 sm:p-4 shadow-2xs mn-panel"
+      className="mn-student-learning-section relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3.5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif]"
     >
-      <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
+      <div className="mb-3 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3.5 sm:px-5">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
-            {icon}
+          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
+            <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
+            <span className="relative z-10">{icon}</span>
           </span>
-          <h3 className="mn-student-learning-heading min-w-0 text-[14px] font-bold leading-[1.22] text-[var(--mn-heading)]">
+          <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 min-w-0 text-[14px] sm:text-[15px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC]">
             {title}
           </h3>
         </div>
-        {count && <span className="shrink-0 text-[11px] font-semibold text-[var(--mn-text-muted)]">{count}</span>}
+        {count && (
+          <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2 py-0.5 text-[10px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+            {count}
+          </span>
+        )}
       </div>
-      {children}
+      <div className="px-3.5 sm:px-5">{children}</div>
     </section>
   );
 }
@@ -2431,103 +2613,121 @@ function ServiceRequestsView({
   const hasAnyRequestsOrInvoices = requests.length > 0 || invoices.length > 0 || Boolean(selected) || Boolean(requestedNotFoundId) || Boolean(invoiceError);
 
   return (
-    <div className="space-y-4" aria-busy={serviceLoading}>
-      {/* Compact inline section header directly below the 8-button navigation */}
+    <div className="mt-0 space-y-4" aria-busy={serviceLoading}>
+      {/* Header box attached directly to the 8-tab bar above and stretched edge-to-edge right & left */}
+      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
+        <section
+          aria-label="طلباتي ومدفوعاتي"
+          className="mn-student-services-hero relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
+        >
+          {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
+          />
+
+          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
+                  <ClipboardList className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
+                </span>
+                <h2 className="mn-student-services-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
+                  طلباتي ومدفوعاتي
+                </h2>
+              </div>
+
+              <Link
+                to="/services"
+                className="inline-flex min-h-8 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#142B5F] hover:bg-[#1a3675] px-3 py-1 text-[11.5px] font-bold font-['Cairo',sans-serif] text-[#F2CD78] shadow-2xs transition-colors border border-[#D6A43B]/40"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
+                <span>استكشف الخدمات</span>
+              </Link>
+            </div>
+
+            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+              تابع حالة طلبات الخدمات الأكاديمية والاستشارية الخاصة بك، واستعرض الفواتير والدفعات والملفات المستلمة.
+            </p>
+          </div>
+        </section>
+
+        <nav
+          aria-label="تصفية الطلبات والفواتير"
+          className="-mt-px grid grid-cols-3 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs"
+        >
+          {[
+            { label: 'طلبات معروضة', number: requests.length, tab: 'REQUESTS' as const, key: 'all-req' },
+            { label: 'قيد المتابعة', number: pendingCount, tab: 'REQUESTS' as const, key: 'pending-req' },
+            { label: 'فواتير معروضة', number: invoices.length, tab: 'INVOICES' as const, key: 'invoices' },
+          ].map((stat) => {
+            const active = activeTab === stat.tab && (stat.key !== 'pending-req');
+            return (
+              <button
+                key={stat.key}
+                type="button"
+                aria-label={`${stat.label}: ${stat.number}، عرض التفاصيل`}
+                onClick={() => setActiveTab(stat.tab)}
+                className={`flex min-h-12 items-center justify-center gap-1.5 px-2 py-2 text-center transition-all cursor-pointer font-['Cairo',sans-serif] ${
+                  active
+                    ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner font-bold'
+                    : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] font-semibold hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
+                }`}
+              >
+                <span className="whitespace-normal break-words text-[11px] sm:text-[12px] leading-[1.35]">{stat.label} ({stat.number})</span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
       <section
-        aria-label="طلباتي ومدفوعاتي"
-        className="mn-student-services-hero relative overflow-hidden rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] shadow-2xs mn-panel dark:border-white/10 font-['Cairo',sans-serif]"
+        aria-label="تصفية طلبات الخدمات"
+        className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] px-3.5 py-3.5 shadow-2xs mn-panel dark:border-white/10 sm:px-5 sm:py-4 font-['Cairo',sans-serif]"
       >
-        {/* Signature gold accent on right edge */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-        />
-
-        <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 pr-4 sm:px-4 sm:py-3">
+        <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
           <div className="flex min-w-0 items-center gap-2">
-            <span className="grid h-7 w-7 sm:h-8 sm:w-8 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/35 bg-[#142B5F]">
-              <ClipboardList className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#F2CD78]" aria-hidden="true" />
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F] dark:bg-[#0c1a3b]">
+              <Settings2 className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
             </span>
-            <h2 className="mn-student-services-heading text-[13.5px] sm:text-[14px] font-bold leading-tight text-[var(--mn-heading)] font-['Cairo',sans-serif]">
-              طلباتي ومدفوعاتي
-            </h2>
+            <h3 className="text-[12.5px] sm:text-[13px] font-bold font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
+              تصفية الطلبات
+            </h3>
           </div>
-
-          <Link
-            to="/services"
-            className="inline-flex min-h-8 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#142B5F] hover:bg-[#1a3675] px-3 py-1 text-[11.5px] font-bold font-['Cairo',sans-serif] text-[#F2CD78] shadow-2xs transition-colors border border-[#D6A43B]/40"
-          >
-            <Sparkles className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
-            <span>استكشف الخدمات</span>
-          </Link>
-        </div>
-
-        {hasAnyRequestsOrInvoices && (
-          <div className="grid grid-cols-3 divide-x divide-x-reverse divide-[var(--mn-border)] border-t border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:divide-white/10 dark:border-white/10 overflow-hidden rounded-b-2xl">
-            {[
-              { label: 'طلبات معروضة', number: requests.length, tab: 'REQUESTS' as const },
-              { label: 'قيد المتابعة', number: pendingCount, tab: 'REQUESTS' as const },
-              { label: 'فواتير معروضة', number: invoices.length, tab: 'INVOICES' as const },
-            ].map((stat) => {
-              const active = activeTab === stat.tab;
-              return (
-                <button
-                  key={stat.label}
-                  type="button"
-                  aria-label={`${stat.label}: ${stat.number}، عرض التفاصيل`}
-                  onClick={() => setActiveTab(stat.tab)}
-                  className={`flex min-h-10 items-center justify-center gap-1.5 px-2 py-1.5 text-center transition-all cursor-pointer font-['Cairo',sans-serif] font-bold ${
-                    active
-                      ? 'bg-[#142B5F] text-[#F2CD78] shadow-inner'
-                      : 'bg-transparent text-[var(--mn-heading)] hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
-                  }`}
-                >
-                  <span className="text-[11.5px] sm:text-[12px] font-bold leading-[1.4]">{stat.label} ({stat.number})</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      <section aria-label="تصفية طلبات الخدمات" className="relative overflow-hidden rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3.5 shadow-2xs mn-panel dark:border-white/10 sm:p-4 font-['Cairo',sans-serif]">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#B78622] via-[#D6A43B] to-[#E5B54F]" />
-        <div className="mb-3 flex min-w-0 items-center gap-2 pr-2">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
-            <Settings2 className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />
+          <span role="status" className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2 py-0.5 text-[10.5px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+            {totalRequests === requests.length ? `${requests.length} طلب` : `عرض ${requests.length} من ${totalRequests} طلب`}
           </span>
-          <h3 className="mn-student-services-heading text-[14px] font-bold font-['Cairo',sans-serif] text-[var(--mn-heading)]">تصفية الطلبات</h3>
         </div>
-        <div className="flex flex-wrap items-end justify-between gap-3 pr-2">
-          <label className="min-w-[185px] flex-1 text-[12px] font-bold font-['Cairo',sans-serif] text-[var(--mn-heading)] sm:max-w-[290px]">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <label className="min-w-[185px] flex-1 text-[11.5px] font-bold font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC] sm:max-w-[320px]">
             حالة الطلب
             <select
               value={statusFilter}
               onChange={(event) => onStatusFilterChange(event.target.value)}
-              className="mt-1 block min-h-10 w-full rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[12px] font-medium font-['Cairo',sans-serif] text-[var(--mn-heading)] outline-none transition-colors focus:border-[#D6A43B] dark:bg-[var(--mn-surface-elevated)]"
+              className="mt-1.5 block min-h-9 w-full rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-1.5 text-[11.5px] font-medium font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC] outline-none transition-colors focus:border-[#0E7C86] dark:bg-[var(--mn-surface-elevated)]"
             >
-              <option value="" className="font-['Cairo',sans-serif] text-[12px]">جميع الحالات</option>
+              <option value="" className="font-['Cairo',sans-serif] text-[11.5px]">جميع الحالات</option>
               {['REQUESTED','ACCEPTED','IN_PROGRESS','AWAITING_PAYMENT','COMPLETED','CANCELLED'].map((status) => (
-                <option key={status} value={status} className="font-['Cairo',sans-serif] text-[12px]">{getServiceRequestStatusBadge(status).label}</option>
+                <option key={status} value={status} className="font-['Cairo',sans-serif] text-[11.5px]">{getServiceRequestStatusBadge(status).label}</option>
               ))}
             </select>
           </label>
-          <span role="status" className="text-[12px] font-bold font-['Cairo',sans-serif] leading-[1.8] text-[var(--mn-text-muted)]">
-            {totalRequests === requests.length ? `${requests.length} طلب` : `عرض ${requests.length} من ${totalRequests} طلب`}
-          </span>
         </div>
       </section>
 
       {hasAnyRequestsOrInvoices && (
-        <nav aria-label="عرض طلبات الخدمات والفواتير" className="grid grid-cols-2 gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-2 font-['Cairo',sans-serif]">
+        <nav
+          aria-label="عرض طلبات الخدمات والفواتير"
+          className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] grid grid-cols-2 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs font-['Cairo',sans-serif]"
+        >
           <button
             type="button"
             onClick={() => setActiveTab('REQUESTS')}
             aria-pressed={activeTab === 'REQUESTS'}
-            className={`min-h-10 min-w-0 rounded-lg px-2 py-1.5 text-[12px] font-bold leading-[1.7] font-['Cairo',sans-serif] transition-colors cursor-pointer ${
+            className={`min-h-11 min-w-0 px-2 py-2 text-[12px] font-bold leading-[1.4] font-['Cairo',sans-serif] transition-colors cursor-pointer ${
               activeTab === 'REQUESTS'
-                ? 'bg-[#142B5F] text-white shadow-2xs border border-[#D6A43B]/40 dark:bg-[#D6A43B] dark:text-[#142B5F]'
-                : 'bg-[var(--mn-page)] text-[var(--mn-text-muted)] hover:bg-[var(--mn-surface-muted)] dark:bg-[var(--mn-surface-elevated)]'
+                ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner'
+                : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
             }`}
           >
             طلبات الخدمات ({requests.length})
@@ -2536,10 +2736,10 @@ function ServiceRequestsView({
             type="button"
             onClick={() => setActiveTab('INVOICES')}
             aria-pressed={activeTab === 'INVOICES'}
-            className={`min-h-10 min-w-0 rounded-lg px-2 py-1.5 text-[12px] font-bold leading-[1.7] font-['Cairo',sans-serif] transition-colors cursor-pointer ${
+            className={`min-h-11 min-w-0 px-2 py-2 text-[12px] font-bold leading-[1.4] font-['Cairo',sans-serif] transition-colors cursor-pointer ${
               activeTab === 'INVOICES'
-                ? 'bg-[#142B5F] text-white shadow-2xs border border-[#D6A43B]/40 dark:bg-[#D6A43B] dark:text-[#142B5F]'
-                : 'bg-[var(--mn-page)] text-[var(--mn-text-muted)] hover:bg-[var(--mn-surface-muted)] dark:bg-[var(--mn-surface-elevated)]'
+                ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner'
+                : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
             }`}
           >
             الفواتير والمدفوعات ({invoices.length})
@@ -2550,7 +2750,7 @@ function ServiceRequestsView({
       {serviceError && (
         <div className="space-y-2" role="alert">
           <Alert tone="error" message={serviceError} />
-          <button type="button" onClick={onRetry} className="inline-flex min-h-9 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3 py-1.5 text-[12px] font-bold text-[var(--mn-heading)]">
+          <button type="button" onClick={onRetry} className="inline-flex min-h-9 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3 py-1.5 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
             إعادة تحميل الطلبات
           </button>
         </div>
@@ -2558,7 +2758,7 @@ function ServiceRequestsView({
       {invoiceError && (
         <div className="space-y-2">
           <Alert tone="error" message={invoiceError} />
-          <button type="button" onClick={onRetry} className="inline-flex min-h-9 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3 py-1.5 text-[12px] font-bold text-[var(--mn-heading)]">
+          <button type="button" onClick={onRetry} className="inline-flex min-h-9 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3 py-1.5 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
             إعادة تحميل الفواتير
           </button>
         </div>
@@ -2573,58 +2773,58 @@ function ServiceRequestsView({
 
       {/* 3. Main Content View */}
       {serviceLoading && activeTab === 'REQUESTS' ? (
-        <div role="status" className="rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-4 text-center text-[12px] font-semibold text-[var(--mn-text-muted)]">
+        <div role="status" className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] p-4 text-center text-[12px] font-semibold text-[var(--mn-text-muted)]">
           جارٍ تحميل بيانات الطلبات…
         </div>
       ) : !hasAnyRequestsOrInvoices && serviceError ? (
-        <div className="rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-4 text-center text-[12px] text-[var(--mn-text-muted)]">
+        <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] p-4 text-center text-[12px] text-[var(--mn-text-muted)]">
           تعذر جلب الطلبات حاليًا. يمكنك إعادة المحاولة دون فقدان اختيارك.
         </div>
       ) : !hasAnyRequestsOrInvoices ? (
-        <div className="rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-6 sm:p-8 text-center mn-panel shadow-2xs">
-          <div className="w-12 h-12 rounded-2xl bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/40 flex items-center justify-center text-[#E5B54F] mx-auto mb-3.5 shadow-xs">
-            <ClipboardList className="w-6 h-6 text-[#E5B54F]" />
+        <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 sm:p-7 text-center mn-panel shadow-2xs">
+          <div className="w-10 h-10 rounded-xl bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/40 flex items-center justify-center text-[#F2CD78] mx-auto mb-3 shadow-xs">
+            <ClipboardList className="w-5 h-5 text-[#F2CD78]" />
           </div>
-          <h3 className="text-[14px] font-bold text-[var(--mn-heading)]">{statusFilter ? 'لا توجد طلبات مطابقة للحالة المختارة' : 'لا توجد طلبات خدمات أو فواتير مسجلة'}</h3>
-          <p className="mt-2 text-[11px] leading-[1.85] text-[var(--mn-text-muted)]">
+          <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">{statusFilter ? 'لا توجد طلبات مطابقة للحالة المختارة' : 'لا توجد طلبات خدمات أو فواتير مسجلة'}</h3>
+          <p className="mt-1.5 text-[11px] leading-[1.8] text-[var(--mn-text-muted)]">
             {statusFilter ? 'اختر «جميع الحالات» لعرض الطلبات الأخرى، أو تصفح دليل الخدمات.' : 'يمكنك استكشاف الخدمات الأكاديمية والاستشارية، وستظهر طلباتك وفواتيرك هنا عند توفرها.'}
           </p>
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/services"
-              className="px-4 py-2 rounded-xl bg-[var(--mn-primary)] text-white text-xs font-bold hover:bg-[var(--mn-primary-hover)] transition-all shadow-2xs inline-flex items-center gap-2"
+              className="px-3.5 py-2 rounded-xl bg-[#142B5F] text-white text-[11.5px] font-bold hover:bg-[#1a3675] transition-all shadow-2xs inline-flex items-center gap-2 border border-[#D6A43B]/40"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#E5B54F]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#F2CD78]" />
               <span>استكشف دليل الخدمات والاستشارات</span>
             </Link>
           </div>
         </div>
       ) : activeTab === 'REQUESTS' ? (
         requests.length === 0 && !selected && !requestedNotFoundId ? (
-          <div className="rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-6 text-center mn-panel">
-            <ClipboardList className="w-8 h-8 mx-auto text-[var(--mn-text-muted)] mb-2" />
-            <h3 className="text-[14px] font-bold text-[var(--mn-heading)]">{serviceError ? 'تعذر تحميل طلباتك حاليًا' : statusFilter ? 'لا توجد طلبات مطابقة للحالة المختارة' : 'لا توجد طلبات خدمات معروضة حاليًا'}</h3>
-            <p className="mt-1 text-[11px] leading-[1.85] text-[var(--mn-text-muted)]">
+          <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 text-center mn-panel">
+            <ClipboardList className="w-7 h-7 mx-auto text-[#0E7C86] mb-1.5" />
+            <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">{serviceError ? 'تعذر تحميل طلباتك حاليًا' : statusFilter ? 'لا توجد طلبات مطابقة للحالة المختارة' : 'لا توجد طلبات خدمات معروضة حاليًا'}</h3>
+            <p className="mt-1 text-[11px] leading-[1.8] text-[var(--mn-text-muted)]">
               {serviceError
                 ? 'يمكنك إعادة تحميل الطلبات من الزر أعلاه. ستبقى الفواتير المحمّلة متاحة هنا.'
                 : 'يمكنك اختيار حالة أخرى أو الاطلاع على الفواتير والمدفوعات أو تقديم طلب جديد عبر دليل الخدمات.'}
             </p>
             <Link
               to="/services"
-              className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[var(--mn-primary)] text-white text-xs font-bold hover:bg-[var(--mn-primary-hover)] transition-all"
+              className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#142B5F] text-white text-[11.5px] font-bold hover:bg-[#1a3675] transition-all border border-[#D6A43B]/40"
             >
               <span>دليل الخدمات</span>
             </Link>
           </div>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-[1fr_1.35fr]">
-            {/* Left Column: Requests List */}
-            <ServiceSectionCard title="سجل الطلبات المقدمة" icon={<ClipboardList className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />} count={`${requests.length} طلب`}>
+          <div className="space-y-4">
+            {/* Requests List Section */}
+            <ServiceSectionCard title="سجل الطلبات المقدمة" icon={<ClipboardList className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />} count={`${requests.length} طلب`}>
 
               <div className="space-y-2.5">
                 {requests.length === 0 && (
-                  <p className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3 text-[11px] leading-[1.8] text-[var(--mn-text-muted)]">
-                    لا توجد طلبات في القائمة المعروضة حاليًا. يمكنك مراجعة تفاصيل الطلب المفتوح على الجانب.
+                  <p className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3 text-[11.5px] leading-[1.8] text-[var(--mn-text-muted)]">
+                    لا توجد طلبات في القائمة المعروضة حاليًا. يمكنك مراجعة تفاصيل الطلب المفتوح بالأسفل.
                   </p>
                 )}
                 {requests.map((request) => {
@@ -2650,15 +2850,15 @@ function ServiceRequestsView({
                       }`}
                     >
                       <div className="flex flex-wrap items-start justify-between gap-2">
-                        <div className="flex min-w-0 flex-1 items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-xl bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/30 flex items-center justify-center text-[#E5B54F] shrink-0">
-                            <ClipboardList className="w-4 h-4 text-[#E5B54F]" />
+                        <div className="flex min-w-0 flex-1 items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/30 flex items-center justify-center text-[#E5B54F] shrink-0">
+                            <ClipboardList className="w-3.5 h-3.5 text-[#E5B54F]" />
                           </div>
                           <div className="min-w-0">
-                            <div className="text-[14px] font-bold leading-[1.65] text-[var(--mn-heading)] break-words">
+                            <div className="text-[12px] sm:text-[12.5px] font-bold leading-snug text-[var(--mn-heading)] break-words">
                               طلب خدمة رقم #{request.publicId}
                             </div>
-                            <div className="text-[11px] text-[var(--mn-text-muted)] mt-0.5">
+                            <div className="text-[10.5px] text-[var(--mn-text-muted)] mt-0.5">
                               تاريخ التقديم: {formatDate(request.createdAt)}
                             </div>
                           </div>
@@ -2691,10 +2891,10 @@ function ServiceRequestsView({
                   {/* Top Details Header */}
                   <div className="flex min-w-0 flex-wrap items-start justify-between gap-3 border-b border-[var(--mn-border)] pb-4 dark:border-white/10">
                     <div>
-                      <h4 className="text-[14px] font-bold leading-[1.65] text-[var(--mn-heading)] break-words">
+                      <h4 className="text-[12px] sm:text-[12.5px] font-bold leading-[1.45] text-[var(--mn-heading)] break-words">
                         طلب خدمة رقم <span className="text-[#B78622] dark:text-[#E5B54F]">#{selected.publicId}</span>
                       </h4>
-                      <div className="text-[11px] text-[var(--mn-text-muted)] mt-1">
+                      <div className="text-[10.5px] text-[var(--mn-text-muted)] mt-0.5">
                         تاريخ الإنشاء: {formatDate(selected.createdAt)} · آخر تحديث: {formatDate(selected.updatedAt)}
                       </div>
                     </div>
@@ -2863,19 +3063,19 @@ function ServiceRequestsView({
                   </div>
                 </ServiceSectionCard>
               ) : requestedNotFoundId ? (
-                <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-8 text-center mn-panel">
+                <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-amber-500/30 bg-amber-500/10 p-6 text-center mn-panel">
                   <AlertTriangle className="w-8 h-8 mx-auto text-amber-600 dark:text-amber-400 mb-2" />
-                  <h3 className="text-[14px] font-bold text-[var(--mn-heading)]">الطلب المطلوب غير موجود أو غير مصرّح بعرضه</h3>
+                  <h3 className="text-[14px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">الطلب المطلوب غير موجود أو غير مصرّح بعرضه</h3>
                   <p className="text-xs text-[var(--mn-text-muted)] mt-1.5 max-w-xs mx-auto leading-relaxed">
-                    المعرّف المُدخل <span className="font-mono font-bold">#{requestedNotFoundId}</span> لا يطابق أي طلب في سجلك المصرح به. يمكنك اختيار أحد طلباتك من القائمة المقابلة.
+                    المعرّف المُدخل <span className="font-mono font-bold">#{requestedNotFoundId}</span> لا يطابق أي طلب في سجلك المصرح به. يمكنك اختيار أحد طلباتك من القائمة أعلاه.
                   </p>
                 </div>
               ) : (
-                <div className="rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-8 text-center mn-panel">
-                  <ClipboardList className="w-8 h-8 mx-auto text-[var(--mn-text-muted)] mb-2" />
-                  <h3 className="text-[14px] font-bold text-[var(--mn-heading)]">اختر طلبًا لعرض تفاصيله</h3>
-                  <p className="text-xs text-[var(--mn-text-muted)] mt-1 max-w-xs mx-auto">
-                    اضغط على أي طلب من القائمة المقابلة للاطلاع على تفاصيل المعايير والمواعيد والفاتورة المرتبطة.
+                <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 text-center mn-panel">
+                  <ClipboardList className="w-7 h-7 mx-auto text-[#0E7C86] mb-1.5" />
+                  <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">اختر طلبًا لعرض تفاصيله</h3>
+                  <p className="text-[11px] text-[var(--mn-text-muted)] mt-1 max-w-xs mx-auto">
+                    اضغط على أي طلب من السجل أعلاه للاطلاع على تفاصيل المعايير والمواعيد والفاتورة المرتبطة.
                   </p>
                 </div>
               )}
@@ -2884,7 +3084,7 @@ function ServiceRequestsView({
         )
       ) : (
         /* Invoices Full Section */
-        <ServiceSectionCard title="سجل الفواتير والمدفوعات" icon={<Receipt className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />} count={`${invoices.length} فاتورة`}>
+        <ServiceSectionCard title="سجل الفواتير والمدفوعات" icon={<Receipt className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />} count={`${invoices.length} فاتورة`}>
 
           {invoices.length === 0 ? (
             <div className="rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-6 text-center mn-panel">
@@ -2908,11 +3108,11 @@ function ServiceRequestsView({
                     <div>
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="flex min-w-0 flex-1 items-center gap-2">
-                          <div className="w-8 h-8 rounded-xl bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/30 flex items-center justify-center text-[#E5B54F]">
-                            <Receipt className="w-4 h-4 text-[#E5B54F]" />
+                          <div className="w-7 h-7 rounded-lg bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/30 flex items-center justify-center text-[#E5B54F]">
+                            <Receipt className="w-3.5 h-3.5 text-[#E5B54F]" />
                           </div>
                           <div>
-                            <div className="text-[14px] font-bold leading-[1.65] text-[var(--mn-heading)] break-words">
+                            <div className="text-[12px] sm:text-[12.5px] font-bold leading-[1.45] text-[var(--mn-heading)] break-words">
                               فاتورة #{invoice.invoiceNumber || invoice.publicId}
                             </div>
                             <div className="text-[10px] text-[var(--mn-text-muted)]">
@@ -3009,7 +3209,7 @@ function ServiceRequestsView({
   );
 }
 
-/** Matches Summary and Opportunities: 14px Cairo and a gold underline only below the title. */
+/** Stretched edge-to-edge section matching Summary and Opportunities. */
 function ServiceSectionCard({
   title,
   icon,
@@ -3022,21 +3222,27 @@ function ServiceSectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section aria-label={title} className="mn-student-services-section relative -mx-[2px] w-[calc(100%+4px)] min-w-0 rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3.5 shadow-2xs mn-panel dark:border-white/10 sm:mx-0 sm:w-full sm:p-4 font-['Cairo',sans-serif] overflow-hidden">
-      {/* Signature gold accent line along the right edge */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#B78622] via-[#D6A43B] to-[#E5B54F]" />
-      <div className="mb-3 flex min-w-0 flex-wrap items-center justify-between gap-2 pr-2">
+    <section
+      aria-label={title}
+      className="mn-student-services-section relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] min-w-0 overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] py-3.5 shadow-2xs mn-panel dark:border-white/10 sm:py-4 font-['Cairo',sans-serif]"
+    >
+      <div className="mb-3 flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3.5 sm:px-5">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
-            {icon}
+          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
+            <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
+            <span className="relative z-10">{icon}</span>
           </span>
-          <h3 className="mn-student-services-heading min-w-0 text-[14px] font-bold leading-[1.22] font-['Cairo',sans-serif] text-[var(--mn-heading)]">{title}</h3>
+          <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 min-w-0 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
+            {title}
+          </h3>
         </div>
-        {count && <span className="text-[12px] font-bold text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">{count}</span>}
+        {count && (
+          <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2 py-0.5 text-[10px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+            {count}
+          </span>
+        )}
       </div>
-      <div className="pr-1">
-        {children}
-      </div>
+      <div className="px-3.5 sm:px-5">{children}</div>
     </section>
   );
 }
@@ -3202,81 +3408,102 @@ function VaultView({
 
   return (
     <div className="mn-student-vault-page mt-0 space-y-4 font-['Cairo',sans-serif]">
-      {/* Compact inline section header directly below the 8-button navigation */}
-      <section
-        aria-label="محفوظاتي ومجموعاتي"
-        className="mn-student-vault-hero relative overflow-hidden rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] shadow-2xs mn-panel dark:border-white/10 font-['Cairo',sans-serif]"
-      >
-        {/* Signature gold accent on right edge */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-        />
-
-        <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 pr-4 sm:px-4 sm:py-3">
-          <div className="flex min-w-0 items-center gap-2">
-            <span className="grid h-7 w-7 sm:h-8 sm:w-8 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/35 bg-[#142B5F]">
-              <Heart className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#F2CD78]" aria-hidden="true" />
-            </span>
-            <h2 className="mn-student-vault-heading text-[13.5px] sm:text-[14px] font-bold leading-tight text-[var(--mn-heading)] font-['Cairo',sans-serif]">
-              محفوظاتي ومجموعاتي
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="inline-flex shrink-0 items-center rounded-lg border border-[#142B5F]/20 bg-[#142B5F]/5 px-2.5 py-1 text-[11px] font-bold text-[#142B5F] dark:border-[#D6A43B]/30 dark:bg-[#142B5F]/40 dark:text-[#F2CD78]">
-              {savedItems.length} محفوظات
-            </span>
-            <Link
-              to="/scholarships"
-              className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-lg bg-[#142B5F] hover:bg-[#163D76] px-3 py-1 text-[11.5px] font-bold text-[#F2CD78] border border-[#D6A43B]/40 transition-all shadow-2xs font-['Cairo',sans-serif]"
-            >
-              <Sparkles className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
-              <span>استكشف المنح</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Saved Items List Section */}
-      <section
-        aria-label="العناصر المحفوظة"
-        className="relative overflow-hidden rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] -mx-1 sm:mx-0 px-2 py-3 sm:px-4 sm:py-5 shadow-2xs mn-panel font-['Cairo',sans-serif]"
-      >
-        {/* Top Controls Container: Gold line strictly on right edge ending at search box */}
-        <div className="relative pr-2 sm:pr-3.5 pb-0.5">
+      {/* Header box attached directly to the 8-tab bar above and stretched edge-to-edge right & left */}
+      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
+        <section
+          aria-label="محفوظاتي ومجموعاتي"
+          className="mn-student-vault-hero relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
+        >
+          {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 -right-2 sm:-right-3.5 w-[3.5px] bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622] rounded-tr-2xl"
+            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
           />
 
-          {/* Header with 14px Cairo font matching دورات قيد التعلم, with underline */}
-          <div className="mb-3.5 border-b border-[var(--mn-border)] dark:border-white/10 pb-3">
+          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
+                  <Heart className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
+                </span>
+                <h2 className="mn-student-vault-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
+                  محفوظاتي ومجموعاتي
+                </h2>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+                  {savedItems.length} محفوظات
+                </span>
+                <Link
+                  to="/scholarships"
+                  className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-lg bg-[#142B5F] hover:bg-[#163D76] px-3 py-1 text-[11.5px] font-bold text-[#F2CD78] border border-[#D6A43B]/40 transition-all shadow-2xs font-['Cairo',sans-serif]"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
+                  <span>استكشف المنح</span>
+                </Link>
+              </div>
+            </div>
+
+            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+              احتفظ بالمنح والجامعات والدورات والفرص التي تهمك في مجموعات منظمة للرجوع إليها ومقارنتها في أي وقت.
+            </p>
+          </div>
+        </section>
+
+        {/* Quick filter bar outside the header box, attached from the top and stretched edge-to-edge */}
+        <nav
+          aria-label="تصفية سريعة للمحفوظات"
+          className="-mt-px grid grid-cols-3 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs"
+        >
+          {[
+            { label: 'جميع المحفوظات', count: savedItems.length, active: collectionFilter === 'ALL' && typeFilter === 'ALL', onClick: () => { setTypeFilter('ALL'); setCollectionFilter('ALL'); } },
+            { label: 'دون مجموعة', count: uncollectedCount, active: collectionFilter === 'UNCOLLECTED', onClick: () => setCollectionFilter('UNCOLLECTED') },
+            { label: 'مجموعاتي', count: collections.length, active: isCollectionsOpen || (collectionFilter !== 'ALL' && collectionFilter !== 'UNCOLLECTED'), onClick: () => setIsCollectionsOpen((prev) => !prev) },
+          ].map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              aria-pressed={item.active}
+              onClick={item.onClick}
+              className={`flex min-h-12 items-center justify-center gap-1.5 px-2 py-2 text-center transition-all cursor-pointer font-['Cairo',sans-serif] ${
+                item.active
+                  ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner font-bold'
+                  : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] font-semibold hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
+              }`}
+            >
+              <span className="whitespace-normal break-words text-[11px] sm:text-[12px] leading-[1.35]">{item.label} ({item.count})</span>
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* 3. Saved Items List Section stretched edge-to-edge */}
+      <section
+        aria-label="العناصر المحفوظة"
+        className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif]"
+      >
+        {/* Top Controls Container */}
+        <div className="relative pb-0.5">
+          <div className="mb-3 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
-                <Bookmark className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F] dark:bg-[#0c1a3b]">
+                <Bookmark className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
               </span>
-              <div>
-                <h3 className="text-[14px] font-bold leading-[1.22] text-[var(--mn-heading)] font-['Cairo',sans-serif]">
-                  العناصر المحفوظة ({filteredItems.length})
-                </h3>
-                {/* Underline directly underneath the title */}
-                <div
-                  className="mt-1 h-[2px] w-14 bg-gradient-to-l from-[#D6A43B] to-transparent dark:from-[#E5B54F] rounded-full"
-                  aria-hidden="true"
-                />
-              </div>
+              <h3 className="text-[12.5px] sm:text-[13px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
+                العناصر المحفوظة ({filteredItems.length})
+              </h3>
             </div>
 
             {collectionFilter !== 'ALL' && (
               <button
                 type="button"
                 onClick={() => setCollectionFilter('ALL')}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[#D6A43B]/40 bg-[#142B5F]/5 dark:bg-[#D6A43B]/10 px-2.5 py-1 text-[11px] font-bold text-[#142B5F] dark:text-[#E5B54F] hover:bg-[#142B5F]/10 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#0E7C86]/40 bg-[#0E7C86]/10 px-2.5 py-1 text-[10.5px] font-bold text-[#0E7C86] dark:text-[#55CBC5] hover:bg-[#0E7C86]/15 transition-colors cursor-pointer"
               >
                 <span>المجموعة: {collectionFilter === 'UNCOLLECTED' ? 'دون مجموعة' : collections.find((c) => c.id === collectionFilter)?.name || 'محددة'}</span>
-                <span className="text-[12px] leading-none">✕</span>
+                <span className="text-[11px] leading-none">✕</span>
               </button>
             )}
           </div>
@@ -3839,27 +4066,22 @@ function VaultView({
               return (
                 <article
                   key={item.id}
-                  className="group relative overflow-hidden rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 pr-3.5 sm:p-3.5 sm:pr-4 shadow-2xs font-['Cairo',sans-serif] transition-all hover:border-[#D6A43B]/60"
+                  className="group relative overflow-hidden rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 shadow-2xs font-['Cairo',sans-serif] transition-all hover:border-[#D6A43B]/60"
                 >
-                  {/* Subtle small gold accent line at the start (right edge) of the card itself */}
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-y-2.5 right-0 w-[2.5px] rounded-r-full bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622] opacity-85 group-hover:opacity-100 transition-opacity"
-                  />
                   {/* Top Section: Emblem Icon on right, Title & Subtitle in middle, Favorite Heart button on left */}
-                  <div className="flex items-center justify-between gap-2.5 sm:gap-3">
-                    <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3">
+                  <div className="flex items-center justify-between gap-2.5">
+                    <div className="flex min-w-0 flex-1 items-center gap-2.5">
                       {/* Rounded Emblem Icon */}
-                      <div className="grid h-10 w-10 sm:h-11 sm:w-11 shrink-0 place-items-center rounded-xl bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/30 text-[#E5B54F] shadow-xs">
-                        {getEntityIcon(item.entityType, 'h-5 w-5 text-[#E5B54F]')}
+                      <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/30 text-[#E5B54F] shadow-xs">
+                        {getEntityIcon(item.entityType, 'h-4 w-4 text-[#E5B54F]')}
                       </div>
 
                       {/* Title & Subtitle (e.g. منحة · الصين) */}
                       <div className="min-w-0 flex-1">
-                        <h4 className="text-[13px] sm:text-[14px] font-bold text-[var(--mn-heading)] leading-snug break-words font-['Cairo',sans-serif]">
+                        <h4 className="text-[12px] sm:text-[12.5px] font-bold text-[var(--mn-heading)] leading-snug break-words font-['Cairo',sans-serif]">
                           {displayName}
                         </h4>
-                        <p className="mt-0.5 text-[11px] sm:text-[11.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+                        <p className="mt-0.5 text-[10.5px] sm:text-[11px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
                           {subtitle}
                         </p>
                       </div>
@@ -4018,7 +4240,7 @@ function VaultView({
   );
 }
 
-/** Matches the cards and gold-underlined 14px headers in ملخصي/فرصي/تعليمي. */
+/** Stretched edge-to-edge section matching ملخصي/فرصي/تعلمي. */
 function VaultSectionCard({
   title,
   icon,
@@ -4033,16 +4255,25 @@ function VaultSectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section aria-label={title} className="mn-student-vault-section relative -mx-[2px] w-[calc(100%+4px)] rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-3.5 shadow-2xs mn-panel dark:border-white/10 sm:mx-0 sm:w-full sm:p-4">
-      <div className="mb-3 flex min-w-0 flex-wrap items-center justify-between gap-2">
+    <section
+      aria-label={title}
+      className="mn-student-vault-section relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] px-3.5 py-3.5 shadow-2xs mn-panel dark:border-white/10 sm:px-5 sm:py-4 font-['Cairo',sans-serif]"
+    >
+      <div className="mb-3 flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
+          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F] dark:bg-[#0c1a3b]">
             {icon}
           </span>
-          <h3 className="mn-student-vault-heading min-w-0 text-[14px] font-bold leading-[1.22] text-[var(--mn-heading)]">{title}</h3>
+          <h3 className="min-w-0 text-[12.5px] sm:text-[13px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC]">
+            {title}
+          </h3>
         </div>
         <div className="flex min-w-0 items-center gap-2">
-          {count && <span className="text-[11px] font-semibold text-[var(--mn-text-muted)]">{count}</span>}
+          {count && (
+            <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2 py-0.5 text-[10.5px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+              {count}
+            </span>
+          )}
           {action}
         </div>
       </div>
@@ -4173,15 +4404,9 @@ function StudentAvatarAssetPicker({ currentAssetId }: { currentAssetId: string |
   }
 
   return (
-    <div className="relative overflow-hidden p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-4 font-['Cairo',sans-serif] space-y-2.5">
-      {/* Signature gold line on right edge */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-      />
-
+    <div className="relative overflow-hidden p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] font-['Cairo',sans-serif] space-y-2.5">
       <div className="flex items-center justify-between gap-2">
-        <label className="block text-[12px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
+        <label className="block text-[11.5px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
           الصورة الشخصية (من الأصول الآمنة)
         </label>
         <button
@@ -4278,19 +4503,19 @@ function ProfileSectionCard({
   return (
     <section
       aria-label={title}
-      className={`relative -mx-[2px] w-[calc(100%+4px)] sm:mx-0 sm:w-full rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3.5 sm:p-5 shadow-2xs mn-panel font-['Cairo',sans-serif] ${className}`}
+      className={`relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif] ${className}`}
     >
-      <div className="mb-3.5 flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5">
+      <div className="mb-3 flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
+          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F] dark:bg-[#0c1a3b]">
             {icon}
           </span>
           <div className="min-w-0">
-            <h3 className="mn-student-profile-heading min-w-0 text-[14px] font-bold leading-[1.22] text-[var(--mn-heading)] font-['Cairo',sans-serif]">
+            <h3 className="min-w-0 text-[12.5px] sm:text-[13px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
               {title}
             </h3>
             {subtitle && (
-              <p className="mt-0.5 text-[11px] text-[var(--mn-text-muted)] truncate max-w-sm font-['Cairo',sans-serif]">
+              <p className="mt-0.5 text-[10.5px] font-medium text-[var(--mn-text-muted)] break-words font-['Cairo',sans-serif]">
                 {subtitle}
               </p>
             )}
@@ -4317,7 +4542,7 @@ function ProfileToggle({
   return (
     <label className="mn-student-profile-toggle group flex cursor-pointer items-center justify-between gap-2.5 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-1.5 min-h-[36px] hover:border-[#D6A43B]/60 hover:bg-[var(--mn-surface-muted)] transition-all font-['Cairo',sans-serif]">
       <div className="min-w-0 flex-1">
-        <span className="text-[12px] font-semibold text-[var(--mn-heading)] block leading-snug font-['Cairo',sans-serif]">
+        <span className="text-[12px] font-semibold text-[#1E293B] dark:text-[#F8FAFC] block leading-snug font-['Cairo',sans-serif]">
           {label}
         </span>
         {description && (
@@ -4378,61 +4603,67 @@ function ProfileView({
 
   return (
     <div className="mn-student-profile-page mt-0 space-y-4 font-['Cairo',sans-serif]">
-      {/* Compact inline section header directly below the 8-button navigation */}
+      {/* Unified inline section header attached directly to the 8-tab bar above and stretched edge-to-edge */}
       <section
-        aria-label="ملفي وإعداداتي"
-        className="mn-student-profile-hero relative overflow-hidden rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] shadow-2xs mn-panel dark:border-white/10 font-['Cairo',sans-serif]"
+        aria-label="إعداداتي وملفي الشخصي"
+        className="mn-student-profile-hero relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px overflow-hidden rounded-b-2xl rounded-t-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
       >
-        {/* Signature gold accent on right edge */}
+        {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
+          className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
         />
 
-        <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 pr-4 sm:px-4 sm:py-3">
-          <div className="flex min-w-0 items-center gap-2">
-            <span className="grid h-7 w-7 sm:h-8 sm:w-8 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/35 bg-[#142B5F]">
-              <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#F2CD78]" aria-hidden="true" />
-            </span>
-            <h2 className="mn-student-profile-heading text-[13.5px] sm:text-[14px] font-bold leading-tight text-[var(--mn-heading)] font-['Cairo',sans-serif]">
-              ملفي وإعداداتي
-            </h2>
+        <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
+                <User className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
+              </span>
+              <h2 className="mn-student-profile-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
+                إعداداتي وملفي الشخصي
+              </h2>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+                <ShieldCheck className="h-3.5 w-3.5 text-[#0E7C86] dark:text-[#55CBC5]" aria-hidden="true" />
+                <span>{arabicStatus(dashboard.workspace.status)}</span>
+              </span>
+
+              <button
+                type="button"
+                disabled={saving}
+                onClick={onLogout}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-rose-300 dark:border-rose-900/40 bg-rose-50 dark:bg-rose-950/30 px-2.5 py-1 text-[11.5px] font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+                title="تسجيل الخروج من الحساب"
+              >
+                <LogOut className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" aria-hidden="true" />
+                <span>تسجيل الخروج</span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2.5 py-1 text-[11px] font-bold text-[var(--mn-heading)] dark:bg-[var(--mn-surface-elevated)]">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#186D7A] dark:text-[#55CBC5]" aria-hidden="true" />
-              <span>{arabicStatus(dashboard.workspace.status)}</span>
-            </span>
-
-            <button
-              type="button"
-              disabled={saving}
-              onClick={onLogout}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-rose-300 dark:border-rose-900/40 bg-rose-50 dark:bg-rose-950/30 px-2.5 py-1 text-[11.5px] font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
-              title="تسجيل الخروج من الحساب"
-            >
-              <LogOut className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" aria-hidden="true" />
-              <span>تسجيل الخروج</span>
-            </button>
-          </div>
+          <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
+            حدّث بياناتك الشخصية والأكاديمية، واضبط تفضيلات الإشعارات والخصوصية وإعدادات العرض في حسابك.
+          </p>
         </div>
       </section>
 
       {/* Profile Form */}
-      <form onSubmit={onSave} onChange={() => onDirtyChange(true)} className="space-y-5 font-['Cairo',sans-serif]">
-        <fieldset disabled={saving} className="space-y-5 min-w-0 border-0 p-0">
+      <form onSubmit={onSave} onChange={() => onDirtyChange(true)} className="space-y-4 font-['Cairo',sans-serif]">
+        <fieldset disabled={saving} className="space-y-4 min-w-0 border-0 p-0">
           {dirty && (
-            <p role="status" className="rounded-xl border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-3 text-[12px] font-bold text-amber-900 dark:text-amber-200 font-['Cairo',sans-serif]">
+            <p role="status" className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-[12px] font-bold text-amber-900 dark:text-amber-200 font-['Cairo',sans-serif]">
               لديك تعديلات غير محفوظة، اضغط على زر الحفظ بالأسفل لتطبيقها سحابياً.
             </p>
           )}
 
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="space-y-4">
             {/* Section 1: بياناتي والهوية */}
             <ProfileSectionCard
               title="بياناتي والهوية"
-              icon={<User className="w-4 h-4 text-[#E5B54F]" />}
+              icon={<User className="w-4 h-4 text-[#F2CD78]" />}
               subtitle="معلومات الحساب المعتمدة في منصة منارتك"
             >
               <div className="space-y-3.5">
@@ -4477,11 +4708,7 @@ function ProfileView({
 
                 {/* Academic Account Role Badge */}
                 <div className="pt-1">
-                  <div className="relative overflow-hidden p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] flex items-center justify-between pr-4 font-['Cairo',sans-serif]">
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-                    />
+                  <div className="p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] flex items-center justify-between font-['Cairo',sans-serif]">
                     <div>
                       <span className="text-[11px] font-semibold text-[var(--mn-text-muted)] block">حالة الحساب الأكاديمي</span>
                       <span className="text-[12px] font-bold text-[#142B5F] dark:text-[#E0B244] mt-0.5 inline-flex items-center gap-1.5">
@@ -4589,11 +4816,7 @@ function ProfileView({
                   </div>
                 </div>
 
-                <div className="relative overflow-hidden rounded-xl bg-amber-500/10 border border-amber-500/20 p-2.5 pr-4 text-[11.5px] text-amber-900 dark:text-amber-200 flex items-start gap-2 font-['Cairo',sans-serif]">
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-                  />
+                <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-2.5 text-[11px] text-amber-900 dark:text-amber-200 flex items-start gap-2 font-['Cairo',sans-serif]">
                   <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                   <span>تُحفظ جميع التفضيلات سحابياً في حسابك وتُطبّق على الفور عبر جميع أجهزتك المتصلة.</span>
                 </div>
@@ -4685,20 +4908,16 @@ function ProfileView({
                   />
                 </div>
 
-                <div className="relative overflow-hidden p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] flex items-center justify-between gap-3 font-['Cairo',sans-serif] pr-4">
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-                  />
+                <div className="p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] flex items-center justify-between gap-3 font-['Cairo',sans-serif]">
                   <div>
-                    <span className="text-[12px] font-bold text-[var(--mn-heading)] block">مسح سجل البحث</span>
-                    <span className="text-[11px] text-[var(--mn-text-muted)]">حذف عمليات البحث المحفوظة من حسابك فوراً.</span>
+                    <span className="text-[11.5px] font-bold text-[var(--mn-heading)] block">مسح سجل البحث</span>
+                    <span className="text-[10.5px] text-[var(--mn-text-muted)]">حذف عمليات البحث المحفوظة من حسابك فوراً.</span>
                   </div>
                   <button
                     type="button"
                     onClick={handleClearSearch}
                     disabled={saving}
-                    className="rounded-lg border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-3 py-1.5 text-[12px] font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors shrink-0 disabled:opacity-50 cursor-pointer font-['Cairo',sans-serif]"
+                    className="rounded-lg border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-3 py-1.5 text-[11px] font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors shrink-0 disabled:opacity-50 cursor-pointer font-['Cairo',sans-serif]"
                   >
                     مسح السجل الآن
                   </button>
@@ -4709,32 +4928,24 @@ function ProfileView({
             {/* Section 5: إعدادات متقدمة والنسخ الاحتياطية */}
             <ProfileSectionCard
               title="إعدادات متقدمة والنسخ الاحتياطية"
-              icon={<Settings2 className="w-4 h-4 text-[#E5B54F]" />}
+              icon={<Settings2 className="w-3.5 h-3.5 text-[#E5B54F]" />}
               subtitle="معرّفات النظام، تفاصيل التزامن السحابي، وإدارة نسخ مساحة العمل"
               className="lg:col-span-2"
             >
               <div className="space-y-4 font-['Cairo',sans-serif]">
                 {/* Internal Identifiers & Technical Sync Details */}
                 <div className="grid gap-3 sm:grid-cols-2 text-xs">
-                  <div className="relative overflow-hidden p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-4">
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-                    />
-                    <span className="text-[11px] font-semibold text-[var(--mn-text-muted)] block">معرّف النظام الداخلي (Principal ID)</span>
-                    <span className="text-[12px] font-mono text-[var(--mn-heading)] mt-1 block truncate select-all" title={identity?.principalId}>
+                  <div className="p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)]">
+                    <span className="text-[10.5px] font-semibold text-[var(--mn-text-muted)] block">معرّف النظام الداخلي (Principal ID)</span>
+                    <span className="text-[11.5px] font-mono text-[var(--mn-heading)] mt-1 block truncate select-all" title={identity?.principalId}>
                       {identity?.principalId || '—'}
                     </span>
                     <span className="text-[10px] text-[var(--mn-text-muted)] mt-0.5 block">معرّف تقني فريد يُستخدم في ربط وتأمين الخدمات</span>
                   </div>
 
-                  <div className="relative overflow-hidden p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-4">
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#E5B54F] via-[#D6A43B] to-[#B78622]"
-                    />
-                    <span className="text-[11px] font-semibold text-[var(--mn-text-muted)] block">إصدار تكوين مساحة العمل</span>
-                    <span className="text-[12px] font-bold text-[var(--mn-heading)] mt-1 inline-flex items-center gap-1.5 font-mono">
+                  <div className="p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)]">
+                    <span className="text-[10.5px] font-semibold text-[var(--mn-text-muted)] block">إصدار تكوين مساحة العمل</span>
+                    <span className="text-[11.5px] font-bold text-[var(--mn-heading)] mt-1 inline-flex items-center gap-1.5 font-mono">
                       <CheckCircle2 className="w-3.5 h-3.5 text-[var(--mn-success-text)]" />
                       الإصدار #{dashboard.workspace.version}
                     </span>
@@ -4805,30 +5016,30 @@ function ProfileView({
             </ProfileSectionCard>
           </div>
 
-          {/* End-of-form save bar: matches other tabs, fully unified and prominent */}
-          <div className="relative mt-5 mb-6 rounded-2xl bg-gradient-to-l from-[#163D76] via-[#0D5875] to-[#06606B] text-white p-3.5 sm:p-4 shadow-md border border-[#186D7A]/50 flex flex-col sm:flex-row items-center justify-between gap-3 font-['Cairo',sans-serif]">
-            <div className="flex items-center gap-2.5 text-center sm:text-right">
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-[#E5B54F]/30 bg-[#142B5F]/60">
-                <ShieldCheck className="w-4 h-4 text-[#E5B54F]" />
+          {/* End-of-form save bar stretched edge-to-edge */}
+          <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-['Cairo',sans-serif]">
+            <div className="flex items-center gap-2 text-right">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F]">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#F2CD78]" />
               </span>
               <div>
-                <p className="text-[12px] sm:text-[13px] font-bold text-white">هل قمت بتعديل بياناتك أو إعداداتك؟</p>
-                <p className="text-[11px] text-white/80">اضغط لحفظ التعديلات وتطبيقها ومزامنتها سحابياً فوراً عبر حسابك.</p>
+                <p className="text-[12px] sm:text-[12.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">هل قمت بتعديل بياناتك أو إعداداتك؟</p>
+                <p className="text-[10.5px] sm:text-[11px] font-medium text-[var(--mn-text-muted)]">اضغط لحفظ التعديلات وتطبيقها ومزامنتها سحابياً فوراً عبر حسابك.</p>
               </div>
             </div>
             <button
               type="submit"
               disabled={saving}
-              className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-[#D6A43B] via-[#E5B54F] to-[#D6A43B] px-6 py-2 text-[12px] font-bold text-[#142B5F] shadow-sm hover:brightness-105 active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer font-['Cairo',sans-serif]"
+              className="w-full sm:w-auto min-h-9 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/45 px-4 py-1.5 text-[11.5px] font-bold text-white shadow-2xs active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer font-['Cairo',sans-serif]"
             >
               {saving ? (
                 <>
-                  <RefreshCw className="w-4 h-4 animate-spin text-[#142B5F]" />
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#F2CD78]" />
                   <span>جارٍ حفظ التفضيلات…</span>
                 </>
               ) : (
                 <>
-                  <Check className="w-4 h-4 text-[#142B5F]" />
+                  <Check className="w-3.5 h-3.5 text-[#F2CD78]" />
                   <span>حفظ جميع التعديلات</span>
                 </>
               )}
@@ -4983,20 +5194,47 @@ function InvoicePanel({
   const content = (
     <>
       {invoices.length ? (
-        <div className={compactSummary ? 'space-y-3.5' : 'space-y-3'}>
+        <div className={compactSummary ? 'space-y-2.5' : 'space-y-3'}>
           {invoices.map((invoice) => (
-            <div key={invoice.id} className={compactSummary
-              ? "rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2.5"
-              : "rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-4"}>
-              <div className="flex justify-between gap-3">
-                <div>
-                  <h3 className={compactSummary ? "text-xs sm:text-sm font-bold leading-5 text-[var(--mn-heading)] break-words" : "font-bold"}>{invoice.invoiceNumber}</h3>
-                  <p className={compactSummary ? "mt-0.5 text-[11px] sm:text-xs leading-5 text-[var(--mn-text-muted)]" : "mt-1 text-sm text-[var(--mn-text-muted)]"}>
-                    المستحق {formatMoney(invoice.amountDue)}
-                  </p>
+            <div
+              key={invoice.id}
+              className={
+                compactSummary
+                  ? 'relative overflow-hidden rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-3 py-2.5 shadow-2xs'
+                  : 'rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-4'
+              }
+            >
+              {compactSummary && (
+                /* Authentic Horizon Petrol (#0E7C86) Geometric Corner Line from top-right down the right edge to middle-bottom */
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-0 right-0 w-4 sm:w-5 h-[68%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#0E7C86] dark:border-[#55CBC5]"
+                />
+              )}
+              <div className="flex items-start justify-between gap-2.5">
+                <div className="flex min-w-0 items-start gap-2">
+                  {compactSummary && (
+                    <span className="mt-0.5 w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                      <Receipt className="h-3.5 w-3.5 text-white" />
+                    </span>
+                  )}
+                  <div className="min-w-0">
+                    <h3 className={compactSummary ? 'text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words' : 'font-bold'}>
+                      {invoice.invoiceNumber}
+                    </h3>
+                    <p className={compactSummary ? 'mt-0.5 text-[9.5px] sm:text-[10px] font-bold leading-snug text-[var(--mn-text-muted)]' : 'mt-1 text-sm text-[var(--mn-text-muted)]'}>
+                      المستحق {formatMoney(invoice.amountDue)}
+                    </p>
+                  </div>
                 </div>
                 <span
-                  className={`h-fit rounded-full ${compactSummary ? 'px-2 py-0.5 text-[10px] sm:text-[11px]' : 'px-3 py-1 text-xs'} font-bold font-['Cairo',sans-serif] ${invoice.status === 'PAID' ? 'border border-[var(--mn-success-border)] bg-[var(--mn-success-soft)] text-[var(--mn-success-text)]' : 'border border-[var(--mn-warning-border)] bg-[var(--mn-warning-soft)] text-[var(--mn-warning-text)]'}`}
+                  className={`h-fit shrink-0 rounded-lg ${compactSummary ? 'px-2.5 py-0.5 text-[9.5px]' : 'px-3 py-1 text-xs'} font-bold font-['Cairo',sans-serif] ${
+                    invoice.status === 'PAID'
+                      ? 'border border-[var(--mn-success-border)] bg-[var(--mn-success-soft)] text-[var(--mn-success-text)]'
+                      : invoice.status === 'ISSUED'
+                        ? 'border border-[#142B5F] bg-[#142B5F] text-white'
+                        : 'border border-[var(--mn-warning-border)] bg-[var(--mn-warning-soft)] text-[var(--mn-warning-text)]'
+                  }`}
                 >
                   {arabicStatus(invoice.status)}
                 </span>
@@ -5004,22 +5242,24 @@ function InvoicePanel({
               <button
                 type="button"
                 onClick={() => onToggle(invoice.id)}
-                className={compactSummary
-                  ? "mn-student-summary-primary-action mt-2 inline-flex items-center justify-center rounded-lg bg-[#142B5F] px-3 py-1.5 font-semibold text-white dark:bg-[#D6A43B] dark:text-[#142B5F] hover:bg-[#203D74] dark:hover:bg-[#E5B54F] transition-colors font-['Cairo',sans-serif]"
-                  : "mt-3 text-xs font-semibold text-[var(--mn-secondary)]"}
+                className={
+                  compactSummary
+                    ? "mn-student-summary-primary-action mt-2 inline-flex items-center justify-center rounded-lg bg-[#142B5F] hover:bg-[#203D74] border border-[#142B5F] px-2.5 py-1 text-[10px] font-bold text-white transition-colors font-['Cairo',sans-serif] cursor-pointer"
+                    : 'mt-3 text-xs font-semibold text-[var(--mn-secondary)]'
+                }
               >
                 {paymentsByInvoice[invoice.id] ? 'إخفاء الدفعات' : 'عرض الدفعات'}
               </button>
               {paymentsByInvoice[invoice.id] && (
-                <div className="mt-3 space-y-2 border-t border-[var(--mn-border)] pt-3">
+                <div className="mt-2.5 space-y-1.5 border-t border-[var(--mn-border)] pt-2.5">
                   {paymentsByInvoice[invoice.id].length ? (
                     paymentsByInvoice[invoice.id].map((payment) => (
-                      <p key={payment.id} className="rounded-lg bg-[var(--mn-surface-muted)] p-2 text-xs">
+                      <p key={payment.id} className="rounded-lg bg-[var(--mn-surface-muted)] p-2 text-[10.5px] font-semibold">
                         {formatMoney(payment.amount)} — {arabicStatus(payment.status)}
                       </p>
                     ))
                   ) : (
-                    <p className="text-xs text-[var(--mn-text-muted)]">لا توجد دفعات مسجلة.</p>
+                    <p className="text-[10.5px] text-[var(--mn-text-muted)]">لا توجد دفعات مسجلة.</p>
                   )}
                 </div>
               )}
@@ -5041,15 +5281,23 @@ function InvoicePanel({
   return (
     <section
       aria-label="الفواتير والدفعات"
-      className="relative -mx-[2px] w-[calc(100%+4px)] sm:mx-0 sm:w-full rounded-2xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3.5 sm:p-4 shadow-2xs mn-panel font-['Cairo',sans-serif]"
+      className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3 sm:py-3.5 shadow-2xs mn-panel font-['Cairo',sans-serif]"
     >
-      <div className="mb-3 flex min-w-0 items-center gap-2">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#D6A43B]/30 bg-[#142B5F] dark:bg-[#0c1a3b]">
-          <Receipt className="h-4 w-4 text-[#E5B54F]" />
+      <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3 sm:px-4">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
+            <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
+            <Receipt className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" />
+          </span>
+          <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
+            الفواتير والدفعات
+          </h3>
+        </div>
+        <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2 py-0.5 text-[10px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+          {invoices.length} فاتورة
         </span>
-        <h2 className="mn-student-summary-heading text-[14px] font-bold font-['Cairo',sans-serif] text-[var(--mn-heading)]">الفواتير والدفعات</h2>
       </div>
-      {content}
+      <div className="px-2.5 sm:px-4">{content}</div>
     </section>
   );
 }

@@ -30,7 +30,7 @@ import {
   CategoryType,
 } from '../types';
 import { FavoriteButton } from './FavoriteButton';
-import { DetailBackButton, DetailSectionHeader, PublicFilterSelectModal, useDetailSearchTarget } from './DetailUi';
+import { DetailBackButton, DetailSectionHeader, PublicCardsPagination, PublicFilterSelectModal, useDetailSearchTarget, usePaginatedCatalog } from './DetailUi';
 
 interface CareersSearchPageProps {
   live?: boolean;
@@ -454,6 +454,17 @@ const LocalCareersSearchPage: React.FC<CareersSearchPageProps> = ({
     selectedEmploymentType,
   ]);
 
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: paginatedOpportunities,
+    goToPage,
+  } = usePaginatedCatalog(
+    filteredOpportunities,
+    `${searchQuery}|${selectedKind}|${selectedCountry}|${selectedIndustry}|${selectedWorkMode}|${selectedExperience}|${selectedEmploymentType}`,
+    30,
+  );
+
   const resetFilters = () => {
     setSearchQuery('');
     setSelectedKind('الكل');
@@ -754,18 +765,29 @@ const LocalCareersSearchPage: React.FC<CareersSearchPageProps> = ({
               <button onClick={resetFilters} className="mt-2 px-4 py-1.5 bg-[var(--mn-primary)] text-white rounded-xl text-xs font-bold cursor-pointer font-['Cairo',sans-serif] mn-inverse ">{publicT('public_clear_filters')}</button>
             </div>
           ) : (
-            filteredOpportunities.map((opportunity) => (
-              <CareerOpportunityCard
-                key={opportunity.id}
-                opportunity={opportunity}
-                isFavorite={favoriteIds.includes(opportunity.id)}
-                onToggleFavorite={onToggleFavorite}
-                onOpen={(selected) => {
-                  setSelectedOpportunity(selected);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+            <>
+              {paginatedOpportunities.map((opportunity) => (
+                <CareerOpportunityCard
+                  key={opportunity.id}
+                  opportunity={opportunity}
+                  isFavorite={favoriteIds.includes(opportunity.id)}
+                  onToggleFavorite={onToggleFavorite}
+                  onOpen={(selected) => {
+                    setSelectedOpportunity(selected);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+              ))}
+
+              <PublicCardsPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={filteredOpportunities.length}
+                pageSize={30}
+                onPageChange={goToPage}
+                dir={publicDir}
               />
-            ))
+            </>
           )}
         </div>
       </div>

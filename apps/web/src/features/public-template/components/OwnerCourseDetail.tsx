@@ -100,9 +100,9 @@ export function OwnerCourseDetail({
         </div>
 
         {/* SVG background with vibrant 3-stop navy-to-petrol gradient and subtle gold waves */}
-        <div className="relative w-full h-[115px] sm:h-[120px]">
+        <div className="relative w-full h-[132px] sm:h-[140px]">
           <svg
-            viewBox="0 0 500 115"
+            viewBox="0 0 500 130"
             preserveAspectRatio="none"
             className="w-full h-full absolute inset-0 block"
           >
@@ -115,18 +115,18 @@ export function OwnerCourseDetail({
             </defs>
 
             {/* Main base background */}
-            <path d="M 0,0 L 500,0 L 500,90 Q 250,112 0,90 Z" fill="url(#ownerCourseHeroGrad)" />
+            <path d="M 0,0 L 500,0 L 500,104 Q 250,126 0,104 Z" fill="url(#ownerCourseHeroGrad)" />
 
             {/* Decorative Gold Waves */}
             <g opacity="0.25">
               <path
-                d="M -50,30 Q 120,-10 260,35 T 550,20"
+                d="M -50,34 Q 120,-8 260,40 T 550,24"
                 stroke="var(--mn-accent)"
                 strokeWidth="1.5"
                 fill="none"
               />
               <path
-                d="M -30,60 Q 150,20 320,55 T 560,35"
+                d="M -30,68 Q 150,24 320,62 T 560,42"
                 stroke="var(--mn-accent)"
                 strokeWidth="1"
                 fill="none"
@@ -141,7 +141,7 @@ export function OwnerCourseDetail({
 
             {/* Gold accent border following the bottom curve */}
             <path
-              d="M 0,90 Q 250,112 500,90"
+              d="M 0,104 Q 250,126 500,104"
               fill="none"
               stroke="var(--mn-accent)"
               strokeWidth="2.2"
@@ -151,13 +151,13 @@ export function OwnerCourseDetail({
 
           {/* Hero Content: Horizontal Row (Glowing Gold Graduation Emblem Right -> Arrow -> Title Left) */}
           <div
-            className="absolute inset-0 flex items-center justify-between pl-11 pr-4 sm:px-6 pt-1 pb-4 z-10"
+            className="absolute inset-0 flex items-center justify-between pl-11 pr-4 sm:px-6 pt-2 pb-5 z-10"
             dir={publicDir}
           >
             {/* Right Side: Official Logo/Emblem Pairing (Navy + Gold) + Interactive Arrow */}
-            <div className="flex items-center gap-2 shrink-0">
-              <div className="w-11 h-11 rounded-full border-2 border-[#F2CD78] flex items-center justify-center p-1.5 shadow-[0_0_12px_rgba(214,164,59,0.45)] bg-gradient-to-br from-[#142B5F] to-[#0E7C86] shrink-0">
-                <GraduationCap className="w-5 h-5 text-[#F2CD78]" />
+            <div className="flex items-center gap-2.5 shrink-0">
+              <div className="w-12 h-12 rounded-full border-2 border-[#F2CD78] flex items-center justify-center p-1.5 shadow-[0_0_12px_rgba(214,164,59,0.45)] bg-gradient-to-br from-[#142B5F] to-[#0E7C86] shrink-0">
+                <GraduationCap className="w-5.5 h-5.5 text-[#F2CD78]" />
               </div>
               <ArrowLeft className="w-4 h-4 text-[#F2CD78] shrink-0 opacity-95 drop-shadow-[0_0_4px_rgba(214,164,59,0.4)]" />
             </div>
@@ -165,12 +165,12 @@ export function OwnerCourseDetail({
             {/* Left Side (in RTL): Course Title & English Subtitle */}
             <div className="flex flex-col text-start min-w-0 flex-1 pr-1.5">
               <h1
-                className="text-[14px] sm:text-[15px] font-bold text-white leading-tight truncate drop-shadow-sm font-['Cairo',sans-serif]"
+                className="text-[15px] sm:text-[16px] font-bold text-white leading-snug truncate drop-shadow-sm font-['Cairo',sans-serif]"
                 data-mn-design="827f35e03a"
               >
                 {course.title}
               </h1>
-              <p className="text-[10.5px] sm:text-[11px] font-bold text-[#F2CD78] font-['Cairo',sans-serif] mt-0.5 tracking-wider truncate">
+              <p className="text-[11px] sm:text-[11.5px] font-bold text-[#F2CD78] font-['Cairo',sans-serif] mt-1 tracking-wider truncate">
                 {course.titleEn ||
                   (course.ownerId ? '' : 'Scholarships and University Admissions Masterclass')}
               </p>
@@ -185,7 +185,7 @@ export function OwnerCourseDetail({
       <div className="px-0 space-y-2.5 z-20 relative -mt-2.5 sm:-mt-3">
         {/* 2. PROVIDER / AUTHORITY CARD */}
         <div
-          className="relative w-full bg-[var(--mn-surface)] rounded-none py-3 px-3.5 sm:px-4 border-y border-[var(--mn-border)] shadow-md shadow-[var(--mn-shadow-ink)]/60 flex items-center gap-3 overflow-hidden mn-panel"
+          className="relative w-full bg-[var(--mn-surface)] rounded-none py-3 px-3.5 sm:px-4 border-y border-[var(--mn-border)] shadow-md shadow-[var(--mn-shadow-ink)]/60 flex items-center gap-2.5 overflow-hidden mn-panel"
           dir={publicDir}
         >
           <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-transparent via-[#142B5F] dark:via-[#D6A43B] to-transparent" />
@@ -195,13 +195,13 @@ export function OwnerCourseDetail({
             <Sparkles className="w-4 h-4 text-[#F2CD78]" />
           </div>
 
-          <div className="w-[1.5px] h-7 bg-[var(--mn-border)] shrink-0 rounded-full" />
+          <div className="w-[1.5px] h-6 bg-[var(--mn-border)] shrink-0 rounded-full" />
 
-          <div className="space-y-0.5 min-w-0 flex-1 text-start">
-            <span className="text-[9.5px] font-bold text-[var(--mn-text-muted)] block font-['Cairo',sans-serif]">
-              {publicT('public_provider')}
+          <div className="flex items-center gap-2 min-w-0 flex-1 text-start">
+            <span className="text-[12px] sm:text-[13px] font-bold text-[#142B5F] dark:text-[#F2CD78] shrink-0 font-['Cairo',sans-serif]">
+              {publicT('public_provider')} :
             </span>
-            <h2 className="text-[11px] sm:text-xs font-bold text-[var(--mn-heading)] leading-tight font-['Cairo',sans-serif]">
+            <h2 className="text-[12px] sm:text-[13px] font-bold text-[var(--mn-heading)] leading-tight truncate font-['Cairo',sans-serif]">
               {publicT('public_presented_by_manaratak')}
             </h2>
           </div>

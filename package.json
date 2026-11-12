@@ -9,7 +9,6 @@
   "scripts": {
     "dev": "CI=true node apps/web/node_modules/vite/bin/vite.js apps/web --port=3000 --host=0.0.0.0 --strictPort",
     "build": "npm run build --workspace=@manaratak/web",
-    "dev:admin": "npm run dev --workspace=@manaratak/admin",
     "lint": "echo 'Lint check passed'"
   },
   "dependencies": {

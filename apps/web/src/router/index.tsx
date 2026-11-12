@@ -14,7 +14,6 @@ import { useTranslation } from '../i18n/I18nProvider';
 import { localizeLocation, resolveLegacyPublicLocale } from '../i18n/localeRouting';
 import PublicTemplateApp from '../features/public-template/PublicTemplateApp';
 import { StudentAuthPage } from '../features/students/StudentAuthPage';
-import { canonicalAdminTarget } from './adminRedirect';
 
 const CertificateVerificationPage = React.lazy(() =>
   import('../features/certificates').then((m) => ({ default: m.CertificateVerificationPage }))
@@ -38,9 +37,6 @@ const PageLoadingFallback = () => {
 
 const PasswordRecoveryPage = () => <StudentAuthPage onAuthenticated={() => { window.location.assign('/student'); }} />;
 
-// In the standalone design deployment, deep links to a student tool must show
-// its existing prototype details rather than calling the unavailable live API.
-// Production retains the complete executable student tool route unchanged.
 function StudentToolPreviewRoute() {
   const { toolKey } = useParams<{ toolKey: string }>();
   const { language } = useTranslation();
@@ -51,7 +47,6 @@ function StudentToolPreviewRoute() {
   }
   return <StudentToolPage />;
 }
-
 
 export const RootLayout = () => {
   const { language, setLanguage } = useTranslation();
@@ -72,27 +67,14 @@ export const RootLayout = () => {
     return <Navigate replace to={localizeLocation(location, targetLocale)} />;
   }
 
-  // Wait for the URL-authoritative locale before mounting readers or metadata.
   if (routeLocale !== language) return <PageLoadingFallback />;
 
-  const localeRelativePath = location.pathname.replace(/^\/(?:ar|en)(?=\/|$)/, '') || '/';
-  const isCanonicalAdminPath =
-    localeRelativePath.startsWith('/admin') ||
-    localeRelativePath.startsWith('/study-destinations') ||
-    localeRelativePath.startsWith('/academic-taxonomy');
-  // apps/admin is the only administrative UI. apps/web never renders a shadow/local admin.
-  if (isCanonicalAdminPath) return <CanonicalAdminRedirect legacyPath={location.pathname} />;
-
-  // Render the matched public child route. This keeps /tools/:toolKey executable
-  // while the catalog/detail routes remain owned by PublicTemplateApp.
   return (
     <React.Suspense fallback={<PageLoadingFallback />}>
       <Outlet />
     </React.Suspense>
   );
 };
-
-// Route Groups Definition
 
 const router = createBrowserRouter([
   {
@@ -253,47 +235,9 @@ const router = createBrowserRouter([
         path: 'tracker',
         element: <PublicTemplateApp />,
       },
-      {
-        path: 'admin/*',
-        element: <CanonicalAdminRedirect legacyPath={window.location.pathname} />,
-      },
-      {
-        path: 'study-destinations/*',
-        element: <CanonicalAdminRedirect legacyPath={window.location.pathname} />,
-      },
-      {
-        path: 'academic-taxonomy/*',
-        element: <CanonicalAdminRedirect legacyPath={window.location.pathname} />,
-      },
     ],
   },
 ]);
-
-function CanonicalAdminRedirect({ legacyPath }: { legacyPath: string }) {
-  const location = useLocation();
-  const target = canonicalAdminTarget(
-    `${legacyPath}${location.search}${location.hash}`,
-    import.meta.env.VITE_ADMIN_URL,
-  );
-
-  useEffect(() => {
-    window.location.replace(target);
-  }, [target]);
-
-  return <PageLoadingFallback />;
-}
-
-function CanonicalAdminUnavailable() {
-  const { t } = useTranslation();
-  return (
-    <div className="mx-auto max-w-2xl py-12 text-center">
-      <div className="mn-card rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-8">
-        <h1 className="text-xl font-bold text-[var(--mn-heading)]">{t('admin_unavailable_title')}</h1>
-        <p className="mt-3 text-sm text-[var(--mn-text-muted)]">{t('admin_unavailable_desc')}</p>
-      </div>
-    </div>
-  );
-}
 
 export function AppRouter() {
   return <RouterProvider router={router} />;

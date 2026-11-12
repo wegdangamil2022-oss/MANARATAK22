@@ -1,8 +1,6 @@
 import { useTranslation as usePublicTemplateTranslation } from '../../../i18n/I18nProvider';
 import React, { useState } from 'react';
-import { FeaturedCatalogImage } from './FeaturedCatalogImage';
-import { FeaturedCatalogStateCards } from './FeaturedCatalogStateCards';
-import { homeCatalogStatus, type HomeCoursePreviews } from '../homeCatalogState';
+import { type HomeCoursePreviews } from '../homeCatalogState';
 import type { PublicLiveDomainStatus } from '../publicLiveDataSource';
 import { Course } from '../types';
 import { PlayCircle, ChevronLeft, ArrowUpLeft, BookOpen, Award, Globe2 } from 'lucide-react';
@@ -20,10 +18,8 @@ interface FeaturedCoursesProps {
 
 export const FeaturedCourses: React.FC<FeaturedCoursesProps> = ({
   courses,
-  dataMode = 'api',
-  status,
+  dataMode = 'prototype',
   previews,
-  onRetry,
   onSelectCourse,
   onViewAllClick,
 }) => {
@@ -35,7 +31,6 @@ export const FeaturedCourses: React.FC<FeaturedCoursesProps> = ({
   const nativeCourses = courses.filter((course) => dataMode === 'prototype' ? course.provider.includes('منارتك') : ['NATIVE_MANARATAK_COURSE', 'PAID_COURSE'].includes(course.originType ?? ''));
   const preview = dataMode === 'api' ? previews?.[activeCourseTab] : undefined;
   const currentCourses = (preview?.courses ?? (activeCourseTab === 'global' ? globalCourses : nativeCourses)).slice(0, 3);
-  const displayStatus = homeCatalogStatus(preview?.status ?? status, currentCourses.length);
 
   const handleCourseClick = (course: Course) => {
     onSelectCourse?.(course);
@@ -109,15 +104,7 @@ export const FeaturedCourses: React.FC<FeaturedCoursesProps> = ({
 
           {/* Courses List Wrapper */}
           <div id="home-course-cards" className="space-y-2 w-full">
-            {displayStatus === 'unavailable' && currentCourses.length > 0 && (
-              <div role="status" className="text-xs text-[var(--mn-text-muted)]">
-                {publicT('public_home_catalog_partial')}
-                {onRetry && <button type="button" onClick={onRetry} className="ms-2 underline">{publicT('public_home_catalog_retry')}</button>}
-              </div>
-            )}
-            {displayStatus === 'loading' || currentCourses.length === 0 ? (
-              <FeaturedCatalogStateCards key={activeCourseTab} kind="courses" status={displayStatus === 'ready' ? 'empty' : displayStatus} onRetry={onRetry} />
-            ) : currentCourses.map((course) => (
+            {currentCourses.map((course) => (
               <div
                 key={course.id}
                 role="button"
@@ -133,8 +120,12 @@ export const FeaturedCourses: React.FC<FeaturedCoursesProps> = ({
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   {/* Course Thumbnail */}
-                  <div className="relative w-14 h-12 sm:w-16 sm:h-14 rounded-lg overflow-hidden shrink-0 bg-[#142B5F] border border-[var(--mn-border)]/40 mn-inverse">
-                    <FeaturedCatalogImage src={course.imageUrl} alt={course.title} kind="courses" />
+                  <div className="relative w-14 h-12 sm:w-16 sm:h-14 rounded-lg overflow-hidden shrink-0 bg-[#142B5F] border border-[var(--mn-border)]/40 flex items-center justify-center mn-inverse">
+                    {course.imageUrl ? (
+                      <img src={course.imageUrl} alt={course.title} className="w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <BookOpen className="w-5 h-5 text-white" />
+                    )}
                     {/* Play Icon Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
                       <PlayCircle className="w-4 h-4 text-white drop-shadow-md" />

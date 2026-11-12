@@ -17,7 +17,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { University } from '../types';
-import { PublicFilterSelectModal } from './DetailUi';
+import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
 
 interface UniversitiesSearchPageProps {
   dataMode?: 'api' | 'prototype';
@@ -66,6 +66,7 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
     const values = new Set(
       universities.map((university) => university.continent).filter((value): value is string => Boolean(value)),
     );
+    ['آسيا', 'أوروبا', 'أمريكا الشمالية', 'أوقيانوسيا', 'أفريقيا'].forEach((c) => values.add(c));
     return ['الكل', ...Array.from(values)];
   }, [universities]);
 
@@ -132,6 +133,17 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
       return true;
     });
   }, [universities, searchQuery, selectedContinent, selectedCountry, selectedCity]);
+
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    pageItems: paginatedUniversities,
+  } = usePaginatedCatalog(
+    filteredUniversities,
+    `${searchQuery}|${selectedContinent}|${selectedCountry}|${selectedCity}`,
+    30,
+  );
 
   const activeFiltersCount =
     (selectedContinent !== 'الكل' ? 1 : 0) +
@@ -369,7 +381,7 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
               >{publicT('public_clear_all_filters')}</button>
             </div>
           ) : (
-            filteredUniversities.map((univ) => {
+            paginatedUniversities.map((univ) => {
               const isSaved = savedUniversities.includes(univ.id);
               return (
                 <div
@@ -418,44 +430,42 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
                     </button>
                   </div>
 
-                  {/* Bottom Row: Compact Single-Row Info Badges + View Details CTA matching MajorCard */}
-                  <div className="mt-0.5 pt-1.5 border-t border-[var(--mn-border)]/50 flex items-center justify-between gap-1.5">
-                    <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap flex-1 min-w-0">
-                      {/* 1. Ownership / Type */}
-                      <span className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg px-2 py-1 inline-flex items-center gap-1 text-[9.5px] sm:text-[10.5px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] shrink-0 mn-panel ">
-                        <Briefcase className="w-3 h-3 text-[var(--mn-link)] shrink-0" />
-                        <span className="truncate">{univ.ownership || univ.type || publicT('public_government')}</span>
-                      </span>
+                  {/* Bottom Row: 4 Boxes in 2x2 Grid with Right-Aligned Parallel Icons matching Country Cards */}
+                  <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-[var(--mn-border)]/50">
+                    {/* 1. Ownership / Type */}
+                    <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
+                      <Briefcase className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#239BA6] shrink-0" />
+                      <span className="truncate">{univ.ownership || univ.type || publicT('public_government')}</span>
+                    </div>
 
-                      {/* 2. Location */}
-                      <span className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg px-2 py-1 inline-flex items-center gap-1 text-[9.5px] sm:text-[10.5px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] shrink-0 mn-panel ">
-                        <MapPin className="w-3 h-3 text-[var(--mn-link)] shrink-0" />
-                        <span className="truncate">
-                          {univ.country}
-                          {univ.city ? publicT('public_city_suffix', { v0: univ.city }) : ''}
-                        </span>
-                      </span>
-
-                      {/* 3. Foundation Year */}
-                      <span className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg px-2 py-1 inline-flex items-center gap-1 text-[9.5px] sm:text-[10.5px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] shrink-0 mn-panel ">
-                        <History className="w-3 h-3 text-[var(--mn-link)] shrink-0" />
-                        <span className="truncate">
-                          {univ.foundationYear ? publicT('public_founded_year', { v0: univ.foundationYear }) : publicT('public_accredited_university')}
-                        </span>
+                    {/* 2. Location */}
+                    <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
+                      <MapPin className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#239BA6] shrink-0" />
+                      <span className="truncate">
+                        {univ.country}
+                        {univ.city ? publicT('public_city_suffix', { v0: univ.city }) : ''}
                       </span>
                     </div>
 
-                    {/* 4. View Details Button matching Major/Scholarship details CTA */}
+                    {/* 3. Foundation Year */}
+                    <div className="bg-[var(--mn-page)] border border-[var(--mn-border)] rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[var(--mn-text)] font-['Cairo',sans-serif] mn-panel ">
+                      <History className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#239BA6] shrink-0" />
+                      <span className="truncate">
+                        {univ.foundationYear ? publicT('public_founded_year', { v0: univ.foundationYear }) : publicT('public_accredited_university')}
+                      </span>
+                    </div>
+
+                    {/* 4. View Details Button */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectUniversity?.(univ);
                       }}
-                      className="bg-[var(--mn-primary)] hover:bg-[var(--mn-primary)] text-white rounded-lg px-2 py-1 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs shrink-0 mn-inverse hover:mn-inverse "
+                      className="bg-[var(--mn-primary)] hover:bg-[var(--mn-primary)] text-white rounded-lg px-2.5 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs shrink-0 mn-inverse hover:mn-inverse "
                       data-mn-design="26ecd1db9e"
                     >
                       <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight text-[var(--mn-accent-soft)]">{publicT('public_view_details')}</span>
-                      <ChevronLeft className="w-3 h-3 rotate-180 text-[var(--mn-accent-soft)]" />
+                      <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[var(--mn-accent-soft)]" />
                     </button>
                   </div>
                 </div>
@@ -463,6 +473,18 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
             })
           )}
         </div>
+
+        {filteredUniversities.length > 0 && (
+          <PublicCardsPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            dir={publicDir}
+          />
+        )}
       </div>
 
       <PublicFilterSelectModal

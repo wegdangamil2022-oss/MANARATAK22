@@ -13,10 +13,10 @@ const tabs: Array<{ id: StudentWorkspaceTab; label: string; icon: LucideIcon }> 
   { id: 'OPPORTUNITIES', label: 'فرصي', icon: Route },
   { id: 'LEARNING', label: 'تعلمي', icon: BookOpen },
   { id: 'VAULT', label: 'محفوظاتي', icon: Heart },
-  { id: 'CAREERS', label: 'مساري المهني', icon: GraduationCap },
-  { id: 'SERVICES', label: 'طلباتي ومدفوعاتي', icon: ClipboardList },
+  { id: 'CAREERS', label: 'مساري', icon: GraduationCap },
+  { id: 'SERVICES', label: 'طلباتي', icon: ClipboardList },
   { id: 'NOTIFICATIONS', label: 'إشعاراتي', icon: Bell },
-  { id: 'PROFILE', label: 'ملفي وإعداداتي', icon: User },
+  { id: 'PROFILE', label: 'إعداداتي', icon: User },
 ];
 
 
@@ -146,11 +146,11 @@ export function StudentWorkspaceShell({
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[3px] bg-gradient-to-r from-[#B38018] via-[#F2CE75] to-[#B38018]" />
       </section>
 
-      {/* Compact inline 8-tab student navigation: always visible so sections open directly below. */}
+      {/* Compact inline 8-tab student navigation: stretched edge-to-edge to right and left */}
       <div
         role="navigation"
         aria-label="أقسام حساب الطالب"
-        className="mn-student-nav relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] mt-0 px-2.5 py-2 sm:px-3.5 sm:py-2.5 rounded-none bg-[var(--mn-surface)] dark:bg-[var(--mn-surface)] border-x-0 border-t-0 border-b border-[var(--mn-border)] shadow-none grid grid-cols-4 lg:grid-cols-8 gap-1.5 sm:gap-2 mn-panel"
+        className="mn-student-nav relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] mt-0 px-1 py-2 sm:px-1.5 sm:py-2.5 rounded-none bg-[var(--mn-surface)] dark:bg-[var(--mn-surface)] border-x-0 border-t-0 border-b border-[var(--mn-border)] shadow-none grid grid-cols-4 gap-1.5 sm:gap-2 mn-panel"
       >
         {tabs.map((item) => {
           const Icon = item.icon;
@@ -160,16 +160,16 @@ export function StudentWorkspaceShell({
               key={item.id}
               type="button"
               aria-current={active ? 'page' : undefined}
-              title={item.id === 'PROFILE' ? 'ملفي وإعدادات الحساب' : item.label}
+              title={item.id === 'PROFILE' ? 'إعداداتي وملفي الشخصي' : item.label}
               onClick={() => onTabChange(item.id)}
-              className={`mn-student-nav-tile min-w-0 min-h-[38px] sm:min-h-[42px] rounded-lg border px-1.5 py-1.5 flex flex-row items-center justify-center gap-1 sm:gap-1.5 transition-all duration-150 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0E7C86] ${
+              className={`mn-student-nav-tile w-full min-w-0 min-h-[46px] sm:min-h-[50px] rounded-xl border px-1.5 py-2 sm:px-2.5 sm:py-2.5 flex flex-row items-center justify-center gap-1.5 sm:gap-2 transition-all duration-150 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#142B5F] ${
                 active
                   ? 'border-[#D6A43B] bg-[#142B5F] text-[#F2CD78] shadow-xs font-bold'
-                  : 'border-[#142B5F]/55 bg-white text-[#142B5F] dark:border-[#D6A43B]/65 dark:bg-[#10264A] dark:text-[#EEF4F6] hover:border-[#142B5F] hover:bg-[#F5F8FA] dark:hover:border-[#D6A43B] dark:hover:bg-[#183456] font-bold'
+                  : 'border-slate-300/90 bg-white text-[#1E293B] dark:border-white/15 dark:bg-[#10264A] dark:text-[#F1F5F9] hover:border-[#142B5F]/60 hover:bg-slate-50/80 dark:hover:border-[#D6A43B]/70 dark:hover:bg-[#183456] font-semibold'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-[#F2CD78]' : 'text-[#142B5F] dark:text-[#E5B54F]'}`} />
-              <span className="text-[10px] sm:text-[10.5px] font-bold font-['Cairo',sans-serif] leading-[1.3] text-center truncate">{item.label}</span>
+              <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${active ? 'text-[#F2CD78]' : 'text-[#142B5F] dark:text-[#E5B54F]'}`} />
+              <span className="text-[12px] sm:text-[13px] font-['Cairo',sans-serif] leading-[1.3] text-center whitespace-nowrap">{item.label}</span>
             </button>
           );
         })}

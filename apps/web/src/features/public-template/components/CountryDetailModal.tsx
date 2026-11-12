@@ -28,6 +28,7 @@ import { CountryDestination } from '../types';
 import { RelatedArticlesStrip } from './RelatedArticlesStrip';
 import { FavoriteButton } from './FavoriteButton';
 import { DetailBackButton, DetailSectionHeader, useDetailSearchTarget } from './DetailUi';
+import { CountryFlagImage } from './CountriesSearchPage';
 
 interface CountryDetailModalProps {
   country: CountryDestination;
@@ -175,8 +176,14 @@ export const CountryDetailModal: React.FC<CountryDetailModalProps> = ({
             {/* Dual-Ring Royal Flag Medallion */}
             <div className="relative shrink-0">
               <div className="w-15 h-15 rounded-2xl rotate-3 bg-gradient-to-br from-[#F2CD78] via-[#D6A43B] to-[#9E711B] p-[2px] shadow-[0_0_16px_rgba(214,164,59,0.45)]">
-                <div className="w-full h-full -rotate-3 rounded-[14px] bg-[#0F234C] border border-[#F2CD78]/40 flex items-center justify-center text-3xl shadow-inner">
-                  {country.flagEmoji}
+                <div className="w-full h-full -rotate-3 rounded-[14px] bg-[#0F234C] border border-[#F2CD78]/40 p-1.5 flex items-center justify-center text-3xl shadow-inner overflow-hidden">
+                  <CountryFlagImage
+                    countryId={country.id}
+                    countryName={country.name}
+                    flagEmoji={country.flagEmoji}
+                    flagUrl={country.flag}
+                    iso2Code={country.iso2Code}
+                  />
                 </div>
               </div>
               <div className="absolute -bottom-1 -left-1 w-5 h-5 rounded-full bg-[#142B5F] border border-[#F2CD78] flex items-center justify-center shadow-xs">

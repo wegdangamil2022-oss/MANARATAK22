@@ -8,9 +8,8 @@ const DEGREE_LEVELS: Array<Exclude<DegreeLevel, 'all'>> = [
   'بكالوريوس', 'ماجستير', 'دكتوراه', 'دورات تدريبية', 'زمالة أبحاث',
 ];
 
-/** Live/API is the safe default. Prototype mode must be explicitly requested. */
 export function resolvePublicTemplateDataMode(value: unknown): PublicTemplateDataMode {
-  return value === 'prototype' ? 'prototype' : 'api';
+  return value === 'api' ? 'api' : 'prototype';
 }
 
 function toTextList(value: string | string[] | undefined | null): string[] {
