@@ -7,8 +7,9 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "CI=true node apps/web/node_modules/vite/bin/vite.js apps/web --port=3000 --host=0.0.0.0 --strictPort",
+    "dev": "vite --config apps/web/vite.config.ts --port=3000 --host=0.0.0.0 --strictPort",
     "build": "npm run build --workspace=@manaratak/web",
+    "test:startup": "node --test tests/runtime/dev-startup.test.mjs",
     "lint": "echo 'Lint check passed'"
   },
   "dependencies": {
