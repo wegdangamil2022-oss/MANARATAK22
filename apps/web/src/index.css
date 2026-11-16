@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Cairo", "Noto Sans Arabic", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Cairo", "Noto Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-cairo: "Cairo", "Noto Sans Arabic", sans-serif;
+  --color-primary: #142B5F;
+  --color-secondary: #0E7C86;
+  --color-accent: #D6A43B;
+}
+
+/* Universal Cairo Font Enforcement across the entire platform */
+*,
+*::before,
+*::after,
+input,
+textarea,
+select,
+option,
+optgroup,
+button {
+  font-family: 'Cairo', 'Noto Sans Arabic', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+.cairo-12, [data-cairo-12] {
+  font-family: 'Cairo', 'Noto Sans Arabic', sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+:root {
+  color-scheme: light;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  background: #f7f7f5;
+  color: #334b57;
+  font-family: 'Cairo', 'Noto Sans Arabic', system-ui, -apple-system, sans-serif !important;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  font-family: 'Cairo', 'Noto Sans Arabic', system-ui, -apple-system, sans-serif !important;
+}
+
+body {
+  margin: 0;
+  background: #f7f7f5;
+  color: #334b57;
+  font-family: 'Cairo', 'Noto Sans Arabic', system-ui, -apple-system, sans-serif !important;
+  text-rendering: optimizeLegibility;
+}
+
+.dark,
+.dark body,
+html.dark,
+html.dark body {
+  background-color: #0E1F44;
+  color: #F8FAFC;
+}
+
+button,
+input,
+select,
+textarea,
+label,
+optgroup,
+option,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+[role='button'] {
+  font-family: 'Cairo', 'Noto Sans Arabic', system-ui, -apple-system, sans-serif !important;
+}
+
+::placeholder,
+::-webkit-input-placeholder,
+::-moz-placeholder,
+:-ms-input-placeholder,
+input::placeholder,
+textarea::placeholder {
+  font-family: 'Cairo', 'Noto Sans Arabic', system-ui, -apple-system, sans-serif !important;
+}
+
+:focus-visible {
+  outline-color: #21A7B4;
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size: 17px;
+  }
+
+  input,
+  select,
+  textarea,
+  button,
+  a {
+    touch-action: manipulation;
+  }
+
+  input,
+  select,
+  textarea {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  button,
+  [role='button'] {
+    min-height: 44px;
+  }
+
+  article {
+    border-radius: 1rem;
+  }
+}
+
+/* MNT-AUD-0114: CSP-safe dynamic progress and decorative presentation. */
+.mn-student-hero-pattern {
+  background-image: radial-gradient(circle at 20% 30%, var(--mn-accent) 0 2px, transparent 3px);
+}
+
+.mn-native-progress {
+  display: block;
+  appearance: none;
+  -webkit-appearance: none;
+  overflow: hidden;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--mn-surface-muted, #e2e8f0);
+}
+.mn-native-progress::-webkit-progress-bar {
+  border-radius: 9999px;
+  background: var(--mn-surface-muted, #e2e8f0);
+}
+.mn-native-progress::-webkit-progress-value { border-radius: 9999px; }
+.mn-native-progress::-moz-progress-bar { border-radius: 9999px; }
+.mn-native-progress-secondary::-webkit-progress-value { background: var(--mn-secondary, #0E7C86); }
+.mn-native-progress-secondary::-moz-progress-bar { background: var(--mn-secondary, #0E7C86); }
+.mn-native-progress-primary::-webkit-progress-value { background: var(--mn-primary, #142B5F); }
+.mn-native-progress-primary::-moz-progress-bar { background: var(--mn-primary, #142B5F); }
+.mn-native-progress-accent::-webkit-progress-value { background: var(--mn-accent, #D6A43B); }
+.mn-native-progress-accent::-moz-progress-bar { background: var(--mn-accent, #D6A43B); }
+.mn-native-progress-accent-on-dark { background: rgb(255 255 255 / 10%); }
+.mn-native-progress-accent-on-dark::-webkit-progress-bar { background: rgb(255 255 255 / 10%); }
+.mn-native-progress-accent-on-dark::-webkit-progress-value { background: var(--mn-accent, #D6A43B); }
+.mn-native-progress-accent-on-dark::-moz-progress-bar { background: var(--mn-accent, #D6A43B); }
+
+@keyframes swipeLeftMotion {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+.animate-swipe-line {
+  animation: swipeLeftMotion 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
