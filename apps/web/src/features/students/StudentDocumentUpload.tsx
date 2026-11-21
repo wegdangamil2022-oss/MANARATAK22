@@ -125,36 +125,36 @@ export function StudentDocumentUpload({
     }
   };
   return (
-    <section className="relative w-full max-w-full min-w-0 overflow-hidden rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3 space-y-2.5 font-['Cairo',sans-serif] shadow-2xs">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
-        <div className="flex items-center gap-2">
-          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#D6A43B]/40 bg-[#142B5F]">
-            <UploadCloud className="w-3 h-3 text-[#F2CD78] shrink-0" />
+    <section className="relative w-full max-w-full min-w-0 overflow-hidden rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-3 space-y-2.5 font-['Cairo',sans-serif]">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#142B5F]/8 dark:border-white/8 pb-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+            <UploadCloud className="w-3.5 h-3.5 text-white shrink-0" />
           </span>
-          <h5 className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+          <h5 className="text-[11px] sm:text-[12px] font-bold text-[#142B5F] dark:text-[#F1F5F9] leading-tight truncate">
             {en ? 'Upload a private document' : 'رفع مستند خاص جديد'}
           </h5>
         </div>
-        <span className="rounded-md border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10px] font-bold text-[#0E7C86] dark:text-[#55CBC5]">
-          PDF · PNG · JPEG (10MB)
+        <span className="text-[9.5px] sm:text-[10px] font-bold tabular-nums text-[#0E7C86] dark:text-[#38C6D4]" dir="ltr">
+          PDF · PNG · JPEG · 10MB
         </span>
       </div>
 
-      <p className="text-[11.5px] leading-[1.75] text-[#475569] dark:text-[#CBD5E1]">
+      <p className="text-[10px] sm:text-[11px] font-medium leading-relaxed text-[#5C707C] dark:text-[#9BB4C7]">
         {en
           ? 'PDF, PNG or JPEG, up to 10 MB. Retained for up to 180 days. A file is selectable only after security checks complete.'
-          : 'ارفع وثيقتك بصيغة PDF أو PNG أو JPEG (بحد أقصى 10 ميغابايت). تُحفظ بأمان في حسابك لغاية 180 يوماً وتُتاح للربط فور اكتمال الفحص الأمني.'}
+          : 'ارفع وثيقتك بصيغة PDF أو PNG أو JPEG (بحد أقصى 10 ميغابايت). تُحفظ بأمان لمدة 180 يوماً وتُتاح للربط بعد الفحص الأمني.'}
       </p>
 
       {/* Modern responsive file trigger area */}
-      <label className="flex flex-col items-center justify-center p-3.5 rounded-xl border-2 border-dashed border-[#0E7C86]/35 hover:border-[#D6A43B] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] cursor-pointer transition w-full max-w-full">
-        <span className="mb-1.5 grid h-9 w-9 place-items-center rounded-full border border-[#0E7C86]/25 bg-[#0E7C86]/10 text-[#0E7C86] dark:text-[#55CBC5]">
-          <FileUp className="w-4 h-4 shrink-0" />
+      <label className="flex flex-col items-center justify-center p-3 rounded-xl border border-dashed border-[#0E7C86]/40 dark:border-[#38C6D4]/35 hover:border-[#0E7C86] bg-white dark:bg-[#111E38] cursor-pointer transition-colors w-full max-w-full">
+        <span className="mb-1.5 grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+          <FileUp className="w-4 h-4 shrink-0 text-white" />
         </span>
-        <span className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] text-center break-all px-2">
+        <span className="text-[10.5px] sm:text-[11.5px] font-bold text-[#142B5F] dark:text-[#F1F5F9] text-center break-all px-2">
           {file ? file.name : (en ? 'Choose a document from your device' : 'اضغط هنا لاختيار مستند من جهازك')}
         </span>
-        <span className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+        <span className="text-[9.5px] sm:text-[10.5px] font-medium text-[#5C707C] dark:text-[#9BB4C7] mt-0.5 tabular-nums">
           {file ? `${(file.size / (1024 * 1024)).toFixed(2)} MB` : (en ? 'PDF, PNG or JPEG' : 'يدعم ملفات PDF أو الصور الواضحة PNG / JPEG')}
         </span>
         <input
@@ -167,13 +167,13 @@ export function StudentDocumentUpload({
       </label>
 
       {/* Consent Checkbox */}
-      <label className="flex items-start gap-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-2.5 cursor-pointer text-[11.5px] font-medium text-[#334155] dark:text-[#E2E8F0] leading-[1.7] select-none">
+      <label className="flex items-start gap-2 rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-white dark:bg-[#111E38] p-2.5 cursor-pointer text-[10px] sm:text-[11px] font-medium text-[#142B5F] dark:text-[#DCE7F0] leading-relaxed select-none">
         <input
           type="checkbox"
           checked={consent}
           disabled={busy}
           onChange={(e) => setConsent(e.target.checked)}
-          className="mt-1 w-4 h-4 rounded border-gray-300 accent-[#142B5F] focus:ring-[#D6A43B] shrink-0 cursor-pointer"
+          className="mt-0.5 w-3.5 h-3.5 rounded border-[#142B5F]/25 accent-[#0E7C86] shrink-0 cursor-pointer"
         />
         <span>
           {en
@@ -188,9 +188,9 @@ export function StudentDocumentUpload({
           type="button"
           disabled={busy || !file || !consent || Boolean(pending)}
           onClick={() => void upload()}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 min-h-10 px-4 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] text-white text-[12px] font-bold transition disabled:opacity-50 cursor-pointer shadow-xs border border-[#D6A43B]/35"
+          className="mn-workspace-btn-sm w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 rounded-lg bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 text-white text-[10.5px] sm:text-[11px] font-bold transition-all disabled:opacity-45 cursor-pointer shadow-2xs"
         >
-          <UploadCloud className="w-4 h-4 text-[#F2CD78]" />
+          <UploadCloud className="w-3.5 h-3.5 text-white shrink-0" />
           <span>{en ? 'Upload and check' : 'رفع وفحص المستند الآن'}</span>
         </button>
 
@@ -211,27 +211,27 @@ export function StudentDocumentUpload({
                   if (request === generation.current) setBusy(false);
                 });
             }}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 min-h-10 px-3.5 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 text-[12px] font-bold transition disabled:opacity-50 cursor-pointer"
+            className="mn-workspace-btn-sm w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 rounded-lg border border-[#0E7C86]/32 dark:border-[#38C6D4]/35 bg-white dark:bg-[#111E38] text-[#142B5F] dark:text-[#EDF5F5] text-[10.5px] sm:text-[11px] font-bold transition-colors disabled:opacity-50 cursor-pointer"
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RefreshCw className="w-3 h-3 text-[#0E7C86] dark:text-[#38C6D4]" />
             <span>{en ? 'Retry file checks' : 'إعادة فحص الملف'}</span>
           </button>
         )}
       </div>
 
       {busy && (
-        <div className="flex items-center gap-2 text-[12px] text-[#0E7C86] font-bold pt-1" role="status">
-          <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+        <div className="flex items-center gap-1.5 text-[10.5px] text-[#0E7C86] dark:text-[#38C6D4] font-bold pt-0.5" role="status">
+          <RefreshCw className="w-3 h-3 animate-spin" />
           <span>{en ? 'Uploading or checking the file…' : 'جارٍ رفع الملف وإجراء الفحص الأمني…'}</span>
         </div>
       )}
       {previewNotice && (
-        <div className="p-2.5 rounded-xl bg-[#0E7C86]/10 border border-[#0E7C86]/25 text-[11.5px] font-medium text-[#0E7C86] dark:text-[#55CBC5]" role="status">
+        <div className="p-2.5 rounded-xl bg-white dark:bg-[#111E38] border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 text-[10.5px] font-semibold text-[#0E7C86] dark:text-[#38C6D4]" role="status">
           {previewNotice}
         </div>
       )}
       {error && (
-        <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-[12px] font-bold text-rose-700 dark:bg-rose-950/20 dark:text-rose-300" role="alert">
+        <div className="p-2.5 rounded-xl bg-white dark:bg-[#111E38] border border-[#142B5F]/20 dark:border-white/15 text-[10.5px] font-bold text-[#142B5F] dark:text-[#F1F5F9]" role="alert">
           {error}
         </div>
       )}

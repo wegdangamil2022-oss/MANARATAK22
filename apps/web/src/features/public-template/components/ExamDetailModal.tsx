@@ -2850,7 +2850,7 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
       {/* ========================================================================= */}
       {/* 1. TOP HERO SECTION (نيلي مع بترولي فيروزي نفس بقية الأقسام)               */}
       {/* ========================================================================= */}
-      <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white px-3.5 sm:px-4 md:px-8 py-4 md:py-6 border-b-2 border-[#D6A43B] shadow-md mn-inverse">
+      <div className="relative w-full overflow-hidden bg-gradient-to-bl from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white px-3.5 sm:px-4 md:px-8 py-4 md:py-6 border-b-2 border-[#D6A43B] shadow-md mn-inverse">
         {/* Decorative Subtle Gold Waves */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <svg
@@ -2948,7 +2948,7 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
           href={officialRegistrationUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full md:max-w-md md:mx-auto py-2.5 md:py-3 px-4 rounded-2xl bg-gradient-to-r from-[#142B5F] via-[#153B75] to-[#0E7C86] hover:opacity-95 text-white border border-[#D6A43B] shadow-sm flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer mn-inverse"
+          className="w-full md:max-w-md md:mx-auto py-2.5 md:py-3 px-4 rounded-2xl bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] hover:opacity-95 text-white border border-[#D6A43B] shadow-sm flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer mn-inverse"
         >
           <ExternalLink className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#F2CD78] shrink-0" />
           <span className="text-[12px] sm:text-[12.5px] md:text-sm font-extrabold leading-none text-white">

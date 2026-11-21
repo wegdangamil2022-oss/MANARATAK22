@@ -25,6 +25,11 @@ import {
   Settings2,
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
+import {
+  isPreviewStudentAuthenticated,
+  loginPreviewStudent,
+  logoutPreviewStudent,
+} from '../../students/studentWorkspacePreviewApi';
 
 interface NavigationDrawerProps {
   isOpen: boolean;
@@ -51,7 +56,17 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
   onToggleDarkMode,
 }) => {
   const { t: publicT } = usePublicTemplateTranslation();
-  const [previewVisitorMode, setPreviewVisitorMode] = useState(false);
+  const [previewVisitorMode, setPreviewVisitorMode] = useState(
+    () => !isPreviewStudentAuthenticated(),
+  );
+
+  React.useEffect(() => {
+    const syncAuthState = () => {
+      setPreviewVisitorMode(!isPreviewStudentAuthenticated());
+    };
+    window.addEventListener('mn-preview-auth-change', syncAuthState);
+    return () => window.removeEventListener('mn-preview-auth-change', syncAuthState);
+  }, []);
 
   useOverlayDialog(isOpen, onClose, 'mn-navigation-dialog');
   if (!isOpen) return null;
@@ -212,7 +227,13 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
             <div className="flex items-center gap-1.5">
               <button
                 type="button"
-                onClick={() => setPreviewVisitorMode((prev) => !prev)}
+                onClick={() => {
+                  if (previewVisitorMode) {
+                    loginPreviewStudent();
+                  } else {
+                    logoutPreviewStudent();
+                  }
+                }}
                 className="h-8 px-2.5 rounded-xl bg-[#203F6A] hover:bg-[#284E82] border border-[#76ADBE]/60 text-[10px] font-bold text-[#C9F2EB] transition-colors cursor-pointer"
                 title={
                   previewVisitorMode

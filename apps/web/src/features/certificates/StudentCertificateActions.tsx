@@ -124,15 +124,15 @@ export function StudentCertificateActions({
   };
 
   return (
-    <div className="mt-2.5 pt-2 border-t border-[var(--mn-border)] space-y-2 font-['Cairo',sans-serif]">
+    <div className="mt-2.5 pt-2.5 border-t border-[#142B5F]/8 dark:border-white/8 space-y-2 font-['Cairo',sans-serif]">
       {/* Compact QR Section if present */}
       {matrix && (
-        <div className="flex items-center gap-2.5 rounded-lg bg-[var(--mn-surface)] border border-[var(--mn-border)] p-2">
+        <div className="flex items-center gap-2.5 rounded-lg bg-white dark:bg-[#111E38] border border-[#142B5F]/10 dark:border-white/10 p-2">
           <svg
             role="img"
             aria-label={copy('QR للتحقق من الشهادة')}
             viewBox={`0 0 ${matrix.length + 8} ${matrix.length + 8}`}
-            className="h-12 w-12 shrink-0 rounded bg-white p-1 border border-slate-200"
+            className="h-11 w-11 shrink-0 rounded bg-white p-1 border border-[#142B5F]/12"
             shapeRendering="crispEdges"
           >
             <rect width="100%" height="100%" fill="white" />
@@ -144,23 +144,23 @@ export function StudentCertificateActions({
               ),
             )}
           </svg>
-          <div className="min-w-0 flex-1 text-[11px] leading-snug text-[var(--mn-text-muted)]">
-            <span className="font-bold text-[var(--mn-heading)] block">رمز التحقق السريع (QR)</span>
-            <span className="text-[10.5px]">يمكنك مسح الرمز للتحقق الفوري من صحة الشهادة</span>
+          <div className="min-w-0 flex-1 text-[10px] leading-snug text-[#5C707C] dark:text-[#9BB4C7]">
+            <span className="font-bold text-[#142B5F] dark:text-[#F1F5F9] block">رمز التحقق السريع (QR)</span>
+            <span className="text-[9.5px]">امسح الرمز للتحقق الفوري من صحة الشهادة</span>
           </div>
         </div>
       )}
 
-      {/* Action Buttons Row - Neatly arranged, tight spacing */}
-      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+      {/* Action Buttons Row */}
+      <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
         {certificate.previewImageAssetId && (
           <button
             type="button"
             disabled={previewBusy}
             onClick={() => void viewPreview()}
-            className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-lg bg-[#142B5F] hover:bg-[#163D76] dark:bg-[#D6A43B] dark:text-[#142B5F] dark:hover:bg-[#E5B54F] px-3 py-1.5 text-[13px] font-bold text-white transition-all shadow-2xs cursor-pointer disabled:opacity-50 font-['Cairo',sans-serif]"
+            className="mn-workspace-btn-sm inline-flex items-center justify-center gap-1 rounded-lg bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 px-2.5 text-[10px] sm:text-[11px] font-bold text-white transition-all shadow-2xs cursor-pointer disabled:opacity-50 font-['Cairo',sans-serif]"
           >
-            <Eye className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <Eye className="h-3 w-3 shrink-0 text-white" aria-hidden="true" />
             <span>{previewBusy ? copy('جارٍ التحميل…') : copy('عرض الشهادة')}</span>
           </button>
         )}
@@ -169,18 +169,18 @@ export function StudentCertificateActions({
           <button
             type="button"
             onClick={() => setError(copy('هذه شهادة توضيحية فقط؛ لا توجد شهادة رسمية للتحقق منها.'))}
-            className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] hover:bg-[var(--mn-page)] px-3 py-1.5 text-[13px] font-bold text-[var(--mn-heading)] transition-all hover:border-[#D6A43B]/60 cursor-pointer font-['Cairo',sans-serif]"
+            className="mn-workspace-btn-sm inline-flex items-center justify-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-white hover:bg-[#F6F8FA] dark:bg-[#111E38] dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-all cursor-pointer font-['Cairo',sans-serif]"
           >
-            <ShieldCheck className="h-4 w-4 shrink-0 text-[#D6A43B]" aria-hidden="true" />
-            <span>{copy('التحقق من الشهادة')}</span>
+            <ShieldCheck className="h-3 w-3 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+            <span>{copy('التحقق')}</span>
           </button>
         ) : (
           <Link
             to={verifyPath}
-            className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] hover:bg-[var(--mn-page)] px-3 py-1.5 text-[13px] font-bold text-[var(--mn-heading)] transition-all hover:border-[#D6A43B]/60 cursor-pointer font-['Cairo',sans-serif]"
+            className="mn-workspace-btn-sm inline-flex items-center justify-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-white hover:bg-[#F6F8FA] dark:bg-[#111E38] dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-all cursor-pointer font-['Cairo',sans-serif]"
           >
-            <ShieldCheck className="h-4 w-4 shrink-0 text-[#D6A43B]" aria-hidden="true" />
-            <span>{copy('التحقق من الشهادة')}</span>
+            <ShieldCheck className="h-3 w-3 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+            <span>{copy('التحقق')}</span>
           </Link>
         ))}
 
@@ -189,15 +189,15 @@ export function StudentCertificateActions({
             type="button"
             disabled={busy}
             onClick={() => void download()}
-            className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] hover:bg-[var(--mn-page)] px-3 py-1.5 text-[13px] font-bold text-[var(--mn-heading)] transition-all hover:border-[#D6A43B]/60 cursor-pointer disabled:opacity-50 font-['Cairo',sans-serif]"
+            className="mn-workspace-btn-sm inline-flex items-center justify-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-white hover:bg-[#F6F8FA] dark:bg-[#111E38] dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-all cursor-pointer disabled:opacity-50 font-['Cairo',sans-serif]"
           >
-            <Download className="h-4 w-4 shrink-0 text-[#0E7C86]" aria-hidden="true" />
-            <span>{busy ? copy('جارٍ التحميل…') : copy('تحميل الشهادة PDF')}</span>
+            <Download className="h-3 w-3 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+            <span>{busy ? copy('جارٍ التحميل…') : copy('تحميل PDF')}</span>
           </button>
         ) : (
-          <span className="inline-flex min-h-8 items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-[var(--mn-text-muted)] border border-dashed border-[var(--mn-border)] rounded-lg font-['Cairo',sans-serif]">
-            <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span>{copy('ملف الشهادة قيد التجهيز')}</span>
+          <span className="inline-flex h-[28px] items-center gap-1 px-2.5 text-[10px] font-semibold text-[#5C707C] dark:text-[#9BB4C7] border border-dashed border-[#142B5F]/18 dark:border-white/15 rounded-lg font-['Cairo',sans-serif]">
+            <FileText className="h-3 w-3 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+            <span>{copy('قيد التجهيز')}</span>
           </span>
         )}
 
@@ -206,28 +206,28 @@ export function StudentCertificateActions({
             type="button"
             disabled={saveBusy}
             onClick={() => void handleSave()}
-            className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] hover:bg-[var(--mn-page)] px-3 py-1.5 text-[13px] font-bold text-[var(--mn-heading)] transition-all hover:border-[#D6A43B]/60 cursor-pointer disabled:opacity-50 font-['Cairo',sans-serif]"
+            className="mn-workspace-btn-sm inline-flex items-center justify-center gap-1 rounded-lg border border-[#142B5F]/15 dark:border-white/15 bg-white hover:bg-[#F6F8FA] dark:bg-[#111E38] dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-all cursor-pointer disabled:opacity-50 font-['Cairo',sans-serif]"
           >
-            <Bookmark className="h-4 w-4 shrink-0 text-[#142B5F] dark:text-[#E5B54F]" aria-hidden="true" />
-            <span>{saveBusy ? copy('جارٍ الحفظ…') : (language === 'en' ? 'Save reference' : 'حفظ مرجع الشهادة')}</span>
+            <Bookmark className="h-3 w-3 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+            <span>{saveBusy ? copy('جارٍ الحفظ…') : (language === 'en' ? 'Save' : 'حفظ المرجع')}</span>
           </button>
         )}
       </div>
 
       {preview && (
-        <div className="mt-2 space-y-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-2 shadow-2xs">
+        <div className="mt-2 space-y-2 rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-white dark:bg-[#111E38] p-2.5 shadow-2xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[var(--mn-heading)]">معاينة الشهادة</span>
-            <button type="button" onClick={closePreview} className="text-[11px] font-bold text-rose-600 hover:underline">
+            <span className="text-[10.5px] font-bold text-[#142B5F] dark:text-[#F1F5F9]">معاينة الشهادة</span>
+            <button type="button" onClick={closePreview} className="text-[10.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4] hover:underline cursor-pointer">
               {copy('إغلاق')}
             </button>
           </div>
-          <img src={preview} alt={copy('معاينة الشهادة')} className="w-full rounded-lg border border-[var(--mn-border)]" />
+          <img src={preview} alt={copy('معاينة الشهادة')} className="w-full rounded-lg border border-[#142B5F]/10" />
         </div>
       )}
 
       {error && (
-        <p role="alert" className="text-[11px] font-bold text-[var(--mn-danger-text)] mt-1">
+        <p role="alert" className="text-[10.5px] font-bold text-[#142B5F] dark:text-[#F2CD78] mt-1">
           {error}
         </p>
       )}

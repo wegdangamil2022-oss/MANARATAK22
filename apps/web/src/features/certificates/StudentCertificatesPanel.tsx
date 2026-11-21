@@ -5,14 +5,16 @@ import { ApiClient as LiveApiClient, type StudentCertificateProjectionDto } from
 import { certificateCopy, certificateStatusCopy } from '@manaratak/shared';
 import { useTranslation } from '../../i18n/I18nProvider';
 import { StudentCertificateActions } from './StudentCertificateActions';
-import { Check, RefreshCw } from 'lucide-react';
+import { Award, Check, RefreshCw } from 'lucide-react';
 
 export function StudentCertificatesPanel({
   initial,
   compactLearning = false,
+  externalRefreshKey,
 }: {
   initial: StudentCertificateProjectionDto[];
   compactLearning?: boolean;
+  externalRefreshKey?: number;
 }) {
   const { language } = useTranslation();
   const copy = useCallback((text: string) => certificateCopy(language, text), [language]);
@@ -23,6 +25,13 @@ export function StudentCertificatesPanel({
   const [refresh, setRefresh] = useState(0);
   const pageController = useRef<AbortController | null>(null);
   const loadedMore = useRef(false);
+
+  useEffect(() => {
+    if (typeof externalRefreshKey === 'number' && externalRefreshKey > 0) {
+      setBusy(false);
+      setRefresh((value) => value + 1);
+    }
+  }, [externalRefreshKey]);
 
   useEffect(() => {
     let active = true;
@@ -87,63 +96,81 @@ export function StudentCertificatesPanel({
   };
 
   return (
-    <section id="certificates" className="space-y-3 scroll-mt-6 font-['Cairo',sans-serif]" aria-label={copy('الشهادات')}>
-      <div className="flex items-center justify-between">
-        {!compactLearning && <h3 className="font-bold text-[15px] text-[var(--mn-heading)]">{copy('إنجازاتي وشهاداتي')}</h3>}
-        <button
-          type="button"
-          onClick={() => {
-            setBusy(false);
-            setRefresh((value) => value + 1);
-          }}
-          className="ms-auto inline-flex items-center gap-1.5 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-1.5 text-[13px] font-bold text-[var(--mn-heading)] hover:border-[#D6A43B]/60 transition-all cursor-pointer font-['Cairo',sans-serif]"
-        >
-          <RefreshCw className="h-3.5 w-3.5 text-[#D6A43B]" aria-hidden="true" />
-          <span>{copy('تحديث')}</span>
-        </button>
-      </div>
+    <section id="certificates" className="space-y-2.5 scroll-mt-6 font-['Cairo',sans-serif]" aria-label={copy('الشهادات')}>
+      {!(compactLearning && typeof externalRefreshKey === 'number') && (
+        <div className="flex items-center justify-between gap-2">
+          {!compactLearning && (
+            <h3 className="font-extrabold text-[13.5px] sm:text-[14.5px] text-[#142B5F] dark:text-[#F1F5F9]">
+              {copy('إنجازاتي وشهاداتي')}
+            </h3>
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              setBusy(false);
+              setRefresh((value) => value + 1);
+            }}
+            className="mn-workspace-btn-sm ms-auto inline-flex items-center gap-1.5 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-colors cursor-pointer font-['Cairo',sans-serif]"
+          >
+            <RefreshCw className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+            <span>{copy('تحديث')}</span>
+          </button>
+        </div>
+      )}
 
       {error && (
-        <p role="alert" className="text-[12px] font-bold text-[var(--mn-danger-text)]">
+        <p role="alert" className="text-[11px] font-bold text-[#142B5F] dark:text-[#F2CD78]">
           {error}
         </p>
       )}
 
       {!rows.length && (
-        <p className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-4 text-center text-[12px] font-medium leading-[1.8] text-[var(--mn-text-muted)]">
+        <p className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-4 text-center text-[11px] font-semibold leading-relaxed text-[#5C707C] dark:text-[#9BB4C7]">
           {copy('تظهر شهادة منارتك للدورات المؤهلة بعد إتمام المتطلبات وانتهاء عملية إصدار الشهادة.')}
         </p>
       )}
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className={`grid gap-2.5 ${rows.length > 1 ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
         {rows.map((row) => (
           <article
             key={row.id}
-            className="mn-student-learning-certificate relative overflow-hidden flex min-w-0 flex-col justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 pr-4 shadow-2xs transition-all hover:border-[#D6A43B]/60 font-['Cairo',sans-serif]"
+            className="mn-student-learning-certificate relative overflow-hidden flex min-w-0 flex-col justify-between rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 dark:hover:border-[#38C6D4]/45 pr-3.5 pl-3 py-3 transition-all font-['Cairo',sans-serif]"
           >
-            {/* Signature Golden Accent Line on Right Edge */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 right-0 w-[3.5px] bg-gradient-to-b from-[#142B5F] via-[#D6A43B] to-[#B78622]"
-            />
+            {/* Selective Manaratak start-bar for issued official certificates */}
+            <span aria-hidden="true" className="mn-summary-start-bar" />
 
             <div>
-              {/* Header: Title & Status Badge */}
+              {/* Header: Icon + Title & Unboxed Petrol Status */}
               <div className="flex items-start justify-between gap-2">
-                <h4 className="text-[13px] sm:text-[13.5px] font-bold leading-snug text-[var(--mn-heading)] break-words">
-                  {row.courseDisplayName}
-                </h4>
-                <span className="shrink-0 inline-flex items-center gap-1 rounded-full border border-[var(--mn-success-border)] bg-[var(--mn-success-soft)] px-2 py-0.5 text-[10.5px] font-bold text-[var(--mn-success-text)]">
-                  <Check className="h-3 w-3 shrink-0 text-[var(--mn-success-text)]" aria-hidden="true" />
-                  <span>{certificateStatusCopy(language, row.status)}</span>
+                <div className="flex items-start gap-2 min-w-0 flex-1">
+                  <span className="mt-0.5 grid h-6.5 w-6.5 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                    <Award className="h-3.5 w-3.5 text-white" aria-hidden="true" />
+                  </span>
+                  <h4 className="min-w-0 flex-1 text-[10.5px] sm:text-[12px] font-bold leading-snug text-[#142B5F] dark:text-[#F1F5F9] break-words">
+                    {row.courseDisplayName}
+                  </h4>
+                </div>
+                <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-extrabold text-[#0E7C86] dark:text-[#38C6D4] whitespace-nowrap">
+                  <Check className="h-3 w-3 shrink-0" aria-hidden="true" />
+                  <span>{certificateStatusCopy(row.status, language)}</span>
                 </span>
               </div>
 
               {/* Metadata Row: Serial & Date */}
-              <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] font-medium text-[var(--mn-text-muted)]">
-                <span>{copy('تاريخ الإصدار')}: <strong className="font-semibold text-[var(--mn-heading)]">{new Date(row.issuedAt).toLocaleDateString(language === 'ar' ? 'ar' : 'en')}</strong></span>
-                <span className="text-[var(--mn-border)]">•</span>
-                <span>الرقم التسلسلي: <strong className="font-mono font-semibold text-[var(--mn-heading)]" dir="ltr">{row.serialNumber}</strong></span>
+              <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[9.5px] sm:text-[10.5px] font-medium text-[#5C707C] dark:text-[#9BB4C7]">
+                <span>
+                  {copy('تاريخ الإصدار')}:{' '}
+                  <strong className="font-bold tabular-nums text-[#142B5F] dark:text-[#F1F5F9]">
+                    {new Date(row.issuedAt).toLocaleDateString(language === 'ar' ? 'ar' : 'en')}
+                  </strong>
+                </span>
+                <span className="text-[#142B5F]/20 dark:text-white/20">·</span>
+                <span>
+                  الرقم التسلسلي:{' '}
+                  <strong className="font-bold tabular-nums text-[#142B5F] dark:text-[#F1F5F9]" dir="ltr">
+                    {row.serialNumber}
+                  </strong>
+                </span>
               </div>
             </div>
 
@@ -166,7 +193,7 @@ export function StudentCertificatesPanel({
           type="button"
           disabled={busy}
           onClick={() => void more()}
-          className="w-full min-h-9 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-4 py-2 text-[12px] font-bold text-[var(--mn-heading)] hover:border-[#D6A43B] transition-all disabled:opacity-50 cursor-pointer"
+          className="mn-workspace-btn-sm w-full rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 px-4 text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] hover:border-[#0E7C86]/55 transition-all disabled:opacity-50 cursor-pointer"
         >
           {busy ? copy('جارٍ التحميل…') : copy('عرض المزيد')}
         </button>

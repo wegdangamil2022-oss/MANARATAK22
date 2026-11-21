@@ -104,7 +104,7 @@ textarea::placeholder {
 
 @media (max-width: 640px) {
   body {
-    font-size: 17px;
+    font-size: 16px;
   }
 
   input,
@@ -118,13 +118,13 @@ textarea::placeholder {
   input,
   select,
   textarea {
-    min-height: 48px;
-    font-size: 16px;
+    min-height: 38px;
+    font-size: 15px;
   }
 
   button,
   [role='button'] {
-    min-height: 44px;
+    min-height: 36px;
   }
 
   article {

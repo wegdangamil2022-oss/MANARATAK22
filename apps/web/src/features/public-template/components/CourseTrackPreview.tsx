@@ -244,7 +244,7 @@ export const CourseTrackPreview: React.FC<CourseTrackPreviewProps> = ({
         {/* ========================================================================= */}
         {/* 2 SEPARATE FLOATING FILTER TILES (المجال • المستوى) INSIDE HERO           */}
         {/* ========================================================================= */}
-        <div className="max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto mn-inline-gutter mt-2.5 md:mt-3.5 relative z-20 pb-0">
+        <div className="max-w-[256px] sm:max-w-[350px] md:max-w-[454px] lg:max-w-[522px] mx-auto mn-inline-gutter mt-2.5 md:mt-3.5 relative z-20 pb-0">
           <div className="grid grid-cols-2 gap-2 sm:gap-2.5 md:gap-3.5">
             {/* Tile 1: المجال / التصنيف */}
             <button

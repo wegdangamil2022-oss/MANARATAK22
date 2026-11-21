@@ -74,18 +74,15 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
       id: 'channels' as TabType,
       label: isRTL ? 'قنواتي' : 'My Channels',
       icon: (isActive: boolean) => (
-        <div className="relative flex items-center justify-center">
-          <Megaphone
-            className={`w-5 h-5 transition-transform duration-200 ${
-              isActive
-                ? 'stroke-[2.5] text-[#142B51] dark:text-[#E5BF65] scale-110'
-                : 'stroke-[1.8] text-[#526672] dark:text-[#cad8e0]/80'
-            }`}
-          />
-          <span className="absolute -top-1 -right-1 flex h-2 w-2">
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D4A846] dark:bg-[#E5BF65] shadow-2xs mn-gold " />
-          </span>
-        </div>
+        <span
+          className={`inline-flex h-6 w-6 items-center justify-center rounded-lg border transition-transform duration-200 ${
+            isActive
+              ? 'bg-[#142B5F] border-[#D6A43B] text-[#F2CD78] scale-110 shadow-2xs'
+              : 'bg-[#142B5F] border-[#D6A43B]/75 text-[#F2CD78] shadow-2xs'
+          }`}
+        >
+          <Megaphone className="w-3.5 h-3.5 text-[#F2CD78] stroke-[2.2]" />
+        </span>
       ),
     },
     {

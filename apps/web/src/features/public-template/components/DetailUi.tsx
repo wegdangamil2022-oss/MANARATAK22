@@ -67,9 +67,9 @@ export function PublicFilterSelectModal({
           </button>
         </div>
 
-        {/* Compact Scrollable Options List (يعرض قليل منها ثم عملية سحب) */}
+        {/* Spacious Scrollable Options List (shows up to 6 items completely without scrolling) */}
         <div
-          className="max-h-[144px] overflow-y-auto overscroll-contain pr-1 pl-0.5 space-y-1 font-['Cairo',sans-serif] scroll-smooth"
+          className="max-h-[268px] overflow-y-auto overscroll-contain pr-1 pl-0.5 space-y-1 font-['Cairo',sans-serif] scroll-smooth"
           style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
         >
           {options.map((opt) => {
@@ -99,8 +99,8 @@ export function PublicFilterSelectModal({
           })}
         </div>
 
-        {/* Scroll Indicator Footer when list has more than 3 items */}
-        {options.length > 3 && (
+        {/* Scroll Indicator Footer only when list has more than 6 items */}
+        {options.length > 6 && (
           <div className="mt-2 pt-1.5 border-t border-[var(--mn-border)]/60 flex items-center justify-center gap-1 text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4] font-['Cairo',sans-serif]">
             <ChevronDown className="w-3 h-3 animate-bounce" />
             <span>{dir === 'ltr' ? `Scroll for more options (${options.length})` : `اسحب لأسفل لعرض بقية الخيارات (${options.length})`}</span>

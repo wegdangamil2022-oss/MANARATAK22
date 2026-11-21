@@ -72,7 +72,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
       dir="rtl"
     >
       {/* 1. EDITORIAL ARTICLE HEADER (ترويسة خاصة بالمقالات والأدلة المرجعية) */}
-      <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white border-b-2 border-[#D6A43B] shadow-md">
+      <div className="relative w-full overflow-hidden bg-gradient-to-bl from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white border-b-2 border-[#D6A43B] shadow-md">
         <div className="relative z-10 px-3.5 sm:px-5 md:px-8 py-4 md:py-5 space-y-3">
           {/* الصف العلوي: عنوان المقال الرئيسي يميناً + أزرار المحفوظة والرجوع يساراً بمسافة آمنة بعيداً عن النص والخط الفاصل */}
           <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/15">

@@ -2,20 +2,62 @@
 @source './';
 @source "../../../../../packages/ui/src";
 
-/* Header: preserve 40px touch targets while keeping the 320px layout inside the viewport. */
+/* Header & Mobile Balance: ~10% more compact containers & cards on mobile while preserving font sizes. */
 @media (max-width: 639px) {
-  #manaratak-header > div { padding-inline: var(--mn-container-mobile); }
+  #manaratak-header > div {
+    padding-inline: var(--mn-container-mobile);
+    min-height: 58px !important;
+    height: 58px;
+  }
   #manaratak-header .mn-header-row { min-width: 0; gap: 5px; }
   #manaratak-header .mn-header-brand { min-width: 0; flex: 1; gap: 6px; }
-  #manaratak-header .mn-header-brand > button { width: 60px; height: 60px; min-width: 60px; min-height: 60px; }
+  #manaratak-header .mn-header-brand > button,
+  #manaratak-header .mn-header-brand > div:first-child {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    min-height: 52px !important;
+  }
   #manaratak-header .mn-header-brand > div { min-width: 0; }
   #manaratak-header .mn-header-brand span:first-child { font-size: 15px; letter-spacing: .3px; }
   #manaratak-header .mn-header-brand span:last-child { font-size: 9px; overflow: hidden; text-overflow: ellipsis; }
   #manaratak-header .mn-header-actions { flex-shrink: 0; gap: 3px; }
-  #manaratak-header .mn-header-actions > button { width: 40px; min-width: 40px; height: 40px; min-height: 40px; padding-inline: 0; justify-content: center; }
+  #manaratak-header .mn-header-actions > button {
+    width: 35px !important;
+    min-width: 35px !important;
+    height: 35px !important;
+    min-height: 35px !important;
+    padding-inline: 0;
+    justify-content: center;
+  }
   #btn-single-language > svg { display: none; }
   #manaratak-header form, #manaratak-header input { min-width: 0; }
   #manaratak-header input { font-size: 11px; }
+
+  .manaratak-public .mn-search-control {
+    height: 35px !important;
+    min-height: 35px !important;
+  }
+  .manaratak-public [data-mn-design="56ab29fe6d"] {
+    height: 35px !important;
+    min-height: 35px !important;
+    max-height: 35px !important;
+  }
+  .manaratak-public section[id^="featured-"] {
+    padding-block: 3px !important;
+  }
+  .manaratak-public button[id^="btn-view-all-"] {
+    min-height: 34px !important;
+    padding-block: 6px !important;
+  }
+  .manaratak-public .mn-filter-chip {
+    min-height: 30px !important;
+    padding: 4px 10px !important;
+  }
+  .manaratak-public .mn-external-link {
+    min-height: 34px !important;
+    padding: 5px 10px !important;
+  }
 }
 @media (max-width: 359px) {
   #manaratak-header .mn-header-brand span:last-child { display: none; }
@@ -318,7 +360,7 @@
 }
 
 .manaratak-public .mn-search-hero {
-  background: linear-gradient(110deg, #142b5f 0%, #142b5f 42%, var(--mn-hero-secondary) 82%, var(--mn-hero-secondary) 100%);
+  background: linear-gradient(250deg, #142b5f 0%, #142b5f 42%, var(--mn-hero-secondary) 82%, var(--mn-hero-secondary) 100%);
 }
 
 .manaratak-public .mn-card-shadow {

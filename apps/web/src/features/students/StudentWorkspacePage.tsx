@@ -1,4 +1,4 @@
-import { PreviewStudentApiClient } from './studentWorkspacePreviewApi';
+import { PreviewStudentApiClient, loginPreviewStudent } from './studentWorkspacePreviewApi';
 const ApiClient = import.meta.env.VITE_PUBLIC_TEMPLATE_DATA_MODE === 'prototype' ? PreviewStudentApiClient : LiveApiClient;
 import {OwnerReferenceNotice} from './OwnerReferenceNotice';
 import {useTranslation} from '../../i18n/I18nProvider';
@@ -8,11 +8,33 @@ import { StudentCareerWorkspace } from './StudentCareerWorkspace';
 import { StudentServiceBookingPanel } from './StudentServiceBookingPanel';
 import { StudentCertificatesPanel } from '../certificates/StudentCertificatesPanel';
 import { StudentNotificationsView, studentNotificationLink } from './StudentNotificationsView';
+import {
+  HorizontalSwipeTabs,
+  WorkspaceTabCanopy,
+  SummarySectionCard,
+  SummarySectionIcon,
+  NextStepHeroCard,
+  ThisWeekScheduleCard,
+  GoalMatchedSection,
+  OpportunitiesDiscoverPanel,
+  OpportunitiesShortlistPanel,
+  OpportunitiesOffersPanel,
+  StudentDocumentsLibraryPanel,
+  LearningStudyPlanPanel,
+  LearningTestPrepPanel,
+  VaultComparisonsPanel,
+  VaultToolsResultsPanel,
+  ServiceDeliverablesPanel,
+  AcademicProfileSummaryCard,
+  StudentCalendarTasksPanel,
+  StudentSupportCenterPanel,
+  AccountQuickSearchModal,
+} from './StudentExpandedSections';
 import './student-workspace.css';
 import { StudentWorkspaceShell } from './StudentWorkspaceShell';
 import React, { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Award, Bell, BookOpen, Bookmark, CheckCircle2, ClipboardList, Compass, Folder, Heart, Home, LayoutGrid, LockKeyhole, RefreshCw, Route, Settings2, Star, X, User, ListChecks, GraduationCap, CalendarClock, Sparkles, Clock3, Languages, Moon, Sun, LogIn, ShieldCheck, ChevronLeft, History as HistoryIcon, Archive, Trash2, ExternalLink, ChevronDown, ChevronUp, FileText, Check, AlertTriangle, CreditCard, Receipt, Info, LogOut, Shield, RotateCcw, Save, Eye, Search, Plus, Layers, Filter, SlidersHorizontal, ArrowUpLeft, Camera, Upload } from 'lucide-react';
+import { ArrowLeft, Award, Bell, BookOpen, Bookmark, CheckCircle2, ClipboardList, Compass, FileCheck2, Folder, Heart, Home, LayoutGrid, LockKeyhole, RefreshCw, Route, Settings2, Star, X, User, ListChecks, GraduationCap, CalendarClock, Sparkles, Clock3, Languages, Moon, Sun, LogIn, ShieldCheck, ChevronLeft, History as HistoryIcon, Archive, Trash2, ExternalLink, ChevronDown, ChevronUp, FileText, Check, AlertTriangle, CreditCard, Receipt, Info, LogOut, Shield, RotateCcw, Save, Eye, Search, Plus, Layers, Filter, SlidersHorizontal, ArrowUpLeft, Camera, Upload, Scale, HelpCircle } from 'lucide-react';
 import {
   ApiClient as LiveApiClient,
   HydratedStudentSavedItemDto,
@@ -99,6 +121,15 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
   const [requestedServiceNotFound, setRequestedServiceNotFound] = useState(false);
   const [requestedNotFoundId, setRequestedNotFoundId] = useState<string | null>(null);
   const [identity, setIdentity] = useState<{ principalId: string; displayName: string; primaryEmail?: string; roles?: string[]; roleNames?: string[] } | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [profileSubTabRequest, setProfileSubTabRequest] = useState<'ACADEMIC' | 'SETTINGS' | 'CALENDAR' | 'SUPPORT' | null>(null);
+  const [opportunitiesSubTabRequest, setOpportunitiesSubTabRequest] = useState<'ACTIVE' | 'DISCOVER' | 'SHORTLIST' | 'OFFERS' | 'DOCUMENTS' | 'ARCHIVED' | null>(null);
+
+  useEffect(() => {
+    const onAuthChange = () => setRetryKey((v) => v + 1);
+    window.addEventListener('mn-preview-auth-change', onAuthChange);
+    return () => window.removeEventListener('mn-preview-auth-change', onAuthChange);
+  }, []);
 
   useEffect(() => {
     if (!dashboard) return;
@@ -650,7 +681,10 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
     setError(null);
     try {
       await ApiClient.logoutStudent();
-      window.location.assign('/');
+      setDashboard(null);
+      setIdentity(null);
+      setStudentReferenceId(null);
+      setError('UNAUTHENTICATED_GUEST');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'تعذر تسجيل الخروج');
     } finally {
@@ -660,8 +694,8 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
 
   if (loading) return <WorkspaceSkeleton />;
 
-  if (error && !dashboard) {
-    const isProvisioning = error.includes('PROVISIONING_PENDING') || error.includes('INITIALIZING');
+  if ((error && !dashboard) || !dashboard) {
+    const isProvisioning = Boolean(error && (error.includes('PROVISIONING_PENDING') || error.includes('INITIALIZING')));
     if (isProvisioning) {
       return (
         <main dir="rtl" className="mn-page-shell py-24 text-center">
@@ -689,35 +723,85 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
       );
     }
 
+    const guestTabMeta: Record<CanonicalWorkspaceTab, { title: string; description: string; icon: React.ComponentType<{ className?: string }> }> = {
+      SUMMARY: {
+        title: 'ملخصي ونظرة عامة',
+        description: 'تابِع أولوياتك اليومية، خطوتك القادمة، ومواعيد التقديم الهامة خلال الأسبوع في لوحة واحدة مركزة.',
+        icon: Home,
+      },
+      OPPORTUNITIES: {
+        title: 'فرصي ومتابعة المنح',
+        description: 'أدِر ملفات تقديمك على المنح الدراسية خطوة بخطوة، وتابع قائمة المهام والمستندات المطلوبة لكل منحة.',
+        icon: Route,
+      },
+      LEARNING: {
+        title: 'تعلمي ودوراتي التدريبية',
+        description: 'استكمل دوراتك التدريبية المسجلة، وتابع نسبة تقدمك الأكاديمي وحمّل شهاداتك المعتمدة فور إتمام الدراسة.',
+        icon: BookOpen,
+      },
+      VAULT: {
+        title: 'محفوظاتي وخزنتي الشخصية',
+        description: 'احفظ المنح الدراسية، الجامعات، التخصصات، والدورات المفضلة لديك في مجموعات منظمة للرجوع إليها في أي وقت.',
+        icon: Heart,
+      },
+      CAREERS: {
+        title: 'مساري الأكاديمي والمهني',
+        description: 'ابنِ ملفك الأكاديمي والمهني واستكشف التخصصات والفرص الوظيفية التي تتناسب مع مؤهلاتك وطموحك المستقبلي.',
+        icon: GraduationCap,
+      },
+      SERVICES: {
+        title: 'طلباتي والخدمات الأكاديمية',
+        description: 'قدّم على خدمات الاستشارة الأكاديمية ومراجعة المستندات، وتابع حالة طلباتك والفواتير المرتبطة بها بسهولة.',
+        icon: ClipboardList,
+      },
+      NOTIFICATIONS: {
+        title: 'إشعاراتي وتنبيهاتي الفورية',
+        description: 'احصل على تنبيهات مبكرة قبل إغلاق مواعيد المنح المحفوظة، وإشعارات فورية بتحديثات طلباتك ودوراتك.',
+        icon: Bell,
+      },
+      PROFILE: {
+        title: 'إعداداتي وملفي الأكاديمي',
+        description: 'أكمل بياناتك الأكاديمية، معدلك التراكمي، ومستوى اللغة لتخصيص توصيات المنح الدراسية الأنسب لملفك.',
+        icon: User,
+      },
+    };
+
+    const currentGuestSection = guestTabMeta[tab] || guestTabMeta.SUMMARY;
+    const GuestSectionIcon = currentGuestSection.icon;
+
     return (
-      <main dir="rtl" className="mn-page-shell py-24 text-center"><div className="mn-public-container mx-auto max-w-xl">
-        <div className="mn-card rounded-[2rem] p-8 sm:p-10">
-          <div className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-[var(--mn-surface-muted)] text-[var(--mn-primary)]">
-            <LockKeyhole className="h-7 w-7" />
-          </div>
-          <h1 className="text-2xl font-bold text-[var(--mn-heading)]">مساحة الطالب محمية</h1>
-          <p className="mt-3 leading-7 text-[var(--mn-text-muted)]">{error}</p>
-          <div className="mt-7 flex justify-center gap-3">
-            <Link
-              to="/login"
-              className="rounded-xl bg-[var(--mn-primary)] px-6 py-3 font-semibold text-white hover:bg-[var(--mn-primary-hover)] mn-inverse"
-            >
-              تسجيل الدخول
-            </Link>
-            <button
-              type="button"
-              onClick={() => setRetryKey((value) => value + 1)}
-              className="rounded-xl border border-[var(--mn-border)] px-6 py-3 font-semibold text-[var(--mn-text)] hover:bg-[var(--mn-surface-muted)]"
-            >
-              إعادة المحاولة
-            </button>
-          </div>
+      <StudentWorkspaceShell
+        activeTab={tab}
+        onTabChange={handleTabChange}
+        isGuest
+        onOpenLogin={() => navigate('/login')}
+        onOpenSignup={() => navigate('/signup')}
+        onTogglePreviewAccount={() => loginPreviewStudent()}
+      >
+        <div className="w-full max-w-4xl mx-auto mt-0 font-['Cairo',sans-serif]">
+          <WorkspaceTabCanopy
+            title={currentGuestSection.title}
+            icon={GuestSectionIcon}
+          >
+            <p className="mt-2 text-[11px] sm:text-[12px] font-medium leading-relaxed text-[#5C707C] dark:text-[#9BB4C7]">
+              {currentGuestSection.description}
+            </p>
+
+            <div className="mt-3.5 pt-3 border-t border-[#142B5F]/8 dark:border-white/10 flex items-center justify-start gap-2">
+              <button
+                type="button"
+                onClick={() => navigate('/login')}
+                className="!min-h-[34px] h-[34px] rounded-xl bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 px-4 py-1.5 text-[11px] sm:text-[12px] font-bold text-white inline-flex items-center justify-center gap-1.5 shadow-[0_2px_10px_rgba(20,43,95,0.18)] transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <LogIn className="w-3.5 h-3.5 text-white shrink-0" />
+                <span>تسجيل الدخول</span>
+              </button>
+            </div>
+          </WorkspaceTabCanopy>
         </div>
-      </div></main>
+      </StudentWorkspaceShell>
     );
   }
-
-  if (!dashboard) return null;
   const { workspace, statistics } = dashboard;
   const notifications = (workspace.notificationMatrix || {}) as Record<string, boolean>;
   const privacy = (workspace.privacyPreferences || {}) as Record<string, boolean>;
@@ -734,6 +818,27 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
   const accountCityName = typeof accountMetadata.cityNameAr === 'string' ? accountMetadata.cityNameAr
     : typeof accountMetadata.cityName === 'string' ? accountMetadata.cityName : undefined;
 
+  const activeApplicationsCount = applicationTrackers.filter((item) => item.status === 'ACTIVE').length;
+  const activeServiceRequestsCount = serviceRequests.filter(
+    (req) => !['COMPLETED', 'CANCELLED', 'REJECTED'].includes(req.status),
+  ).length;
+  const checklistTasks = applicationTrackers.flatMap((tracker) => tracker.checklist || []);
+  const completedChecklistTasks = checklistTasks.filter((task) => task.completed).length;
+  const baseCompletedProfileItems = [
+    Boolean(workspace.displayName || identity?.displayName),
+    Boolean(identity?.primaryEmail),
+    Boolean(accountCountryName),
+    Boolean(workspace.preferredLanguage),
+    dashboard.savedItems.length > 0,
+    dashboard.courseEnrollments.length > 0,
+  ].filter(Boolean).length;
+  const totalRequirementsCount = Math.max(10, 6 + checklistTasks.length);
+  const completedRequirementsCount = Math.min(
+    totalRequirementsCount,
+    baseCompletedProfileItems + completedChecklistTasks,
+  );
+  const readinessPercent = Math.round((completedRequirementsCount / totalRequirementsCount) * 100);
+
   return (
     <StudentWorkspaceShell
       activeTab={tab}
@@ -746,6 +851,12 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
       timezone={workspace.timezone}
       previewMode={import.meta.env.VITE_PUBLIC_TEMPLATE_DATA_MODE === 'prototype'}
       accessibility={accessibility}
+      readinessPercent={readinessPercent}
+      completedRequirementsCount={completedRequirementsCount}
+      totalRequirementsCount={totalRequirementsCount}
+      activeApplicationsCount={activeApplicationsCount}
+      activeServiceRequestsCount={activeServiceRequestsCount}
+      onTogglePreviewAccount={() => void logout()}
     >
       <div className="w-full max-w-4xl mx-auto space-y-4 mt-0">
         {error && <Alert tone="error" message={error} onClose={() => setError(null)} />}
@@ -767,6 +878,19 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
             setTab={handleTabChange}
             identity={identity}
             applicationTrackers={applicationTrackers}
+            onOpenSearch={() => setSearchOpen(true)}
+            onOpenDocuments={() => {
+              setOpportunitiesSubTabRequest('DOCUMENTS');
+              handleTabChange('OPPORTUNITIES');
+            }}
+            onOpenCalendar={() => {
+              setProfileSubTabRequest('CALENDAR');
+              handleTabChange('PROFILE');
+            }}
+            onOpenSupport={() => {
+              setProfileSubTabRequest('SUPPORT');
+              handleTabChange('PROFILE');
+            }}
           />
         )}
         {tab === 'OPPORTUNITIES' && !sectionFailures.includes('ملفات التقديم') && (
@@ -780,6 +904,8 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
             onArchive={archiveApplicationTracker}
             onRemove={removeApplicationTracker}
             onDocumentsChanged={() => { void ApiClient.listMyStudentApplicationTrackers().then(setApplicationTrackers).catch(() => setError('تعذر تحديث ملفات التقديم')); }}
+            requestedSubTab={opportunitiesSubTabRequest}
+            onClearRequestedSubTab={() => setOpportunitiesSubTabRequest(null)}
           />
         )}
         {tab === 'LEARNING' && (
@@ -799,6 +925,7 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
             onMoveSavedItem={moveSavedItem}
             onRemoveSavedItem={removeSavedItem}
             setTab={handleTabChange}
+            trackers={applicationTrackers}
           />
         )}
         {tab === 'CAREERS' && <StudentCareerWorkspace />}
@@ -855,8 +982,20 @@ export function StudentWorkspacePage({ initialTab = 'SUMMARY' }: { initialTab?: 
             onResetLayout={resetLayout}
             onClearSearch={clearSearchHistory}
             onBack={() => handleTabChange('SUMMARY')}
+            trackers={applicationTrackers}
+            requestedSubTab={profileSubTabRequest}
+            onClearRequestedSubTab={() => setProfileSubTabRequest(null)}
           />
         )}
+
+        <AccountQuickSearchModal
+          open={searchOpen}
+          onClose={() => setSearchOpen(false)}
+          dashboard={dashboard}
+          trackers={applicationTrackers}
+          requests={serviceRequests}
+          onNavigateTab={handleTabChange}
+        />
       </div>
     </StudentWorkspaceShell>
   );
@@ -869,6 +1008,10 @@ function SummaryView({
   onTogglePayments,
   setTab,
   applicationTrackers,
+  onOpenSearch,
+  onOpenDocuments,
+  onOpenCalendar,
+  onOpenSupport,
 }: {
   dashboard: StudentDashboardSummaryDto;
   invoices: StudentFinanceInvoiceDto[];
@@ -877,6 +1020,10 @@ function SummaryView({
   setTab: (tab: CanonicalWorkspaceTab) => void;
   identity: { principalId: string; displayName: string; primaryEmail?: string; roles?: string[]; roleNames?: string[] } | null;
   applicationTrackers: StudentApplicationTrackerDto[];
+  onOpenSearch: () => void;
+  onOpenDocuments: () => void;
+  onOpenCalendar: () => void;
+  onOpenSupport: () => void;
 }) {
   const [showAllActivities, setShowAllActivities] = useState(false);
 
@@ -903,28 +1050,6 @@ function SummaryView({
     [dashboard.courseEnrollments],
   );
 
-  const urgentAlerts = useMemo(() => {
-    const unread = dashboard.notifications.filter((notification) => !notification.readAt);
-    const pendingInvoices = invoices
-      .filter((invoice) => ['ISSUED', 'PARTIALLY_PAID', 'OVERDUE'].includes(invoice.status))
-      .sort((a, b) => Number(b.status === 'OVERDUE') - Number(a.status === 'OVERDUE'));
-    const now = Date.now();
-    const criticalDeadlines = activeMilestones
-      .filter((tracker) => {
-        if (!tracker.deadlineAt) return false;
-        const remaining = new Date(tracker.deadlineAt).getTime() - now;
-        return Number.isFinite(remaining) && remaining >= 0 && remaining <= 48 * 60 * 60 * 1000;
-      })
-      .sort((a, b) => new Date(a.deadlineAt || '').getTime() - new Date(b.deadlineAt || '').getTime());
-    return {
-      unread,
-      pendingInvoices,
-      criticalDeadlines,
-      hasCritical: criticalDeadlines.length > 0 || pendingInvoices.some((invoice) => invoice.status === 'OVERDUE'),
-      hasUrgent: unread.length > 0 || pendingInvoices.length > 0 || criticalDeadlines.length > 0,
-    };
-  }, [dashboard.notifications, invoices, activeMilestones]);
-
   const isNewStudent = (
     dashboard.statistics.savedItems === 0 &&
     dashboard.statistics.activeCourses === 0 &&
@@ -932,367 +1057,179 @@ function SummaryView({
     applicationTrackers.length === 0
   );
 
-  const attentionPanel = urgentAlerts.hasUrgent ? (
-    <section
-      aria-label="أمور تحتاج انتباه الطالب"
-      className="mn-student-attention relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] text-[#1E293B] dark:text-[#F8FAFC] text-right font-['Cairo',sans-serif] shadow-2xs"
-    >
-      <div className="relative z-10 py-3 sm:py-3.5">
-        {/* Edge-to-edge table header divider without right/left gap */}
-        <div className="flex items-center gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3 sm:px-4">
-          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
-            <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
-            <Bell className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" />
-          </span>
-          <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
-            يحتاج انتباهك
-          </h3>
-        </div>
-        <div className="mt-2.5 space-y-2 px-2.5 sm:px-4">
-          {urgentAlerts.criticalDeadlines.slice(0, 2).map((tracker) => (
-            <div
-              key={tracker.id}
-              className="mn-student-attention-card relative overflow-hidden flex min-w-0 items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-2.5 py-2"
-            >
-              {/* Authentic Manaratak Geometric Corner Line from top-right to middle-bottom */}
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]"
-              />
-              <div className="min-w-0 flex-1">
-                <h4 className="text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words font-['Cairo',sans-serif]">
-                  موعد تقديم قريب
-                </h4>
-                <p className="mt-0.5 text-[9.5px] sm:text-[10px] font-bold leading-snug text-[var(--mn-text-muted)] break-words font-['Cairo',sans-serif]">
-                  {trackerDisplayName(tracker)} — {formatDate(tracker.deadlineAt)}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setTab('OPPORTUNITIES')}
-                className="mn-student-attention-action shrink-0 whitespace-nowrap rounded-lg border border-[#142B5F] bg-transparent hover:bg-[#142B5F]/5 dark:border-[#F2CD78]/65 dark:text-[#F2CD78] px-2.5 py-1 text-[10px] font-bold text-[#142B5F] cursor-pointer font-['Cairo',sans-serif] transition-colors"
-              >
-                متابعة
-              </button>
-            </div>
-          ))}
-          {urgentAlerts.pendingInvoices.slice(0, 1).map((inv) => (
-            <div
-              key={inv.id}
-              className="mn-student-attention-card relative overflow-hidden flex min-w-0 items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-2.5 py-2"
-            >
-              {/* Authentic Manaratak Geometric Corner Line from top-right to middle-bottom */}
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]"
-              />
-              <div className="min-w-0 flex-1">
-                <h4 className="text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
-                  {inv.status === 'OVERDUE' ? 'فاتورة متأخرة' : 'فاتورة مستحقة'}
-                </h4>
-                <p className="mt-0.5 text-[9.5px] sm:text-[10px] font-bold leading-snug text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-                  {inv.invoiceNumber} ({formatMoney(inv.amountDue)})
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onTogglePayments(inv.id)}
-                className="mn-student-attention-action shrink-0 whitespace-nowrap rounded-lg border border-[#142B5F] bg-transparent hover:bg-[#142B5F]/5 dark:border-[#F2CD78]/65 dark:text-[#F2CD78] px-2.5 py-1 text-[10px] font-bold text-[#142B5F] cursor-pointer font-['Cairo',sans-serif] transition-colors"
-              >
-                تفاصيل الفاتورة
-              </button>
-            </div>
-          ))}
-          {urgentAlerts.unread.slice(0, 2).map((n) => (
-            <div
-              key={n.id}
-              className="mn-student-attention-card relative overflow-hidden flex min-w-0 items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-2.5 py-2"
-            >
-              {/* Authentic Manaratak Geometric Corner Line from top-right to middle-bottom */}
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute top-0 right-0 w-4 h-[75%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]"
-              />
-              <div className="min-w-0 flex-1">
-                <h4 className="text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words font-['Cairo',sans-serif]">
-                  {n.title}
-                </h4>
-                <p className="mt-0.5 text-[9.5px] sm:text-[10px] font-bold leading-snug text-[var(--mn-text-muted)] break-words font-['Cairo',sans-serif]">
-                  {n.message}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setTab('NOTIFICATIONS')}
-                className="mn-student-attention-action shrink-0 whitespace-nowrap rounded-lg border border-[#142B5F] bg-transparent hover:bg-[#142B5F]/5 dark:border-[#F2CD78]/65 dark:text-[#F2CD78] px-2.5 py-1 text-[10px] font-bold text-[#142B5F] cursor-pointer font-['Cairo',sans-serif] transition-colors"
-              >
-                عرض
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  ) : null;
-
   return (
-    <div className="mt-0 space-y-4 font-['Cairo',sans-serif]">
-      {/* Unified Header Box + Connected 4-Stat Bar attached directly to the 8-tab bar above */}
-      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
-        <section
-          aria-label="ملخصي ونظرة عامة"
-          className="relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
-        >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
-          />
-          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-2.5">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
-                  <LayoutGrid className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
-                </span>
-                <h2 className="mn-student-summary-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
-                  ملخصي ونظرة عامة
-                </h2>
-              </div>
-              <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
-                {activeMilestones.length} تقديم نشط · {dashboard.statistics.activeCourses} دورة
+    <div className="mn-summary-tab mt-0 space-y-2.5 sm:space-y-3.5 font-['Cairo',sans-serif]">
+      {/* Parent Umbrella Canopy: top cap line spanning right-to-left & descending on both sides */}
+      <WorkspaceTabCanopy
+        title="ملخصي ونظرة عامة"
+        subtitle="أولويات اليوم، مواعيد الأسبوع، واستكمال مسارك الدراسي"
+        icon={LayoutGrid}
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={onOpenSearch}
+              className="mn-summary-btn-sm inline-flex items-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <Search className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+              <span>بحث</span>
+            </button>
+            <button
+              type="button"
+              onClick={onOpenSupport}
+              className="mn-summary-btn-sm inline-flex items-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <HelpCircle className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+              <span>الدعم</span>
+            </button>
+          </>
+        }
+      >
+        {/* Embedded Quick Overview Strip: gives the student an instant 1-second snapshot right inside the umbrella */}
+        <div className="mt-2.5 pt-2.5 border-t border-[#142B5F]/8 dark:border-white/8 grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
+          <button
+            type="button"
+            onClick={() => setTab('OPPORTUNITIES')}
+            className="mn-summary-stat-tile flex items-center justify-between gap-2 rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 dark:hover:border-[#38C6D4]/45 px-2.5 py-2 text-right transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                <Route className="w-3 h-3" />
+              </span>
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#DCE7F0] truncate">
+                تقديمات نشطة
               </span>
             </div>
-            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-semibold leading-[1.8] text-[#334155] dark:text-[#E2E8F0] font-['Cairo',sans-serif]">
-              نظرة شاملة على آخر مستجدات ملفات تقديمك للمنح الدراسية، تقدمك في الدورات التدريبية، والتنبيهات العاجلة في حسابك.
-            </p>
-          </div>
-        </section>
+            <span className="text-[12px] sm:text-[13px] font-extrabold tabular-nums text-[#0E7C86] dark:text-[#F2CD78] shrink-0">
+              {activeMilestones.length}
+            </span>
+          </button>
 
-        {!isNewStudent && (
-          <div className="-mt-px grid grid-cols-2 sm:grid-cols-4 divide-x divide-x-reverse divide-y sm:divide-y-0 divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs">
-            <button
-              type="button"
-              onClick={() => setTab('OPPORTUNITIES')}
-              className="group flex min-w-0 items-center justify-start gap-2 pr-3 pl-2.5 py-2.5 text-right transition-colors hover:bg-[var(--mn-surface)] cursor-pointer font-['Cairo',sans-serif]"
-            >
-              <Route className="w-4 h-4 shrink-0 text-[#0E7C86] group-hover:scale-110 transition-transform" />
-              <div className="min-w-0 flex items-baseline gap-1.5 truncate">
-                <span className="text-[13px] sm:text-[13.5px] leading-none font-bold tabular-nums text-[#1E293B] dark:text-[#F8FAFC]">
-                  {activeMilestones.length}
-                </span>
-                <span className="text-[11px] sm:text-[11.5px] font-bold leading-tight text-[#334155] dark:text-[#CBD5E1] truncate">
-                  تقديمات نشطة
-                </span>
-              </div>
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab('LEARNING')}
-              className="group flex min-w-0 items-center justify-start gap-2 pr-3 pl-2.5 py-2.5 text-right transition-colors hover:bg-[var(--mn-surface)] cursor-pointer font-['Cairo',sans-serif]"
-            >
-              <BookOpen className="w-4 h-4 shrink-0 text-[#0E7C86] group-hover:scale-110 transition-transform" />
-              <div className="min-w-0 flex items-baseline gap-1.5 truncate">
-                <span className="text-[13px] sm:text-[13.5px] leading-none font-bold tabular-nums text-[#1E293B] dark:text-[#F8FAFC]">
-                  {dashboard.statistics.activeCourses}
-                </span>
-                <span className="text-[11px] sm:text-[11.5px] font-bold leading-tight text-[#334155] dark:text-[#CBD5E1] truncate">
-                  دورات جارية
-                </span>
-              </div>
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab('VAULT')}
-              className="group flex min-w-0 items-center justify-start gap-2 pr-3 pl-2.5 py-2.5 text-right transition-colors hover:bg-[var(--mn-surface)] cursor-pointer font-['Cairo',sans-serif]"
-            >
-              <Heart className="w-4 h-4 shrink-0 text-[#0E7C86] group-hover:scale-110 transition-transform" />
-              <div className="min-w-0 flex items-baseline gap-1.5 truncate">
-                <span className="text-[13px] sm:text-[13.5px] leading-none font-bold tabular-nums text-[#1E293B] dark:text-[#F8FAFC]">
-                  {dashboard.statistics.savedItems}
-                </span>
-                <span className="text-[11px] sm:text-[11.5px] font-bold leading-tight text-[#334155] dark:text-[#CBD5E1] truncate">
-                  عناصر محفوظة
-                </span>
-              </div>
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab('LEARNING')}
-              className="group flex min-w-0 items-center justify-start gap-2 pr-3 pl-2.5 py-2.5 text-right transition-colors hover:bg-[var(--mn-surface)] cursor-pointer font-['Cairo',sans-serif]"
-            >
-              <Award className="w-4 h-4 shrink-0 text-[#0E7C86] group-hover:scale-110 transition-transform" />
-              <div className="min-w-0 flex items-baseline gap-1.5 truncate">
-                <span className="text-[13px] sm:text-[13.5px] leading-none font-bold tabular-nums text-[#1E293B] dark:text-[#F8FAFC]">
-                  {dashboard.statistics.certificates}
-                </span>
-                <span className="text-[11px] sm:text-[11.5px] font-bold leading-tight text-[#334155] dark:text-[#CBD5E1] truncate">
-                  شهادات صادرة
-                </span>
-              </div>
-            </button>
-          </div>
-        )}
-      </div>
+          <button
+            type="button"
+            onClick={() => setTab('LEARNING')}
+            className="mn-summary-stat-tile flex items-center justify-between gap-2 rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 dark:hover:border-[#38C6D4]/45 px-2.5 py-2 text-right transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                <BookOpen className="w-3 h-3" />
+              </span>
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#DCE7F0] truncate">
+                دورات جارية
+              </span>
+            </div>
+            <span className="text-[12px] sm:text-[13px] font-extrabold tabular-nums text-[#0E7C86] dark:text-[#F2CD78] shrink-0">
+              {dashboard.statistics.activeCourses}
+            </span>
+          </button>
 
-      {/* Critical deadline or overdue invoice */}
-      {urgentAlerts.hasCritical && attentionPanel}
-      {!urgentAlerts.hasCritical && attentionPanel}
+          <button
+            type="button"
+            onClick={() => setTab('VAULT')}
+            className="mn-summary-stat-tile flex items-center justify-between gap-2 rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 dark:hover:border-[#38C6D4]/45 px-2.5 py-2 text-right transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                <Heart className="w-3 h-3" />
+              </span>
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#DCE7F0] truncate">
+                عناصر محفوظة
+              </span>
+            </div>
+            <span className="text-[12px] sm:text-[13px] font-extrabold tabular-nums text-[#0E7C86] dark:text-[#F2CD78] shrink-0">
+              {dashboard.statistics.savedItems}
+            </span>
+          </button>
 
-      {/* 3. New Student Welcome / Starting State */}
+          <button
+            type="button"
+            onClick={() => setTab('LEARNING')}
+            className="mn-summary-stat-tile flex items-center justify-between gap-2 rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 dark:hover:border-[#38C6D4]/45 px-2.5 py-2 text-right transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                <Award className="w-3 h-3" />
+              </span>
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#DCE7F0] truncate">
+                شهادات صادرة
+              </span>
+            </div>
+            <span className="text-[12px] sm:text-[13px] font-extrabold tabular-nums text-[#0E7C86] dark:text-[#F2CD78] shrink-0">
+              {dashboard.statistics.certificates}
+            </span>
+          </button>
+        </div>
+      </WorkspaceTabCanopy>
+
+      {/* 1. خطوتي التالية (Focal Priority Action — WITH selective leading accent bar) */}
+      <NextStepHeroCard
+        trackers={applicationTrackers}
+        dashboard={dashboard}
+        invoices={invoices}
+        onNavigate={setTab}
+      />
+
+      {/* 2. هذا الأسبوع (Calm Grouped Schedule — NO start bars) */}
+      <ThisWeekScheduleCard
+        trackers={applicationTrackers}
+        dashboard={dashboard}
+        onNavigate={setTab}
+        onOpenCalendar={onOpenCalendar}
+      />
+
+      {/* New Student Starting State */}
       {isNewStudent && (
-        <section className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 text-right mn-panel shadow-2xs">
-          <div className="flex items-start gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-[#142B5F] border border-[#D6A43B]/40 flex items-center justify-center shrink-0">
-              <Sparkles className="w-3.5 h-3.5 text-[#F2CD78]" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h3 className="text-[12.5px] sm:text-[13px] font-bold font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
-                مرحبًا بك في مساحتك في منارتك
-              </h3>
-              <p className="text-[11px] sm:text-[11.5px] text-[#475569] dark:text-[#CBD5E1] mt-1.5 leading-[1.75]">
-                مساحتك جاهزة لتتبع طلبات المنح، التسجيل في الدورات، واستكشاف الجامعات والتخصصات وحفظ ما يهمك.
-              </p>
-              <div className="mt-3.5 grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2">
-                <Link
-                  to="/scholarships"
-                  className="rounded-xl bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 px-3 py-2 text-[12px] font-bold text-white transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
-                >
-                  <Route className="w-3.5 h-3.5 text-[#F2CD78]" />
-                  <span>المنح الدراسية</span>
-                </Link>
-                <Link
-                  to="/courses"
-                  className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
-                >
-                  <BookOpen className="w-3.5 h-3.5 text-[#0E7C86]" />
-                  <span>الدورات التدريبية</span>
-                </Link>
-                <Link
-                  to="/universities"
-                  className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
-                >
-                  <Compass className="w-3.5 h-3.5 text-[#0E7C86]" />
-                  <span>دليل الجامعات</span>
-                </Link>
-                <Link
-                  to="/majors"
-                  className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] transition-colors inline-flex items-center justify-center gap-1.5 shadow-2xs"
-                >
-                  <GraduationCap className="w-3.5 h-3.5 text-[#0E7C86]" />
-                  <span>التخصصات</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 4. Continue learning: one recent unfinished course, stretched edge-to-edge */}
-      {activeCourse && (
-        <section
-          aria-label="متابعة التعلم"
-          className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3 sm:py-3.5 shadow-2xs mn-panel"
-        >
-          <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3 sm:px-4">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
-                <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
-                <BookOpen className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" />
-              </span>
-              <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
-                متابعة التعلم
-              </h3>
-            </div>
-            <button
-              type="button"
-              onClick={() => setTab('LEARNING')}
-              className="mn-student-summary-header-link inline-flex shrink-0 items-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 py-0.5 text-[10px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] cursor-pointer font-['Cairo',sans-serif]"
+        <SummarySectionCard title="ابدأ رحلتك الأكاديمية" icon={Sparkles}>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <Link
+              to="/scholarships"
+              className="rounded-xl bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] px-3 py-2 text-[11px] font-bold text-white transition-opacity hover:opacity-95 inline-flex items-center justify-center gap-1.5 shadow-2xs"
             >
-              <span>جميع الدورات</span>
-              <ChevronLeft className="h-3 w-3 text-[#0E7C86]" />
-            </button>
+              <Route className="w-3.5 h-3.5 text-white shrink-0" />
+              <span>المنح الدراسية</span>
+            </Link>
+            <Link
+              to="/courses"
+              className="rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 px-3 py-2 text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9] hover:border-[#0E7C86]/45 transition-colors inline-flex items-center justify-center gap-1.5"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+              <span>الدورات التدريبية</span>
+            </Link>
+            <Link
+              to="/universities"
+              className="rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 px-3 py-2 text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9] hover:border-[#0E7C86]/45 transition-colors inline-flex items-center justify-center gap-1.5"
+            >
+              <Compass className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+              <span>دليل الجامعات</span>
+            </Link>
+            <Link
+              to="/majors"
+              className="rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 px-3 py-2 text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9] hover:border-[#0E7C86]/45 transition-colors inline-flex items-center justify-center gap-1.5"
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+              <span>التخصصات</span>
+            </Link>
           </div>
-
-          <div className="px-2.5 sm:px-4">
-            {/* Stretched Course Card with Authentic Manaratak Geometric Corner Line */}
-            <div className="relative overflow-hidden rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-3 py-2.5 shadow-2xs">
-              {/* Geometric Corner Line from top-right down the right edge to middle-bottom */}
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute top-0 right-0 w-4 sm:w-5 h-[68%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]"
-              />
-
-              <div className="flex min-w-0 items-start justify-between gap-2">
-                <div className="min-w-0 flex-1">
-                  <span className="inline-flex items-center gap-1 text-[9.5px] sm:text-[10px] font-semibold text-[#475569] dark:text-[#94A3B8]">
-                    <Clock3 className="h-3 w-3 text-[#0E7C86]" />
-                    <span>آخر دورة تتابعها</span>
-                  </span>
-                  <div className="mt-1 flex items-center gap-2 min-w-0">
-                    {/* Official Oxford Sub-Item Icon (MIX-10: Horizon Petrol bg + Royal Navy border & ring + white icon) */}
-                    <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
-                      <BookOpen className="h-3.5 w-3.5 text-white" />
-                    </span>
-                    <h4 className="min-w-0 text-[11px] sm:text-[11.5px] font-bold leading-snug text-[#0E7C86] dark:text-[#55CBC5] break-words font-['Cairo',sans-serif]">
-                      {activeCourse.courseName}
-                    </h4>
-                  </div>
-                </div>
-                <span className="shrink-0 rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10px] font-bold tabular-nums text-[#0E7C86] dark:text-[#55CBC5]" dir="ltr">
-                  {Math.min(100, Math.max(0, activeCourse.progressPercentage))}%
-                </span>
-              </div>
-
-              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200/80 dark:bg-slate-800" dir="rtl">
-                <div
-                  className="h-full rounded-full bg-gradient-to-l from-[#142B5F] via-[#163D76] to-[#0E7C86] transition-all duration-300"
-                  style={{ width: `${Math.min(100, Math.max(0, activeCourse.progressPercentage))}%` }}
-                />
-              </div>
-
-              <div className="mt-2 flex items-center justify-between gap-2 border-t border-[var(--mn-border)] dark:border-white/10 pt-2">
-                <span className="text-[10px] sm:text-[10.5px] font-bold text-[#334155] dark:text-[#E2E8F0]">
-                  {activeCourse.lastAccessedAt ? `آخر وصول: ${formatDate(activeCourse.lastAccessedAt)}` : `تاريخ التسجيل: ${formatDate(activeCourse.enrolledAt)}`}
-                </span>
-                <Link
-                  to={`../student/courses/${encodeURIComponent(activeCourse.courseId)}`}
-                  className="mn-student-summary-primary-action inline-flex items-center justify-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 px-2.5 py-1 text-[10px] font-bold text-white transition-colors font-['Cairo',sans-serif]"
-                >
-                  <span>متابعة التعلم</span>
-                  <ArrowLeft className="h-3 w-3 text-[#F2CD78]" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        </SummarySectionCard>
       )}
 
-      {/* 5. Active application trackers: stretched edge-to-edge */}
+      {/* 3. ملفات التقديم النشطة (Active Momentum — WITH selective leading accent bar) */}
       {activeMilestones.length > 0 && (
-        <section
-          aria-label="ملفات التقديم النشطة"
-          className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3 sm:py-3.5 shadow-2xs mn-panel font-['Cairo',sans-serif]"
-        >
-          <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3 sm:px-4">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
-                <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
-                <Route className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" />
-              </span>
-              <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
-                ملفات التقديم النشطة
-              </h3>
-            </div>
+        <SummarySectionCard
+          title="ملفات التقديم النشطة"
+          icon={Route}
+          action={
             <button
               type="button"
               onClick={() => setTab('OPPORTUNITIES')}
-              className="mn-student-summary-header-link inline-flex shrink-0 items-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 py-0.5 text-[10px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] cursor-pointer font-['Cairo',sans-serif]"
+              className="mn-summary-btn-sm inline-flex items-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-colors cursor-pointer whitespace-nowrap"
             >
               <span>عرض الكل</span>
-              <ChevronLeft className="h-3 w-3 text-[#0E7C86]" />
+              <ChevronLeft className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
             </button>
-          </div>
-
-          <div className="space-y-2.5 px-2.5 sm:px-4">
+          }
+        >
+          <div className="space-y-2">
             {[...activeMilestones]
               .sort((first, second) => (Date.parse(second.updatedAt) || 0) - (Date.parse(first.updatedAt) || 0))
               .slice(0, 2)
@@ -1302,93 +1239,128 @@ function SummaryView({
                 return (
                   <div
                     key={item.id}
-                    className="relative overflow-hidden rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-3 py-2.5 shadow-2xs"
+                    className="relative overflow-hidden rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 dark:hover:border-[#38C6D4]/45 pr-3.5 pl-3 py-2.5 transition-all duration-200"
                   >
-                    {/* Authentic Manaratak Geometric Corner Line from top-right down the right edge to middle-bottom */}
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute top-0 right-0 w-4 sm:w-5 h-[68%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#142B5F] dark:border-[#D6A43B]"
-                    />
+                    {/* Selective start-of-card accent bar for active applications */}
+                    <span aria-hidden="true" className="mn-summary-start-bar" />
 
                     <div className="flex min-w-0 items-center justify-between gap-2">
                       <div className="flex min-w-0 flex-1 items-center gap-2">
-                        {/* Official Oxford Sub-Item Icon (MIX-10: Horizon Petrol bg + Royal Navy border & ring + white icon) */}
-                        <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                        <span className="grid h-6.5 w-6.5 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-[0_2px_6px_rgba(20,43,95,0.14)]">
                           <GraduationCap className="h-3.5 w-3.5 text-white" />
                         </span>
-                        <h4 className="min-w-0 flex-1 text-[11px] sm:text-[11.5px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words font-['Cairo',sans-serif]">
+                        <h4 className="min-w-0 flex-1 text-[10.5px] sm:text-[12px] font-bold leading-snug text-[#142B5F] dark:text-[#F1F5F9] break-words">
                           {trackerDisplayName(item)}
                         </h4>
                       </div>
-                      <span className="shrink-0 rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10px] font-bold tabular-nums text-[#0E7C86] dark:text-[#55CBC5]" dir="ltr">
+                      <span className="shrink-0 text-[10.5px] sm:text-[11.5px] font-extrabold tabular-nums text-[#0E7C86] dark:text-[#38C6D4]" dir="ltr">
                         {progress}%
                       </span>
                     </div>
 
-                    <div className="mt-2 grid grid-cols-2 gap-1.5">
-                      <div className="flex items-center justify-start gap-1.5 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] pr-2.5 pl-2 py-1.5">
-                        <Sparkles className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" />
-                        <span className="text-[9.5px] sm:text-[10px] font-bold text-[#1E293B] dark:text-[#F8FAFC] truncate leading-tight">
-                          {item.stage}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-start gap-1.5 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] pr-2.5 pl-2 py-1.5">
-                        <CalendarClock className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" />
-                        <span className="text-[9.5px] sm:text-[10px] font-bold text-[#1E293B] dark:text-[#F8FAFC] truncate leading-tight">
-                          {item.deadlineAt ? formatDate(item.deadlineAt) : 'مفتوح / متجدد'}
-                        </span>
-                      </div>
+                    <div className="mt-2 h-[4.5px] w-full overflow-hidden rounded-full bg-white dark:bg-[#111E38] border border-[#142B5F]/8 dark:border-white/10" dir="rtl">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] dark:from-[#0E7C86] dark:to-[#38C6D4] transition-all duration-300"
+                        style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+                      />
                     </div>
 
-                    <div className="mt-2 flex min-w-0 items-center justify-between gap-2 border-t border-[var(--mn-border)] dark:border-white/10 pt-2">
-                      <span className="text-[10px] font-semibold text-[#475569] dark:text-[#CBD5E1]">
-                        إنجاز المهام: {completed} من {item.checklist.length}
+                    <div className="mt-2 flex items-center justify-between gap-2">
+                      <span className="text-[9.5px] sm:text-[10.5px] font-semibold text-[#5C707C] dark:text-[#9BB4C7] truncate">
+                        {item.stage} · {completed}/{item.checklist.length} مهام
                       </span>
                       <button
                         type="button"
                         onClick={() => setTab('OPPORTUNITIES')}
-                        className="mn-student-summary-primary-action inline-flex items-center justify-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 px-2.5 py-1 text-[10px] font-bold text-white transition-colors font-['Cairo',sans-serif] cursor-pointer"
+                        className="mn-summary-cta-secondary shrink-0 inline-flex items-center justify-center gap-1 rounded-lg border border-[#0E7C86]/32 dark:border-[#38C6D4]/35 bg-white hover:bg-gradient-to-l hover:from-[#142B5F] hover:via-[#133A6A] hover:to-[#0E7C86] hover:border-transparent dark:bg-[#111E38] px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] hover:text-white dark:text-[#EDF5F5] transition-all cursor-pointer whitespace-nowrap"
                       >
                         <span>متابعة الملف</span>
-                        <ArrowLeft className="h-3 w-3 text-[#F2CD78]" />
+                        <ArrowLeft className="h-3 w-3 shrink-0" />
                       </button>
                     </div>
                   </div>
                 );
               })}
           </div>
-        </section>
+        </SummarySectionCard>
       )}
 
-      {/* 6. Recent activities: stretched edge-to-edge */}
-      {activityLog.length > 0 && (
-        <section
-          aria-label="آخر الأنشطة والخطوات"
-          className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3 sm:py-3.5 shadow-2xs mn-panel font-['Cairo',sans-serif]"
+      {/* 4. متابعة التعلم (Active Course — calm progress card, NO start bar) */}
+      {activeCourse && (
+        <SummarySectionCard
+          title="متابعة التعلم"
+          icon={BookOpen}
+          action={
+            <button
+              type="button"
+              onClick={() => setTab('LEARNING')}
+              className="mn-summary-btn-sm inline-flex items-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <span>جميع الدورات</span>
+              <ChevronLeft className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+            </button>
+          }
         >
-          <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3 sm:px-4">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
-                <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
-                <HistoryIcon className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" />
+          <div className="rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 dark:hover:border-[#38C6D4]/45 px-3 py-2.5 transition-all duration-200">
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <span className="grid h-6.5 w-6.5 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-[0_2px_6px_rgba(20,43,95,0.14)]">
+                  <BookOpen className="h-3.5 w-3.5 text-white" />
+                </span>
+                <h4 className="min-w-0 flex-1 text-[10.5px] sm:text-[12px] font-bold leading-snug text-[#142B5F] dark:text-[#F1F5F9] break-words">
+                  {activeCourse.courseName}
+                </h4>
+              </div>
+              <span className="shrink-0 text-[10.5px] sm:text-[11.5px] font-extrabold tabular-nums text-[#0E7C86] dark:text-[#38C6D4]" dir="ltr">
+                {Math.min(100, Math.max(0, activeCourse.progressPercentage))}%
               </span>
-              <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
-                آخر الأنشطة والخطوات
-              </h3>
             </div>
+
+            <div className="mt-2 h-[4.5px] w-full overflow-hidden rounded-full bg-white dark:bg-[#111E38] border border-[#142B5F]/8 dark:border-white/10" dir="rtl">
+              <div
+                className="h-full rounded-full bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] dark:from-[#0E7C86] dark:to-[#38C6D4] transition-all duration-300"
+                style={{ width: `${Math.min(100, Math.max(0, activeCourse.progressPercentage))}%` }}
+              />
+            </div>
+
+            <div className="mt-2 flex items-center justify-between gap-2">
+              <span className="text-[9.5px] sm:text-[10.5px] font-semibold text-[#5C707C] dark:text-[#9BB4C7] truncate">
+                {activeCourse.lastAccessedAt ? `آخر وصول: ${formatDate(activeCourse.lastAccessedAt)}` : `تاريخ التسجيل: ${formatDate(activeCourse.enrolledAt)}`}
+              </span>
+              <Link
+                to={`../student/courses/${encodeURIComponent(activeCourse.courseId)}`}
+                className="mn-summary-cta-secondary shrink-0 inline-flex items-center justify-center gap-1 rounded-lg border border-[#0E7C86]/32 dark:border-[#38C6D4]/35 bg-white hover:bg-gradient-to-l hover:from-[#142B5F] hover:via-[#133A6A] hover:to-[#0E7C86] hover:border-transparent dark:bg-[#111E38] px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] hover:text-white dark:text-[#EDF5F5] transition-all whitespace-nowrap"
+              >
+                <span>متابعة التعلم</span>
+                <ArrowLeft className="h-3 w-3 shrink-0" />
+              </Link>
+            </div>
+          </div>
+        </SummarySectionCard>
+      )}
+
+      {/* 5. مناسب لهدفي (Goal-Matched Discovery — NO start bars) */}
+      <GoalMatchedSection onNavigate={setTab} />
+
+      {/* 6. آخر الأنشطة والخطوات (Minimal Clean Timeline — NO start bars) */}
+      {activityLog.length > 0 && (
+        <SummarySectionCard
+          title="آخر الأنشطة والخطوات"
+          icon={HistoryIcon}
+          action={
             <button
               type="button"
               onClick={() => setShowAllActivities((previous) => !previous)}
               aria-expanded={showAllActivities}
               aria-controls="student-summary-activity-timeline"
-              className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 py-0.5 text-[10px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] cursor-pointer font-['Cairo',sans-serif]"
+              className="mn-summary-btn-sm inline-flex items-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-colors cursor-pointer whitespace-nowrap"
             >
               <span>{showAllActivities ? 'إخفاء السجلات' : 'كل السجلات'}</span>
-              <ChevronLeft className={`h-3 w-3 text-[#0E7C86] transition-transform ${showAllActivities ? '-rotate-90' : ''}`} />
+              <ChevronLeft className={`h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4] transition-transform shrink-0 ${showAllActivities ? '-rotate-90' : ''}`} />
             </button>
-          </div>
-
-          <ol id="student-summary-activity-timeline" className="mr-5 ml-3 sm:mr-6 sm:ml-4 space-y-2 border-r-2 border-[#0E7C86]/35 pr-4 dark:border-[#5BC6C0]/45">
+          }
+        >
+          <ol id="student-summary-activity-timeline" className="mr-2 space-y-2.5 border-r-[1.5px] border-[#0E7C86]/30 dark:border-[#38C6D4]/35 pr-4">
             {(showAllActivities
               ? activityLog
               : (dashboard.timeline.length > 0
@@ -1396,18 +1368,23 @@ function SummaryView({
                 : activityLog.slice(0, 3)))
               .map((item) => (
                 <li key={item.id} className="relative min-w-0">
-                  <span aria-hidden="true" className="absolute -right-[22px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--mn-surface)] bg-[#0E7C86] dark:bg-[#5BC6C0]" />
-                  <h4 className="text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words">{item.title}</h4>
-                  <time className="mt-0.5 block text-[9.5px] sm:text-[10px] font-bold leading-4 text-[var(--mn-text-muted)]">
+                  <span
+                    aria-hidden="true"
+                    className="absolute -right-[21.5px] top-1 h-2.5 w-2.5 rounded-full border-2 border-[#0E7C86] dark:border-[#38C6D4] bg-white dark:bg-[#111E38]"
+                  />
+                  <h4 className="text-[10.5px] sm:text-[11.5px] font-bold leading-snug text-[#142B5F] dark:text-[#F1F5F9] break-words">
+                    {item.title}
+                  </h4>
+                  <time className="mt-0.5 block text-[9.5px] sm:text-[10.5px] font-medium leading-4 text-[#5C707C] dark:text-[#9BB4C7] tabular-nums">
                     {formatDate(item.occurredAt)}
                   </time>
                 </li>
               ))}
           </ol>
-        </section>
+        </SummarySectionCard>
       )}
 
-      {/* 7. Invoices (If any exist) */}
+      {/* 7. الفواتير والدفعات (Compact Finance Summary — only if invoices exist) */}
       {invoices.length > 0 && (
         <div className="mn-student-summary-invoices">
           <InvoicePanel
@@ -1422,6 +1399,8 @@ function SummaryView({
   );
 }
 
+type OpportunitiesSubTab = 'ACTIVE' | 'DISCOVER' | 'SHORTLIST' | 'OFFERS' | 'DOCUMENTS' | 'ARCHIVED';
+
 function OpportunitiesView({
   dashboard,
   trackers,
@@ -1432,6 +1411,8 @@ function OpportunitiesView({
   onArchive,
   onRemove,
   onDocumentsChanged,
+  requestedSubTab,
+  onClearRequestedSubTab,
 }: {
   dashboard: StudentDashboardSummaryDto;
   trackers: StudentApplicationTrackerDto[];
@@ -1442,17 +1423,20 @@ function OpportunitiesView({
   onArchive: (tracker: StudentApplicationTrackerDto) => void;
   onRemove: (tracker: StudentApplicationTrackerDto) => void;
   onDocumentsChanged: () => void;
+  requestedSubTab?: OpportunitiesSubTab | null;
+  onClearRequestedSubTab?: () => void;
 }) {
-  const [filter, setFilter] = useState<'ACTIVE' | 'ARCHIVED' | 'ALL'>('ACTIVE');
+  const [subTab, setSubTab] = useState<OpportunitiesSubTab>(requestedSubTab || 'ACTIVE');
+
+  useEffect(() => {
+    if (requestedSubTab) {
+      setSubTab(requestedSubTab);
+      onClearRequestedSubTab?.();
+    }
+  }, [requestedSubTab, onClearRequestedSubTab]);
 
   const activeTrackers = useMemo(() => trackers.filter((item) => item.status === 'ACTIVE'), [trackers]);
   const archivedTrackers = useMemo(() => trackers.filter((item) => item.status === 'ARCHIVED'), [trackers]);
-
-  const displayedTrackers = useMemo(() => {
-    if (filter === 'ACTIVE') return activeTrackers;
-    if (filter === 'ARCHIVED') return archivedTrackers;
-    return trackers;
-  }, [filter, activeTrackers, archivedTrackers, trackers]);
 
   const upcomingDeadlines = useMemo(() => {
     return activeTrackers
@@ -1464,108 +1448,44 @@ function OpportunitiesView({
       });
   }, [activeTrackers]);
 
-  const hasTrackers = trackers.length > 0;
-
-  const activeTaskCount = activeTrackers.reduce((total, item) => total + item.checklist.length, 0);
-  const activeCompletedCount = activeTrackers.reduce(
-    (total, item) => total + item.checklist.filter((task) => task.completed).length,
-    0,
+  const savedScholarshipsCount = useMemo(
+    () => dashboard.savedItems.filter((item) => item.entityType === 'SCHOLARSHIP' || item.entityType === 'UNIVERSITY').length,
+    [dashboard.savedItems],
   );
-  const activeTaskProgress = activeTaskCount > 0
-    ? Math.round((activeCompletedCount / activeTaskCount) * 100)
-    : 0;
+
+  const subTabs = [
+    { id: 'ACTIVE' as const, label: 'تقديماتي', count: activeTrackers.length, icon: CheckCircle2 },
+    { id: 'DISCOVER' as const, label: 'اكتشف', icon: Compass },
+    { id: 'SHORTLIST' as const, label: 'قائمتي', count: savedScholarshipsCount, icon: Star },
+    { id: 'OFFERS' as const, label: 'النتائج', icon: Award },
+    { id: 'DOCUMENTS' as const, label: 'المستندات', icon: FileCheck2 },
+    { id: 'ARCHIVED' as const, label: 'الأرشيف', count: archivedTrackers.length, icon: Archive },
+  ];
 
   return (
-    <div className="mn-student-opportunities-page mt-0 space-y-4 font-['Cairo',sans-serif]">
-      {/* Header box attached directly to the 8-tab bar above and stretched edge-to-edge right & left */}
-      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
-        <section
-          aria-label="فرصي وملفات التقديم"
-          className="relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
-        >
-          {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
-          />
+    <div className="mn-student-opportunities-page mt-0 space-y-2.5 sm:space-y-3.5 font-['Cairo',sans-serif]">
+      {/* Parent Umbrella Canopy with integrated 6 sub-tabs */}
+      <WorkspaceTabCanopy
+        title="فرصي وملفات التقديم"
+        subtitle="متابعة ملفات التقديم النشطة، الاستكشاف، النتائج والمستندات"
+        icon={Route}
+        metaLabel={`${trackers.length} ملف تقديم`}
+      >
+        <HorizontalSwipeTabs
+          embedded
+          ariaLabel="أقسام فرصي وملفات التقديم"
+          items={subTabs}
+          activeId={subTab}
+          onChange={setSubTab}
+        />
+      </WorkspaceTabCanopy>
 
-          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-2.5">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
-                  <Route className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
-                </span>
-                <h2 className="mn-student-opportunities-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
-                  فرصي وملفات التقديم
-                </h2>
-              </div>
-              <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0] font-['Cairo',sans-serif]">
-                {trackers.length} ملف تقديم
-              </span>
-            </div>
-
-            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-              تابع ملفات تقديمك على المنح الدراسية والقبولات الجامعية، ونظّم متطلباتك ومواعيدك النهائية خطوة بخطوة حتى القبول.
-            </p>
-          </div>
-        </section>
-
-        {/* Filter bar outside the header box, attached from the top and stretched edge-to-edge */}
-        <nav
-          aria-label="تصفية ملفات التقديم"
-          className="-mt-px grid grid-cols-3 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs font-['Cairo',sans-serif]"
-        >
-          {([
-            { value: 'ACTIVE' as const, label: 'النشطة حاليًا', count: activeTrackers.length, icon: CheckCircle2 },
-            { value: 'ARCHIVED' as const, label: 'المؤرشفة', count: archivedTrackers.length, icon: Archive },
-            { value: 'ALL' as const, label: 'الكل', count: trackers.length, icon: ListChecks },
-          ]).map(({ value, label, count, icon: Icon }) => {
-            const active = filter === value;
-            return (
-              <button
-                key={value}
-                type="button"
-                aria-pressed={active}
-                onClick={() => setFilter(value)}
-                className={`flex min-h-12 items-center justify-center gap-1.5 px-2 py-2 text-center font-['Cairo',sans-serif] transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#142B5F] ${
-                  active
-                    ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner font-bold'
-                    : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] font-semibold hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
-                }`}
-              >
-                <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 ${active ? 'text-[#F2CD78]' : 'text-[#142B5F] dark:text-[#E5B54F]'}`} aria-hidden="true" />
-                <span className="whitespace-normal break-words text-[11px] sm:text-[12px] leading-[1.35]">{label} ({count})</span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* 3. Main Trackers or Single Clean Starter State */}
-      {!hasTrackers ? (
-        <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 sm:p-7 text-center mn-panel shadow-2xs overflow-hidden">
-          <div className="w-10 h-10 rounded-xl bg-[#142B5F] border border-[#D6A43B]/45 flex items-center justify-center text-[#F2CD78] mx-auto mb-3 shadow-xs">
-            <Route className="w-5 h-5 text-[#F2CD78]" />
-          </div>
-          <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">ابدأ متابعة تقديماتك خطوة بخطوة</h3>
-          <p className="text-[11px] sm:text-[11.5px] text-[#475569] dark:text-[#CBD5E1] mt-1.5 leading-[1.8] max-w-lg mx-auto">
-            <strong>ما الفرق؟</strong> حفظ المنحة في <span className="font-bold text-[#1E293B] dark:text-[#F8FAFC]">«محفوظاتي»</span> يتيح لك الرجوع إليها في أي وقت، بينما فتح <span className="font-bold text-[#1E293B] dark:text-[#F8FAFC]">«ملف تقديم»</span> هنا يمكّنك من إدارة المواعيد النهائية، إنجاز المتطلبات وقوائم المهام خطوة بخطوة حتى القبول.
-          </p>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to="/scholarships"
-              className="px-3.5 py-2 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 text-white text-[11.5px] font-bold transition-all shadow-2xs inline-flex items-center gap-2"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-[#F2CD78]" />
-              <span>استكشف دليل المنح الدراسية</span>
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-4 min-w-0 max-w-full">
+      {/* Sub-Tab 1: ACTIVE (تقديماتي) */}
+      {subTab === 'ACTIVE' && (
+        <div className="space-y-2.5 sm:space-y-3.5 min-w-0 max-w-full">
           <ApplicationTrackersPanel
-            trackers={displayedTrackers}
-            filter={filter}
+            trackers={activeTrackers}
+            filter="ACTIVE"
             saving={saving}
             onStageChange={onStageChange}
             onChecklistToggle={onChecklistToggle}
@@ -1575,101 +1495,83 @@ function OpportunitiesView({
             onDocumentsChanged={onDocumentsChanged}
           />
 
-          {/* Upcoming Deadlines Panel */}
           {upcomingDeadlines.length > 0 && (
-            <OpportunitiesSectionCard
+            <SummarySectionCard
               title="المواعيد النهائية القريبة"
-              icon={<CalendarClock className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}
-              description="مواعيد إغلاق تقديمات المنح المتابعة في حسابك"
+              icon={CalendarClock}
+              metaLabel={`${upcomingDeadlines.length} موعد`}
             >
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="overflow-hidden rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 divide-y divide-[#142B5F]/8 dark:divide-white/8">
                 {upcomingDeadlines.slice(0, 4).map((tracker) => {
                   const deadlineStr = tracker.deadlineAt || tracker.owner?.deadlineAt;
                   const title = trackerDisplayName(tracker);
                   return (
                     <div
                       key={tracker.id}
-                      className="p-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] flex items-center justify-between gap-2.5"
+                      className="flex items-center justify-between gap-2.5 px-3 py-2.5 hover:bg-white dark:hover:bg-[#142342] transition-colors"
                     >
-                      <div className="min-w-0 flex-1">
-                        <div className="text-[11.5px] sm:text-[12px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words">{title}</div>
-                        <div className="text-[10.5px] font-medium text-[#64748B] dark:text-[#94A3B8] mt-0.5">{tracker.stage}</div>
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        <span className="grid h-6.5 w-6.5 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-[0_2px_6px_rgba(20,43,95,0.14)]">
+                          <GraduationCap className="h-3.5 w-3.5 text-white" aria-hidden="true" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-[10.5px] sm:text-[12px] font-bold leading-snug text-[#142B5F] dark:text-[#F1F5F9] truncate">
+                            {title}
+                          </h4>
+                          <p className="mt-0.5 text-[9.5px] sm:text-[10.5px] font-medium leading-snug text-[#5C707C] dark:text-[#9BB4C7] truncate">
+                            {tracker.stage}
+                          </p>
+                        </div>
                       </div>
-                      <div className="shrink-0 inline-flex items-center gap-1 rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-1 text-[10.5px] font-bold text-[#0E7C86] dark:text-[#55CBC5]">
-                        <CalendarClock className="h-3.5 w-3.5 shrink-0" />
-                        <span>{formatDate(deadlineStr)}</span>
-                      </div>
+                      <span className="shrink-0 text-[10px] sm:text-[11px] font-bold tabular-nums text-[#0E7C86] dark:text-[#38C6D4] whitespace-nowrap">
+                        {formatDate(deadlineStr)}
+                      </span>
                     </div>
                   );
                 })}
               </div>
-            </OpportunitiesSectionCard>
-          )}
-
-          {/* Application Progress Summary */}
-          <OpportunitiesSectionCard title="حصيلة التقديم" icon={<ClipboardList className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}>
-            <div className="grid gap-3.5 sm:grid-cols-2">
-              <ProgressRow label="إنجاز مهام التقديم النشطة" value={activeTaskProgress} />
-              <ProgressRow
-                label="نسبة الملفات المؤرشفة"
-                value={trackers.length ? Math.round((archivedTrackers.length / trackers.length) * 100) : 0}
-              />
-            </div>
-            <div className="mt-3 flex items-start gap-2 rounded-xl border border-[#0E7C86]/25 bg-[#0E7C86]/[0.07] dark:bg-[#0E7C86]/15 px-3 py-2 text-[11px] leading-[1.7] text-[#1E293B] dark:text-[#F1F5F9]">
-              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#55CBC5]" aria-hidden="true" />
-              <p><strong className="font-bold">تنبيه دقة البيانات:</strong> حفظ المنحة في «محفوظاتي» يتيح الرجوع إليها لاحقًا، بينما فتح «ملف تقديم» هنا يمكّنك من متابعة المهام ومراحل التقديم خطوة بخطوة.</p>
-            </div>
-          </OpportunitiesSectionCard>
-
-          {/* Timeline of activity */}
-          {dashboard.timeline.length > 0 && (
-            <OpportunitiesSectionCard title="سجل الأنشطة والمواعيد" icon={<HistoryIcon className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}>
-              <div className="mn-student-opportunities-activity">
-                <ActivityList items={dashboard.timeline} />
-              </div>
-            </OpportunitiesSectionCard>
+            </SummarySectionCard>
           )}
         </div>
+      )}
+
+      {/* Sub-Tab 2: DISCOVER (اكتشف) */}
+      {subTab === 'DISCOVER' && <OpportunitiesDiscoverPanel />}
+
+      {/* Sub-Tab 3: SHORTLIST (قائمتي المختصرة) */}
+      {subTab === 'SHORTLIST' && (
+        <OpportunitiesShortlistPanel
+          savedItems={dashboard.savedItems}
+          trackers={trackers}
+          onSwitchToActive={() => setSubTab('ACTIVE')}
+        />
+      )}
+
+      {/* Sub-Tab 4: OFFERS (النتائج والعروض + خطواتي بعد القبول) */}
+      {subTab === 'OFFERS' && <OpportunitiesOffersPanel trackers={trackers} />}
+
+      {/* Sub-Tab 5: DOCUMENTS (مستنداتي الموحدة) */}
+      {subTab === 'DOCUMENTS' && (
+        <StudentDocumentsLibraryPanel trackers={trackers} onDocumentsChanged={onDocumentsChanged} />
+      )}
+
+      {/* Sub-Tab 6: ARCHIVED (الأرشيف) */}
+      {subTab === 'ARCHIVED' && (
+        <ApplicationTrackersPanel
+          trackers={archivedTrackers}
+          filter="ARCHIVED"
+          saving={saving}
+          onStageChange={onStageChange}
+          onChecklistToggle={onChecklistToggle}
+          onNotesUpdate={onNotesUpdate}
+          onArchive={onArchive}
+          onRemove={onRemove}
+          onDocumentsChanged={onDocumentsChanged}
+        />
       )}
     </div>
   );
 }
-
-function OpportunitiesSectionCard({
-  title,
-  icon,
-  description,
-  children,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  description?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section
-      aria-label={title}
-      className="mn-student-opportunities-section relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3.5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif] overflow-hidden"
-    >
-      <div className="mb-2.5 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3.5 sm:px-5">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
-            <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
-            <span className="relative z-10">{icon}</span>
-          </span>
-          <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 min-w-0 text-[14px] sm:text-[15px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC]">
-            {title}
-          </h3>
-        </div>
-        {description && (
-          <p className="mt-1 text-[10.5px] font-medium leading-[1.65] text-[#64748B] dark:text-[#94A3B8]">{description}</p>
-        )}
-      </div>
-      <div className="px-3.5 sm:px-5">{children}</div>
-    </section>
-  );
-}
-
 
 const APPLICATION_STAGES = [
   'تجهيز المستندات',
@@ -1704,30 +1606,38 @@ function ApplicationTrackersPanel({
   if (!trackers.length) {
     if (filter === 'ARCHIVED') {
       return (
-        <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 text-center mn-panel overflow-hidden">
-          <Archive className="w-7 h-7 mx-auto text-[#0E7C86] mb-1.5" />
-          <h3 className="font-bold text-[12.5px] sm:text-[13px] text-[#1E293B] dark:text-[#F8FAFC]">لا توجد ملفات تقديم مؤرشفة</h3>
-          <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] mt-1 max-w-sm mx-auto">
-            عند إتمام تقديماتك أو أرشفتها ستظهر هنا للاحتفاظ بسجلك الأكاديمي.
-          </p>
-        </div>
+        <SummarySectionCard title="الأرشيف" icon={Archive}>
+          <div className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-5 text-center">
+            <span className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+              <Archive className="w-4 h-4 text-white" />
+            </span>
+            <h4 className="font-bold text-[12px] sm:text-[13px] text-[#142B5F] dark:text-[#F1F5F9]">
+              لا توجد ملفات تقديم مؤرشفة
+            </h4>
+            <p className="text-[10.5px] sm:text-[11.5px] font-medium text-[#5C707C] dark:text-[#9BB4C7] mt-1 max-w-sm mx-auto leading-relaxed">
+              عند إتمام تقديماتك أو أرشفتها ستظهر هنا للاحتفاظ بسجلك الأكاديمي.
+            </p>
+          </div>
+        </SummarySectionCard>
       );
     }
     return (
-      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 text-center mn-panel overflow-hidden">
-        <EmptyState
-          icon={<Route className="h-7 w-7 text-[#E5B54F]" />}
-          title="لا توجد ملفات تقديم نشطة بعد"
-          text="تصفح دليل المنح الدراسية واختر «متابعة التقديم» على المنحة التي ترغب بالتقديم عليها لتوليد ملف تتبع مخصص خطوة بخطوة."
-          href="/scholarships"
-          action="استكشف دليل المنح الآن"
-        />
-      </div>
+      <SummarySectionCard title="ملفات التقديم النشطة" icon={Route}>
+        <div className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-5 text-center">
+          <EmptyState
+            icon={<Route className="h-7 w-7 text-[#0E7C86] dark:text-[#38C6D4]" />}
+            title="لا توجد ملفات تقديم نشطة بعد"
+            text="تصفح دليل المنح الدراسية واختر «متابعة التقديم» على المنحة التي ترغب بالتقديم عليها لتوليد ملف تتبع مخصص خطوة بخطوة."
+            href="/scholarships"
+            action="استكشف دليل المنح الآن"
+          />
+        </div>
+      </SummarySectionCard>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2.5 sm:space-y-3.5">
       {trackers.map((tracker) => (
         <ApplicationTrackerCard
           key={tracker.id}
@@ -1783,109 +1693,134 @@ function ApplicationTrackerCard({
   }
 
   return (
-    <article className="relative overflow-hidden -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif] transition-all">
+    <article className="relative overflow-hidden rounded-2xl border border-[#142B5F]/10 dark:border-white/10 bg-white dark:bg-[#111E38] px-3 py-3 sm:px-4.5 sm:py-4 shadow-[0_2px_10px_rgba(20,43,95,0.035)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.24)] mn-panel font-['Cairo',sans-serif] transition-all">
+      {/* Delicate approved top hairline */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#142B5F]/28 dark:via-[#D6A43B]/35 to-transparent"
+      />
+
       <OwnerReferenceNotice reference={tracker.owner?.referenceState} />
 
-      {/* Row 1: Oxford Sub-Item Icon (MIX-10) + Subordinate Scholarship Title + Status Badge */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 -mx-3.5 sm:-mx-5 px-3.5 sm:px-5">
+      {/* Row 1: Official Manaratak Section Icon + Scholarship Title + Unboxed Status */}
+      <div className="relative z-10 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <span className="w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
-            <GraduationCap className="w-3.5 h-3.5 text-white" />
-          </span>
-
-          <div className="min-w-0 flex-1">
-            <h3 className="text-[11.5px] sm:text-[12px] leading-[1.4] font-bold text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif] break-words">
+          <SummarySectionIcon icon={GraduationCap} />
+          <div className="inline-flex flex-col items-start min-w-0">
+            <h3 className="text-[13px] sm:text-[14.5px] leading-tight font-extrabold text-[#142B5F] dark:text-[#F1F5F9] font-['Cairo',sans-serif] truncate max-w-full">
               {displayName}
             </h3>
+            <span
+              aria-hidden="true"
+              className="w-full min-w-[68px] h-[1.5px] mt-0.5 rounded-full bg-[linear-gradient(270deg,rgba(14,124,134,0.68)_0%,rgba(14,124,134,0.3)_72%,transparent_100%)] dark:bg-[linear-gradient(270deg,rgba(56,198,212,0.75)_0%,rgba(56,198,212,0.34)_72%,transparent_100%)]"
+            />
           </div>
         </div>
 
-        {isArchived ? (
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-500/10 text-slate-600 dark:text-slate-300 border border-slate-500/20 shrink-0">
-            مؤرشف تنظيمياً
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg bg-[#0E7C86]/10 text-[#0E7C86] dark:text-[#55CBC5] border border-[#0E7C86]/25 shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0E7C86] dark:bg-[#55CBC5]" />
-            تقديم نشط
-          </span>
-        )}
+        <span
+          className={`shrink-0 text-[10px] sm:text-[11px] font-bold whitespace-nowrap ${
+            isArchived
+              ? 'text-[#5C707C] dark:text-[#9BB4C7]'
+              : 'text-[#0E7C86] dark:text-[#38C6D4]'
+          }`}
+        >
+          {isArchived ? 'مؤرشف' : 'تقديم نشط'}
+        </span>
       </div>
 
-      {/* Row 2: 2x2 Info Boxes on Mobile (4 cols on desktop) with Horizon Petrol (#0E7C86) Icons on the Right */}
-      <div className="mt-2.5 grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-        <div className="flex items-center justify-start gap-2 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-2.5 pl-2 py-1.5">
-          <Compass className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
-          <div className="min-w-0">
-            <span className="block text-[9px] sm:text-[9.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+      {/* Row 2: Clean 2x2 Info Tiles on Mobile / 4x1 on Desktop with unified Navy-to-Petrol mini icons */}
+      <div className="relative z-10 mt-2.5 grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
+        <div className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-2.5 py-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white">
+              <Compass className="h-2.5 w-2.5 text-white" aria-hidden="true" />
+            </span>
+            <span className="text-[9.5px] font-semibold text-[#5C707C] dark:text-[#9BB4C7] truncate">
               الدولة / الوجهة
             </span>
-            <span className="mt-0.5 block text-[10px] sm:text-[10.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] break-words leading-tight">
-              {tracker.owner?.country || 'منحة دولية'}
-            </span>
           </div>
+          <span className="mt-1 block text-[10.5px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9] truncate leading-snug">
+            {tracker.owner?.country || 'منحة دولية'}
+          </span>
         </div>
 
-        <div className="flex items-center justify-start gap-2 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-2.5 pl-2 py-1.5">
-          <CalendarClock className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
-          <div className="min-w-0">
-            <span className="block text-[9px] sm:text-[9.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+        <div className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-2.5 py-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white">
+              <CalendarClock className="h-2.5 w-2.5 text-white" aria-hidden="true" />
+            </span>
+            <span className="text-[9.5px] font-semibold text-[#5C707C] dark:text-[#9BB4C7] truncate">
               موعد التقديم
             </span>
-            <span className="mt-0.5 block text-[10px] sm:text-[10.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] break-words leading-tight">
-              {deadlineStr ? formatDate(deadlineStr) : 'مفتوح / متجدد'}
-            </span>
           </div>
+          <span className="mt-1 block text-[10.5px] sm:text-[11px] font-bold tabular-nums text-[#0E7C86] dark:text-[#38C6D4] truncate leading-snug">
+            {deadlineStr ? formatDate(deadlineStr) : 'مفتوح / متجدد'}
+          </span>
         </div>
 
-        <div className="flex items-center justify-start gap-2 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-2.5 pl-2 py-1.5">
-          <Sparkles className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
-          <div className="min-w-0">
-            <span className="block text-[9px] sm:text-[9.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+        <div className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-2.5 py-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white">
+              <Sparkles className="h-2.5 w-2.5 text-white" aria-hidden="true" />
+            </span>
+            <span className="text-[9.5px] font-semibold text-[#5C707C] dark:text-[#9BB4C7] truncate">
               المرحلة الحالية
             </span>
-            <span className="mt-0.5 block text-[10px] sm:text-[10.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] break-words leading-tight">
-              {tracker.stage}
-            </span>
           </div>
+          <span className="mt-1 block text-[10.5px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9] truncate leading-snug">
+            {tracker.stage}
+          </span>
         </div>
 
-        <div className="flex items-center justify-start gap-2 rounded-lg border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-2.5 pl-2 py-1.5">
-          <ListChecks className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
-          <div className="min-w-0">
-            <span className="block text-[9px] sm:text-[9.5px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+        <div className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-2.5 py-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white">
+              <ListChecks className="h-2.5 w-2.5 text-white" aria-hidden="true" />
+            </span>
+            <span className="text-[9.5px] font-semibold text-[#5C707C] dark:text-[#9BB4C7] truncate">
               نسبة الجاهزية
             </span>
-            <span className="mt-0.5 block text-[10px] sm:text-[10.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
-              {progress}% ({completed}/{total})
-            </span>
           </div>
+          <span className="mt-1 block text-[10.5px] sm:text-[11px] font-extrabold text-[#142B5F] dark:text-[#38C6D4] leading-snug tabular-nums" dir="ltr">
+            {progress}% ({completed}/{total})
+          </span>
         </div>
       </div>
 
-      {/* Row 3: Unified Progress Bar + Next Actionable Requirement */}
-      <div className="mt-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-2.5 space-y-1.5">
-        <div className="flex items-center justify-between gap-2 text-[11px]">
-          <span className="inline-flex items-center gap-1.5 font-bold text-[#1E293B] dark:text-[#F8FAFC]">
-            <CheckCircle2 className="h-3.5 w-3.5 text-[#0E7C86]" aria-hidden="true" />
-            <span>المهام المنجزة: {completed} من {total}</span>
-          </span>
-          <span className="text-[10.5px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+      {/* Row 3: Progress & Next Actionable Step (WITH selective start-bar on active trackers only) */}
+      <div
+        className={`relative z-10 overflow-hidden mt-2 rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 dark:hover:border-[#38C6D4]/45 py-2.5 transition-all ${
+          isArchived ? 'px-3' : 'pr-3.5 pl-3'
+        }`}
+      >
+        {!isArchived && <span aria-hidden="true" className="mn-summary-start-bar" />}
+
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+              <CheckCircle2 className="h-3.5 w-3.5 text-white" aria-hidden="true" />
+            </span>
+            <span className="text-[10.5px] sm:text-[11.5px] font-bold leading-snug text-[#142B5F] dark:text-[#F1F5F9] tabular-nums">
+              المهام المنجزة: {completed} من {total}
+            </span>
+          </div>
+          <span className="text-[9.5px] sm:text-[10px] font-medium text-[#5C707C] dark:text-[#9BB4C7] tabular-nums shrink-0">
             آخر تحديث: {formatDate(tracker.updatedAt)}
           </span>
         </div>
 
-        <div className="w-full h-1.5 rounded-full bg-slate-200/80 dark:bg-slate-800 overflow-hidden" dir="rtl">
+        <div className="mt-2 h-[4.5px] w-full overflow-hidden rounded-full bg-white dark:bg-[#111E38] border border-[#142B5F]/8 dark:border-white/10" dir="rtl">
           <div
-            className="h-full rounded-full bg-gradient-to-l from-[#142B5F] via-[#163D76] to-[#0E7C86] transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] dark:from-[#0E7C86] dark:to-[#38C6D4] transition-all duration-500"
             style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
           />
         </div>
 
         {nextTask && (
-          <div className="pt-0.5 flex items-center justify-between gap-2 text-[11px] text-[#475569] dark:text-[#CBD5E1]">
-            <span className="min-w-0 flex-1 break-words">
-              <strong className="text-[#1E293B] dark:text-[#F8FAFC]">الخطوة القادمة:</strong> {nextTask.label}
+          <div className="mt-2 flex items-center justify-between gap-2 text-[9.5px] sm:text-[10.5px] text-[#5C707C] dark:text-[#9BB4C7]">
+            <span className="min-w-0 flex-1 break-words leading-snug">
+              <strong className="font-bold text-[#0E7C86] dark:text-[#38C6D4]">الخطوة القادمة:</strong>{' '}
+              <span className="font-semibold text-[#142B5F] dark:text-[#DCE7F0]">{nextTask.label}</span>
             </span>
           </div>
         )}
@@ -1893,38 +1828,42 @@ function ApplicationTrackerCard({
 
       {/* Source Unavailability Notice */}
       {tracker.owner && !tracker.owner.available && (
-        <div className="mt-2.5 rounded-xl bg-[var(--mn-warning-soft)] p-2.5 text-[11px] font-bold text-[var(--mn-warning-text)] flex items-center gap-2 border border-amber-500/20">
-          <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-600" />
+        <div className="relative z-10 mt-2 rounded-xl bg-[#0E7C86]/[0.06] dark:bg-[#38C6D4]/10 px-3 py-2 text-[10px] font-bold text-[#142B5F] dark:text-[#DCE7F0] flex items-center gap-2 border border-[#0E7C86]/25">
+          <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" />
           <span>غير معروضة حاليًا لدى المصدر؛ وسجلك محفوظ بحسابك.</span>
         </div>
       )}
 
       {/* Row 4: Documents and application cycle accordion */}
-      <div className="mt-3 w-full max-w-full min-w-0">
+      <div className="relative z-10 w-full max-w-full min-w-0">
         <StudentApplicationDocuments tracker={tracker} onChanged={onDocumentsChanged} />
       </div>
 
-      {/* Row 5: Clean Unified Action Buttons */}
-      <div className="mt-3 pt-2.5 border-t border-[var(--mn-border)] dark:border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 font-['Cairo',sans-serif]">
+      {/* Row 5: Clean Unified Action Bar */}
+      <div className="relative z-10 mt-2.5 pt-2.5 border-t border-[#142B5F]/8 dark:border-white/8 flex items-center justify-between gap-1.5 font-['Cairo',sans-serif]">
         <button
           type="button"
           aria-expanded={expanded}
           onClick={() => setExpanded((value) => !value)}
-          className="w-full sm:flex-1 inline-flex items-center justify-center gap-1.5 min-h-9 px-3.5 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 text-white text-[11px] sm:text-[11.5px] font-bold shadow-xs transition-all cursor-pointer"
+          className="mn-student-opp-btn-primary inline-flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 text-white shadow-[0_2px_8px_rgba(20,43,95,0.16)] transition-all active:scale-[0.98] cursor-pointer shrink-0 whitespace-nowrap"
         >
-          <span>{expanded ? 'إخفاء تفاصيل الملف والمهام' : 'عرض تفاصيل الملف والمهام'}</span>
-          {expanded ? <ChevronUp className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" /> : <ChevronDown className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}
+          <span>{expanded ? 'إخفاء التفاصيل' : 'تفاصيل الملف والمهام'}</span>
+          {expanded ? (
+            <ChevronUp className="h-3 w-3 text-white shrink-0" aria-hidden="true" />
+          ) : (
+            <ChevronDown className="h-3 w-3 text-white shrink-0" aria-hidden="true" />
+          )}
         </button>
 
-        <div className="grid grid-cols-3 sm:flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-1.5">
           {slug && (
             <Link
               to={`/scholarships/${encodeURIComponent(slug)}`}
-              className="inline-flex items-center justify-center gap-1 min-h-9 px-2.5 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] text-[11px] font-bold text-[#1E293B] dark:text-[#F8FAFC] hover:border-[#0E7C86] transition-all cursor-pointer shadow-2xs text-center"
+              className="mn-student-opp-btn-secondary inline-flex items-center justify-center gap-1 border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 text-[#142B5F] dark:text-[#EDF5F5] transition-all cursor-pointer"
               title="صفحة المنحة"
             >
-              <ExternalLink className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
-              <span>صفحة المنحة</span>
+              <ExternalLink className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" aria-hidden="true" />
+              <span>المنحة</span>
             </Link>
           )}
 
@@ -1932,47 +1871,47 @@ function ApplicationTrackerCard({
             type="button"
             disabled={saving}
             onClick={() => onArchive(tracker)}
-            className="inline-flex items-center justify-center gap-1 min-h-9 px-2.5 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] text-[11px] font-bold text-[#334155] dark:text-[#E2E8F0] hover:border-[#D6A43B] transition-all cursor-pointer disabled:opacity-50 shadow-2xs text-center"
+            className="mn-student-opp-btn-secondary inline-flex items-center justify-center gap-1 border border-[#142B5F]/15 dark:border-white/15 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 text-[#142B5F] dark:text-[#DCE7F0] transition-all cursor-pointer disabled:opacity-50"
             title={isArchived ? 'إلغاء الأرشفة' : 'أرشفة'}
           >
-            <Archive className="h-3.5 w-3.5 text-[#0E7C86] shrink-0" aria-hidden="true" />
-            <span>{isArchived ? 'إلغاء الأرشفة' : 'أرشفة'}</span>
+            <Archive className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" aria-hidden="true" />
+            <span>{isArchived ? 'استعادة' : 'أرشفة'}</span>
           </button>
 
           <button
             type="button"
             disabled={saving}
             onClick={() => onRemove(tracker)}
-            className="inline-flex items-center justify-center gap-1 min-h-9 px-2.5 rounded-xl border border-rose-200 dark:border-rose-900/30 bg-rose-50/70 dark:bg-rose-950/20 text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-all cursor-pointer disabled:opacity-50 shadow-2xs text-center"
+            className="mn-student-opp-btn-secondary inline-flex items-center justify-center gap-1 border border-[#142B5F]/12 dark:border-white/12 bg-transparent hover:bg-[#F6F8FA] dark:hover:bg-[#0B1529]/80 text-[#5C707C] dark:text-[#9BB4C7] hover:text-[#142B5F] dark:hover:text-white transition-all cursor-pointer disabled:opacity-50"
             title="إزالة"
           >
-            <Trash2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <Trash2 className="h-3 w-3 shrink-0" aria-hidden="true" />
             <span>إزالة</span>
           </button>
         </div>
       </div>
 
-      {/* Expanded Details: Stage selector, Checklist, Notes */}
+      {/* Expanded Details: Stage selector, Checklist, Notes (clean Frost/White blocks without redundant bars) */}
       {expanded && (
-        <div className="mt-3 space-y-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] p-3 shadow-2xs animate-in fade-in duration-200 dark:bg-[var(--mn-surface-elevated)]">
+        <div className="mn-student-tracker-details relative z-10 mt-3 space-y-2.5 rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/70 p-2.5 sm:p-3 animate-in fade-in duration-200">
           {/* Sub-section 1: Stage Selector */}
-          <div className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3">
-            <div className="flex items-center gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2 mb-2">
-              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#D6A43B]/40 bg-[#142B5F]">
-                <Sparkles className="h-3 w-3 text-[#F2CD78]" />
+          <div className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-white dark:bg-[#111E38] p-2.5 sm:p-3">
+            <div className="flex items-center gap-2">
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white">
+                <Sparkles className="h-3 w-3 text-white" />
               </span>
-              <label className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+              <label className="text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9] leading-snug">
                 المرحلة الحالية للتقديم
               </label>
             </div>
-            <p className="mb-2 text-[11px] font-medium leading-relaxed text-[#64748B] dark:text-[#94A3B8]">
-              اختر الخطوة التي وصلت إليها لتسهيل متابعة ملفك.
+            <p className="mt-1 mb-2 text-[9.5px] sm:text-[10px] font-medium leading-snug text-[#5C707C] dark:text-[#9BB4C7]">
+              اختر الخطوة التي وصلت إليها لتحديث حالة ملفك تلقائيًا.
             </p>
             <select
               disabled={saving}
               value={tracker.stage}
               onChange={(event) => onStageChange(tracker, event.target.value)}
-              className="min-h-9 w-full rounded-xl border border-[var(--mn-border)] dark:border-white/15 bg-[var(--mn-page)] px-3 py-1.5 text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] outline-none transition-colors focus:border-[#0E7C86] disabled:opacity-60 dark:bg-[var(--mn-surface-elevated)]"
+              className="h-[34px] w-full rounded-lg border border-[#142B5F]/15 dark:border-white/15 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-2.5 py-1 text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9] outline-none transition-colors focus:border-[#0E7C86] disabled:opacity-60"
             >
               {APPLICATION_STAGES.map((stage) => (
                 <option key={stage} value={stage}>
@@ -1983,31 +1922,31 @@ function ApplicationTrackerCard({
           </div>
 
           {/* Sub-section 2: Checklist Items */}
-          <div className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3">
-            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
-              <div className="flex items-center gap-2">
-                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#D6A43B]/40 bg-[#142B5F]">
-                  <ListChecks className="h-3 w-3 text-[#F2CD78]" />
+          <div className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-white dark:bg-[#111E38] p-2.5 sm:p-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white">
+                  <ListChecks className="h-3 w-3 text-white" />
                 </span>
-                <span className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+                <span className="text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9] leading-snug truncate">
                   قائمة المهام والمتطلبات
                 </span>
               </div>
-              <span className="rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10.5px] font-bold text-[#0E7C86] dark:text-[#55CBC5]">
+              <span className="shrink-0 text-[10px] font-bold tabular-nums text-[#0E7C86] dark:text-[#38C6D4]">
                 {completed} من {total} مكتمل
               </span>
             </div>
-            <p className="mb-2 text-[11px] font-medium leading-relaxed text-[#64748B] dark:text-[#94A3B8]">
-              علّم على المتطلبات التي أنجزتها، وستُحفظ متابعتك في ملف التقديم.
+            <p className="mt-1 mb-2 text-[9.5px] sm:text-[10px] font-medium leading-snug text-[#5C707C] dark:text-[#9BB4C7]">
+              علّم على المتطلبات التي أنجزتها لتحديث نسبة الجاهزية.
             </p>
             <div className="space-y-1.5">
               {tracker.checklist.map((item) => (
                 <label
                   key={item.id}
-                  className={`flex min-h-[42px] items-center gap-2.5 rounded-xl border px-2.5 py-2 text-[11.5px] leading-5 transition-colors cursor-pointer ${
+                  className={`flex min-h-[36px] items-center gap-2 rounded-lg border px-2.5 py-1.5 text-[10.5px] leading-snug transition-colors cursor-pointer ${
                     item.completed
-                      ? 'border-emerald-500/25 bg-emerald-500/[0.06] text-[#64748B]'
-                      : 'border-[var(--mn-border)] bg-[var(--mn-page)] text-[#1E293B] dark:text-[#F8FAFC] font-bold dark:bg-[var(--mn-surface-elevated)]'
+                      ? 'border-[#0E7C86]/22 bg-[#0E7C86]/[0.05] dark:bg-[#38C6D4]/[0.08] text-[#5C707C] dark:text-[#9BB4C7]'
+                      : 'border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] font-bold'
                   }`}
                 >
                   <input
@@ -2015,13 +1954,13 @@ function ApplicationTrackerCard({
                     type="checkbox"
                     checked={item.completed}
                     onChange={(event) => onChecklistToggle(tracker, item.id, event.target.checked)}
-                    className="h-4 w-4 shrink-0 rounded accent-[#142B5F] dark:accent-[#E5B54F]"
+                    className="h-[15px] w-[15px] shrink-0 rounded accent-[#0E7C86]"
                   />
-                  <span className={`min-w-0 flex-1 font-['Cairo',sans-serif] text-[11.5px] leading-snug break-words ${item.completed ? 'line-through opacity-75' : ''}`}>
+                  <span className={`min-w-0 flex-1 font-['Cairo',sans-serif] text-[10.5px] leading-snug break-words ${item.completed ? 'line-through opacity-75' : ''}`}>
                     {item.label}
                   </span>
                   {item.completedAt && (
-                    <span className="shrink-0 text-[10px] font-medium text-[#0E7C86]">
+                    <span className="shrink-0 text-[9px] font-semibold tabular-nums text-[#0E7C86] dark:text-[#38C6D4]">
                       {formatDate(item.completedAt)}
                     </span>
                   )}
@@ -2031,13 +1970,13 @@ function ApplicationTrackerCard({
           </div>
 
           {/* Sub-section 3: Notes Section */}
-          <div className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-3">
-            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
+          <div className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-white dark:bg-[#111E38] p-2.5 sm:p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
-                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#D6A43B]/40 bg-[#142B5F]">
-                  <FileText className="h-3 w-3 text-[#F2CD78]" aria-hidden="true" />
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white">
+                  <FileText className="h-3 w-3 text-white" aria-hidden="true" />
                 </span>
-                <span className="text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
+                <span className="text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9] leading-snug truncate">
                   ملاحظاتي على ملف التقديم
                 </span>
               </div>
@@ -2045,32 +1984,32 @@ function ApplicationTrackerCard({
                 <button
                   type="button"
                   onClick={() => setEditingNotes(true)}
-                  className="inline-flex min-h-7 shrink-0 items-center justify-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2.5 text-[11px] font-bold text-[#1E293B] dark:text-[#F8FAFC] transition-colors hover:border-[#0E7C86] cursor-pointer"
+                  className="inline-flex h-[26px] shrink-0 items-center justify-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 px-2.5 text-[9.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-colors hover:border-[#0E7C86]/55 cursor-pointer"
                 >
-                  <FileText className="h-3 w-3 text-[#0E7C86]" aria-hidden="true" />
-                  {tracker.notes ? 'تعديل الملاحظة' : 'إضافة ملاحظة'}
+                  <FileText className="h-2.5 w-2.5 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+                  <span>{tracker.notes ? 'تعديل الملاحظة' : 'إضافة ملاحظة'}</span>
                 </button>
               )}
             </div>
 
             {editingNotes ? (
-              <div className="space-y-2 mt-1.5">
+              <div className="space-y-2 mt-1">
                 <textarea
                   value={notesDraft}
                   onChange={(e) => setNotesDraft(e.target.value)}
                   placeholder="سجّل أي تفاصيل مهمة (مثل اسم المشرف، تاريخ المقابلة، الملاحظات المطلوبة)..."
                   rows={3}
                   maxLength={500}
-                  className="min-h-20 w-full resize-y rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[11.5px] leading-6 text-[#1E293B] dark:text-[#F8FAFC] outline-none transition-colors placeholder:text-[#64748B] focus:border-[#0E7C86]"
+                  className="min-h-[72px] w-full resize-y rounded-lg border border-[#142B5F]/15 dark:border-white/15 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-2.5 py-1.5 text-[10.5px] leading-relaxed text-[#142B5F] dark:text-[#F1F5F9] outline-none transition-colors placeholder:text-[#5C707C] focus:border-[#0E7C86]"
                 />
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center justify-end gap-1.5">
                   <button
                     type="button"
                     onClick={() => {
                       setNotesDraft(tracker.notes || '');
                       setEditingNotes(false);
                     }}
-                    className="inline-flex min-h-8 items-center justify-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] px-2.5 text-[11px] font-bold text-[#64748B] transition-colors hover:bg-[var(--mn-page)] cursor-pointer"
+                    className="inline-flex h-[28px] items-center justify-center rounded-lg border border-[#142B5F]/15 dark:border-white/15 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 text-[10px] font-bold text-[#5C707C] dark:text-[#9BB4C7] transition-colors hover:bg-white cursor-pointer"
                   >
                     إلغاء
                   </button>
@@ -2078,14 +2017,14 @@ function ApplicationTrackerCard({
                     type="button"
                     disabled={saving}
                     onClick={handleSaveNotes}
-                    className="inline-flex min-h-8 items-center justify-center rounded-lg bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 px-3 text-[11px] font-bold text-white transition-colors disabled:opacity-50 cursor-pointer"
+                    className="inline-flex h-[28px] items-center justify-center rounded-lg bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 px-3 text-[10px] font-bold text-white transition-all disabled:opacity-50 cursor-pointer"
                   >
                     حفظ الملاحظة
                   </button>
                 </div>
               </div>
             ) : (
-              <p className="mt-1 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] px-3 py-2 text-[11.5px] font-medium leading-6 text-[#475569] dark:text-[#CBD5E1] dark:bg-[var(--mn-surface-elevated)]">
+              <p className="mt-1 rounded-lg border border-[#142B5F]/8 dark:border-white/8 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-2.5 py-2 text-[10px] sm:text-[10.5px] font-medium leading-relaxed text-[#5C707C] dark:text-[#9BB4C7]">
                 {tracker.notes || 'لا توجد ملاحظات مسجلة لهذا الملف حتى الآن.'}
               </p>
             )}
@@ -2096,8 +2035,14 @@ function ApplicationTrackerCard({
   );
 }
 
+type LearningSubTab = 'COURSES' | 'PLAN' | 'EXAMS' | 'CERTIFICATES';
+
 function LearningView({ dashboard }: { dashboard: StudentDashboardSummaryDto }) {
-  const [filter, setFilter] = useState<'ALL' | 'IN_PROGRESS' | 'COMPLETED' | 'CERTIFICATES'>('ALL');
+  const [subTab, setSubTab] = useState<LearningSubTab>(() =>
+    typeof window !== 'undefined' && window.location.hash === '#certificates' ? 'CERTIFICATES' : 'COURSES'
+  );
+  const [courseFilter, setCourseFilter] = useState<'ALL' | 'IN_PROGRESS' | 'COMPLETED'>('ALL');
+  const [certRefreshKey, setCertRefreshKey] = useState(0);
 
   const inProgressCourses = useMemo(
     () => dashboard.courseEnrollments.filter((course) => ['ACTIVE', 'ENROLLED', 'IN_PROGRESS'].includes(course.status)),
@@ -2113,295 +2058,240 @@ function LearningView({ dashboard }: { dashboard: StudentDashboardSummaryDto }) 
   );
   const certificates = useMemo(() => dashboard.certificates || [], [dashboard.certificates]);
   const hasAnyLearningData = dashboard.courseEnrollments.length > 0 || certificates.length > 0;
-  const learningFilterItems = [
-    { value: 'ALL' as const, label: 'الكل', count: dashboard.courseEnrollments.length + certificates.length, icon: ListChecks },
-    { value: 'IN_PROGRESS' as const, label: 'قيد التعلم', count: inProgressCourses.length, icon: Clock3 },
-    { value: 'COMPLETED' as const, label: 'المكتملة', count: completedCourses.length, icon: CheckCircle2 },
-    { value: 'CERTIFICATES' as const, label: 'الشهادات', count: certificates.length, icon: Award },
+  const hasBothCourseStates = inProgressCourses.length > 0 && completedCourses.length > 0;
+
+  const learningSubTabs = [
+    { id: 'COURSES' as const, label: 'دوراتي', count: dashboard.courseEnrollments.length, icon: BookOpen },
+    { id: 'PLAN' as const, label: 'خطتي', icon: ListChecks },
+    { id: 'EXAMS' as const, label: 'الاختبارات', icon: GraduationCap },
+    { id: 'CERTIFICATES' as const, label: 'شهاداتي', count: certificates.length, icon: Award },
   ];
 
   return (
-    <div className="mn-student-learning-page mt-0 space-y-4 font-['Cairo',sans-serif]">
-      {/* Header box attached directly to the 8-tab bar above and stretched edge-to-edge right & left */}
-      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
-        <section
-          aria-label="تعليمي وإنجازاتي"
-          className="mn-student-learning-hero relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
-        >
-          {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
-          />
-
-          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-2.5">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
-                  <BookOpen className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
-                </span>
-                <h2 className="mn-student-learning-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC]">
-                  تعليمي وإنجازاتي
-                </h2>
-              </div>
-              <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
-                {dashboard.courseEnrollments.length} دورة · {certificates.length} شهادة
-              </span>
-            </div>
-
-            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-              استكمل دوراتك التدريبية المسجلة، وتابع نسب تقدمك في المحاضرات وحمّل شهادات الإنجاز الصادرة لك.
-            </p>
-          </div>
-        </section>
-
-        {/* Four filter buttons outside the header box, attached from the top and stretched edge-to-edge */}
-        <nav
-          aria-label="تصفية الدورات والشهادات"
-          className="-mt-px grid grid-cols-4 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs"
-        >
-          {learningFilterItems.map(({ value, label, count, icon: Icon }) => {
-            const active = filter === value;
-            return (
-              <button
-                key={value}
-                type="button"
-                aria-pressed={active}
-                onClick={() => setFilter(value)}
-                className={`flex min-h-12 items-center justify-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-2 text-center transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#142B5F] ${
-                  active
-                    ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner font-bold'
-                    : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] font-semibold hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
-                }`}
-              >
-                <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 ${active ? 'text-[#F2CD78]' : 'text-[#142B5F] dark:text-[#E5B54F]'}`} aria-hidden="true" />
-                <span className="whitespace-normal break-words leading-[1.35] text-[11px] sm:text-[12px]">{label} ({count})</span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+    <div className="mn-student-learning-page mt-0 space-y-2.5 sm:space-y-3.5 font-['Cairo',sans-serif]">
+      {/* Parent Umbrella Canopy with architectural top-and-side line + integrated 4 sub-tabs */}
+      <WorkspaceTabCanopy
+        title="تعليمي وإنجازاتي"
+        subtitle="الدورات المسجلة، خطة الدراسة الأسبوعية، الاختبارات والشهادات"
+        icon={BookOpen}
+        metaLabel={`${dashboard.courseEnrollments.length} دورة · ${certificates.length} شهادة`}
+      >
+        <HorizontalSwipeTabs
+          embedded
+          ariaLabel="أقسام تعلمي وإنجازاتي"
+          items={learningSubTabs}
+          activeId={subTab}
+          onChange={setSubTab}
+        />
+      </WorkspaceTabCanopy>
 
       {dashboard.capabilityStatus?.learning === 'DEGRADED' && <Alert tone="warning" message="تعذر تحميل الدورات حالياً؛ القائمة الحالية لا تعني عدم وجود تسجيلات." />}
       {dashboard.capabilityStatus?.certificates === 'DEGRADED' && <Alert tone="warning" message="تعذر تحميل الشهادات حالياً. أعد تحديث الحساب." />}
 
-      {!hasAnyLearningData ? (
-        <LearningSectionCard title="ابدأ رحلتك التعليمية" icon={<BookOpen className="h-4 w-4 text-[#E5B54F]" aria-hidden="true" />}>
-          <div className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-4 text-center">
-            <p className="text-[12px] font-semibold leading-[1.9] text-[var(--mn-text-muted)]">
-              سجّل في دورة من دليل منارتك لتظهر هنا الدروس التي تتابعها، ونسب إنجازك، والشهادات التي تصدر لك.
-            </p>
-          </div>
-        </LearningSectionCard>
-      ) : (
-        <>
-          {(filter === 'ALL' || filter === 'IN_PROGRESS') && (
-            <LearningSectionCard
-              title="دورات قيد التعلم"
-              icon={<Clock3 className="h-3.5 w-3.5 text-[#E5B54F]" aria-hidden="true" />}
-              count={`${inProgressCourses.length} دورة`}
-            >
-              {inProgressCourses.length === 0 ? (
-                <p className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3.5 text-center text-[11.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-                  لا توجد دورات قيد التعلم حاليًا.
+      {subTab === 'COURSES' && (
+        <div className="space-y-2.5 sm:space-y-3.5">
+          {!hasAnyLearningData ? (
+            <SummarySectionCard title="ابدأ رحلتك التعليمية" icon={BookOpen}>
+              <div className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-4 text-center">
+                <p className="text-[11px] sm:text-[12px] font-semibold leading-relaxed text-[#5C707C] dark:text-[#9BB4C7]">
+                  سجّل في دورة من دليل منارتك لتظهر هنا الدروس التي تتابعها ونسب إنجازك.
                 </p>
-              ) : (
-                <div className="grid gap-2.5 sm:grid-cols-2">
-                  {inProgressCourses.map((course) => (
-                    <article
-                      key={course.enrollmentId || course.courseId}
-                      className="mn-student-learning-course relative overflow-hidden flex min-w-0 flex-col justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 shadow-xs transition-all hover:border-[#D6A43B]/60 font-['Cairo',sans-serif]"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="rounded-full border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10px] sm:text-[10.5px] font-bold text-[#0E7C86] dark:text-[#E5B54F] dark:border-[#E5B54F]/30 dark:bg-[#E5B54F]/10">
-                            قيد التعلم
-                          </span>
-                          <span className="text-[12px] font-extrabold text-[#142B5F] dark:text-[#E5B54F]">
-                            {course.progressPercentage}%
-                          </span>
-                        </div>
-
-                        <h4 className="mt-1.5 text-[12px] sm:text-[12.5px] font-bold leading-snug text-[var(--mn-heading)] break-words">
-                          {course.courseName}
-                        </h4>
-
-                        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800" dir="rtl">
-                          <div
-                            className="h-full rounded-full bg-gradient-to-l from-[#142B5F] via-[#163D76] to-[#0E7C86] dark:from-[#D6A43B] dark:to-[#E5B54F] transition-all duration-300"
-                            style={{ width: `${Math.min(100, Math.max(0, course.progressPercentage))}%` }}
-                          />
-                        </div>
-
-                        <p className="mt-1.5 text-[10.5px] font-medium text-[var(--mn-text-muted)]">
-                          {course.lastAccessedAt
-                            ? `آخر وصول: ${formatDate(course.lastAccessedAt)}`
-                            : `تاريخ التسجيل: ${formatDate(course.enrolledAt)}`}
-                        </p>
-                      </div>
-
-                      <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-[var(--mn-border)] pt-2">
-                        <span className="text-[10.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">متابعة تقدم الدورة</span>
-                        <Link
-                          to={`../student/courses/${encodeURIComponent(course.courseId)}`}
-                          className="ms-auto inline-flex min-h-8 items-center justify-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#163D76] dark:bg-[#D6A43B] dark:text-[#142B5F] dark:hover:bg-[#E5B54F] px-3 py-1 text-[11px] font-bold text-white transition-all shadow-xs"
-                        >
-                          <span>متابعة التعلم</span>
-                          <ArrowLeft className="h-3 w-3" aria-hidden="true" />
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              )}
-            </LearningSectionCard>
-          )}
-
-          {(filter === 'ALL' || filter === 'COMPLETED') && (
-            <LearningSectionCard
-              title="الدورات المكتملة"
-              icon={<CheckCircle2 className="h-3.5 w-3.5 text-[#E5B54F]" aria-hidden="true" />}
-              count={`${completedCourses.length} دورة`}
-            >
-              {completedCourses.length === 0 ? (
-                <p className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3.5 text-center text-[11.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-                  لا توجد دورات مكتملة حتى الآن.
-                </p>
-              ) : (
-                <div className="grid gap-2.5 sm:grid-cols-2">
-                  {completedCourses.map((course) => (
-                    <article
-                      key={course.enrollmentId || course.courseId}
-                      className="mn-student-learning-course relative overflow-hidden flex min-w-0 flex-col justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 shadow-xs transition-all hover:border-[#D6A43B]/60 font-['Cairo',sans-serif]"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="rounded-full border border-[var(--mn-success-border)] bg-[var(--mn-success-soft)] px-2 py-0.5 text-[10px] sm:text-[10.5px] font-bold text-[var(--mn-success-text)] font-['Cairo',sans-serif]">
-                            مكتملة بنجاح
-                          </span>
-                          <span className="text-[12px] font-extrabold text-[var(--mn-success-text)] font-['Cairo',sans-serif]">
-                            100%
-                          </span>
-                        </div>
-                        <h4 className="mt-1.5 text-[12px] sm:text-[12.5px] font-bold leading-snug text-[var(--mn-heading)] break-words font-['Cairo',sans-serif]">
-                          {course.courseName}
-                        </h4>
-                        <div className="mt-1.5 flex items-center gap-1.5 text-[10.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-                          <Check className="h-3.5 w-3.5 shrink-0 text-[var(--mn-success-text)]" aria-hidden="true" />
-                          <span>{course.completedAt ? `تاريخ الإتمام: ${formatDate(course.completedAt)}` : 'تاريخ الإتمام غير متاح'}</span>
-                        </div>
-                      </div>
-                      <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-[var(--mn-border)] pt-2">
-                        <span className="text-[10.5px] font-medium text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">مراجعة محتوى الدورة</span>
-                        <Link
-                          to={`../student/courses/${encodeURIComponent(course.courseId)}`}
-                          className="ms-auto inline-flex min-h-8 items-center justify-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#163D76] dark:bg-[#D6A43B] dark:text-[#142B5F] dark:hover:bg-[#E5B54F] px-3 py-1 text-[11px] font-bold text-white transition-all shadow-xs"
-                        >
-                          <span>مراجعة المواد</span>
-                          <ArrowLeft className="h-3 w-3" aria-hidden="true" />
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              )}
-            </LearningSectionCard>
-          )}
-
-          {filter === 'ALL' && otherCourses.length > 0 && (
-            <LearningSectionCard
-              title="تسجيلات معلقة أو سابقة"
-              icon={<ClipboardList className="h-3.5 w-3.5 text-[#E5B54F]" aria-hidden="true" />}
-              count={`${otherCourses.length} تسجيل`}
-            >
-              <div className="grid gap-3 sm:grid-cols-2">
-                {otherCourses.map((course) => (
-                  <CourseCard key={course.enrollmentId || course.courseId} course={course} />
-                ))}
+                <Link
+                  to="/courses"
+                  className="mt-3 inline-flex h-[32px] items-center justify-center gap-1.5 rounded-lg bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] px-4 text-[11px] font-bold text-white shadow-2xs transition-opacity hover:opacity-95"
+                >
+                  <span>تصفح الدورات التدريبية</span>
+                  <ArrowLeft className="h-3.5 w-3.5 text-white shrink-0" />
+                </Link>
               </div>
-            </LearningSectionCard>
+            </SummarySectionCard>
+          ) : (
+            <>
+              {/* Compact course status switcher when both in-progress and completed courses exist */}
+              {hasBothCourseStates && (
+                <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-white dark:bg-[#111E38] p-1 shadow-[0_2px_8px_rgba(20,43,95,0.03)]">
+                  {[
+                    { id: 'ALL' as const, label: `الكل (${dashboard.courseEnrollments.length})` },
+                    { id: 'IN_PROGRESS' as const, label: `قيد التعلم (${inProgressCourses.length})` },
+                    { id: 'COMPLETED' as const, label: `مكتملة (${completedCourses.length})` },
+                  ].map((item) => {
+                    const active = courseFilter === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setCourseFilter(item.id)}
+                        className={`mn-workspace-btn-sm rounded-lg px-2 text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer truncate ${
+                          active
+                            ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-[0_2px_6px_rgba(20,43,95,0.16)]'
+                            : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#DCE7F0] hover:bg-white dark:hover:bg-[#142342]'
+                        }`}
+                      >
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {(courseFilter === 'ALL' || courseFilter === 'IN_PROGRESS') && (
+                <SummarySectionCard
+                  title="دورات قيد التعلم"
+                  icon={Clock3}
+                  metaLabel={`${inProgressCourses.length} دورة`}
+                >
+                  {inProgressCourses.length === 0 ? (
+                    <p className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-3.5 text-center text-[11px] font-semibold text-[#5C707C] dark:text-[#9BB4C7]">
+                      لا توجد دورات قيد التعلم حاليًا.
+                    </p>
+                  ) : (
+                    <div className={`grid gap-2.5 ${inProgressCourses.length > 1 ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
+                      {inProgressCourses.map((course) => (
+                        <article
+                          key={course.enrollmentId || course.courseId}
+                          className="mn-student-learning-course relative overflow-hidden flex min-w-0 flex-col justify-between rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 dark:hover:border-[#38C6D4]/45 pr-3.5 pl-3 py-2.5 transition-all duration-200 font-['Cairo',sans-serif]"
+                        >
+                          {/* Selective start-bar for active in-progress courses */}
+                          <span aria-hidden="true" className="mn-summary-start-bar" />
+
+                          <div>
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex items-center gap-2 min-w-0 flex-1">
+                                <span className="grid h-6.5 w-6.5 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-[0_2px_6px_rgba(20,43,95,0.14)]">
+                                  <BookOpen className="h-3.5 w-3.5 text-white" aria-hidden="true" />
+                                </span>
+                                <h4 className="min-w-0 flex-1 text-[10.5px] sm:text-[12px] font-bold leading-snug text-[#142B5F] dark:text-[#F1F5F9] break-words">
+                                  {course.courseName}
+                                </h4>
+                              </div>
+                              <span className="shrink-0 text-[10.5px] sm:text-[11.5px] font-extrabold tabular-nums text-[#0E7C86] dark:text-[#38C6D4]" dir="ltr">
+                                {Math.min(100, Math.max(0, course.progressPercentage))}%
+                              </span>
+                            </div>
+
+                            <div className="mt-2 h-[4.5px] w-full overflow-hidden rounded-full bg-white dark:bg-[#111E38] border border-[#142B5F]/8 dark:border-white/10" dir="rtl">
+                              <div
+                                className="h-full rounded-full bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] dark:from-[#0E7C86] dark:to-[#38C6D4] transition-all duration-300"
+                                style={{ width: `${Math.min(100, Math.max(0, course.progressPercentage))}%` }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="mt-2.5 pt-2 border-t border-[#142B5F]/8 dark:border-white/8 flex items-center justify-between gap-2">
+                            <span className="text-[9.5px] sm:text-[10.5px] font-medium text-[#5C707C] dark:text-[#9BB4C7] truncate tabular-nums">
+                              {course.lastAccessedAt
+                                ? `آخر وصول: ${formatDate(course.lastAccessedAt)}`
+                                : `التسجيل: ${formatDate(course.enrolledAt)}`}
+                            </span>
+                            <Link
+                              to={`../student/courses/${encodeURIComponent(course.courseId)}`}
+                              className="mn-workspace-btn-sm shrink-0 inline-flex items-center justify-center gap-1 rounded-lg bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 px-2.5 text-[10px] sm:text-[11px] font-bold text-white shadow-[0_2px_6px_rgba(20,43,95,0.16)] transition-all whitespace-nowrap"
+                            >
+                              <span>متابعة التعلم</span>
+                              <ArrowLeft className="h-3 w-3 text-white shrink-0" aria-hidden="true" />
+                            </Link>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </SummarySectionCard>
+              )}
+
+              {(courseFilter === 'ALL' || courseFilter === 'COMPLETED') && (
+                <SummarySectionCard
+                  title="الدورات المكتملة"
+                  icon={CheckCircle2}
+                  metaLabel={`${completedCourses.length} دورة`}
+                >
+                  {completedCourses.length === 0 ? (
+                    <p className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-3.5 text-center text-[11px] font-semibold text-[#5C707C] dark:text-[#9BB4C7]">
+                      لا توجد دورات مكتملة حتى الآن.
+                    </p>
+                  ) : (
+                    <div className={`grid gap-2.5 ${completedCourses.length > 1 ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
+                      {completedCourses.map((course) => (
+                        <article
+                          key={course.enrollmentId || course.courseId}
+                          className="mn-student-learning-course flex min-w-0 flex-col justify-between rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 dark:hover:border-[#38C6D4]/45 px-3 py-2.5 transition-all duration-200 font-['Cairo',sans-serif]"
+                        >
+                          <div>
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex items-center gap-2 min-w-0 flex-1">
+                                <span className="grid h-6.5 w-6.5 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-[0_2px_6px_rgba(20,43,95,0.14)]">
+                                  <Check className="h-3.5 w-3.5 text-white" aria-hidden="true" />
+                                </span>
+                                <h4 className="min-w-0 flex-1 text-[10.5px] sm:text-[12px] font-bold leading-snug text-[#142B5F] dark:text-[#F1F5F9] break-words">
+                                  {course.courseName}
+                                </h4>
+                              </div>
+                              <span className="shrink-0 text-[10px] sm:text-[11px] font-extrabold tabular-nums text-[#0E7C86] dark:text-[#38C6D4]">
+                                100% · مكتملة
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="mt-2.5 pt-2 border-t border-[#142B5F]/8 dark:border-white/8 flex items-center justify-between gap-2">
+                            <span className="text-[9.5px] sm:text-[10.5px] font-medium text-[#5C707C] dark:text-[#9BB4C7] truncate tabular-nums">
+                              {course.completedAt ? `أُتمّت: ${formatDate(course.completedAt)}` : 'مكتملة بنجاح'}
+                            </span>
+                            <Link
+                              to={`../student/courses/${encodeURIComponent(course.courseId)}`}
+                              className="mn-workspace-btn-sm shrink-0 inline-flex items-center justify-center gap-1 rounded-lg border border-[#0E7C86]/32 dark:border-[#38C6D4]/35 bg-white hover:bg-gradient-to-l hover:from-[#142B5F] hover:via-[#133A6A] hover:to-[#0E7C86] hover:border-transparent dark:bg-[#111E38] px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] hover:text-white dark:text-[#EDF5F5] transition-all whitespace-nowrap"
+                            >
+                              <span>مراجعة المواد</span>
+                              <ArrowLeft className="h-3 w-3 shrink-0" aria-hidden="true" />
+                            </Link>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </SummarySectionCard>
+              )}
+
+              {courseFilter === 'ALL' && otherCourses.length > 0 && (
+                <SummarySectionCard
+                  title="تسجيلات معلقة أو سابقة"
+                  icon={ClipboardList}
+                  metaLabel={`${otherCourses.length} تسجيل`}
+                >
+                  <div className="grid gap-2.5 sm:grid-cols-2">
+                    {otherCourses.map((course) => (
+                      <CourseCard key={course.enrollmentId || course.courseId} course={course} />
+                    ))}
+                  </div>
+                </SummarySectionCard>
+              )}
+            </>
           )}
-        </>
+        </div>
       )}
 
-      {(filter === 'ALL' || filter === 'CERTIFICATES') && (
-        <LearningSectionCard
+      {subTab === 'PLAN' && <LearningStudyPlanPanel dashboard={dashboard} />}
+
+      {subTab === 'EXAMS' && <LearningTestPrepPanel />}
+
+      {subTab === 'CERTIFICATES' && (
+        <SummarySectionCard
           title="إنجازاتي وشهاداتي"
-          icon={<Award className="h-3.5 w-3.5 text-[#E5B54F]" aria-hidden="true" />}
+          icon={Award}
+          metaLabel={`${certificates.length} شهادة`}
+          action={
+            <button
+              type="button"
+              onClick={() => setCertRefreshKey((value) => value + 1)}
+              className="mn-workspace-btn-sm inline-flex items-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/55 px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#EDF5F5] transition-colors cursor-pointer"
+            >
+              <RefreshCw className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+              <span>تحديث</span>
+            </button>
+          }
         >
-          <StudentCertificatesPanel initial={certificates} compactLearning />
-        </LearningSectionCard>
+          <StudentCertificatesPanel initial={certificates} compactLearning externalRefreshKey={certRefreshKey} />
+        </SummarySectionCard>
       )}
-
-      {/* Dedicated End Section: Motivational Courses Discovery Section stretched edge-to-edge */}
-      <section
-        aria-label="استكشاف الدورات التدريبية"
-        className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif]"
-      >
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="space-y-1 max-w-xl">
-            <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F] text-[#F2CD78]">
-                <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
-              </span>
-              <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
-                طوّر مهاراتك وانطلق نحو مستقبلك الأكاديمي والمهني
-              </h3>
-            </div>
-            <p className="text-[11px] sm:text-[11.5px] font-medium leading-[1.75] text-[var(--mn-text-muted)]">
-              استكشف باقة متميزة من الدورات المتخصصة في التحضير للقبول الجامعي، كتابة السيرة الذاتية، واجتياز اختبارات اللغة والمقابلات الشخصية لتحقيق طموحاتك بثقة.
-            </p>
-          </div>
-
-          <Link
-            to="/courses"
-            className="w-full sm:w-auto shrink-0 inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] px-3.5 py-1.5 text-[11.5px] font-bold text-white shadow-2xs transition-all cursor-pointer border border-[#D6A43B]/40"
-          >
-            <Sparkles className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
-            <span>تصفح دليل الدورات المتاحة</span>
-            <ArrowLeft className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
-          </Link>
-        </div>
-      </section>
     </div>
-  );
-}
-
-/** Stretched edge-to-edge section matching ملخصي and فرصي. */
-function LearningSectionCard({
-  title,
-  icon,
-  count,
-  children,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  count?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section
-      aria-label={title}
-      className="mn-student-learning-section relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3.5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif]"
-    >
-      <div className="mb-3 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3.5 sm:px-5">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
-            <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
-            <span className="relative z-10">{icon}</span>
-          </span>
-          <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 min-w-0 text-[14px] sm:text-[15px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC]">
-            {title}
-          </h3>
-        </div>
-        {count && (
-          <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2 py-0.5 text-[10px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
-            {count}
-          </span>
-        )}
-      </div>
-      <div className="px-3.5 sm:px-5">{children}</div>
-    </section>
   );
 }
 
@@ -2558,6 +2448,8 @@ const TECHNICAL_REQUEST_KEYS = new Set([
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+type ServicesSubTab = 'REQUESTS' | 'BOOKINGS' | 'DELIVERABLES' | 'INVOICES';
+
 function ServiceRequestsView({
   requests,
   serviceLoading,
@@ -2591,13 +2483,8 @@ function ServiceRequestsView({
   paymentsByInvoice: Record<string, StudentFinancePaymentDto[]>;
   onTogglePayments: (invoiceId: string) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<'REQUESTS' | 'INVOICES'>('REQUESTS');
+  const [activeTab, setActiveTab] = useState<ServicesSubTab>('REQUESTS');
   useEffect(() => { if (selected) setActiveTab('REQUESTS'); }, [selected?.id]);
-
-  const pendingCount = useMemo(
-    () => requests.filter((request) => !['COMPLETED', 'FULFILLED', 'RESOLVED', 'CANCELLED', 'REJECTED'].includes(request.status.toUpperCase())).length,
-    [requests],
-  );
 
   const matchedInvoice = useMemo(() => {
     if (!selected) return undefined;
@@ -2608,143 +2495,88 @@ function ServiceRequestsView({
     );
   }, [selected, invoices]);
 
-  // A directly linked, authorized request must remain inspectable even if it is
-  // absent from the currently fetched/filtered request page.
   const hasAnyRequestsOrInvoices = requests.length > 0 || invoices.length > 0 || Boolean(selected) || Boolean(requestedNotFoundId) || Boolean(invoiceError);
 
+  const serviceSubTabs = [
+    { id: 'REQUESTS' as const, label: 'طلبات الخدمات', count: requests.length, icon: ClipboardList },
+    { id: 'BOOKINGS' as const, label: 'الحجوزات والمواعيد', icon: CalendarClock },
+    { id: 'DELIVERABLES' as const, label: 'الملفات المستلمة', icon: FileText },
+    { id: 'INVOICES' as const, label: 'الفواتير والمدفوعات', count: invoices.length, icon: Receipt },
+  ];
+
   return (
-    <div className="mt-0 space-y-4" aria-busy={serviceLoading}>
-      {/* Header box attached directly to the 8-tab bar above and stretched edge-to-edge right & left */}
+    <div className="mt-0 space-y-3.5" aria-busy={serviceLoading}>
+      {/* Header box attached directly to the 8-tab bar above */}
       <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
         <section
           aria-label="طلباتي ومدفوعاتي"
           className="mn-student-services-hero relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
         >
-          {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
+          {/* Selective Start-of-Box Accent Line (Navy) */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
           />
 
-          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-2.5">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
-                  <ClipboardList className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
-                </span>
+          <div className="px-3.5 py-3 pr-4 sm:px-5 sm:py-3.5 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
+                <ClipboardList className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
+              </span>
+              <div>
                 <h2 className="mn-student-services-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
                   طلباتي ومدفوعاتي
                 </h2>
+                <p className="text-[10.5px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                  طلبات الخدمات، المواعيد الاستشارية، المخرجات والفواتير
+                </p>
               </div>
-
-              <Link
-                to="/services"
-                className="inline-flex min-h-8 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#142B5F] hover:bg-[#1a3675] px-3 py-1 text-[11.5px] font-bold font-['Cairo',sans-serif] text-[#F2CD78] shadow-2xs transition-colors border border-[#D6A43B]/40"
-              >
-                <Sparkles className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
-                <span>استكشف الخدمات</span>
-              </Link>
             </div>
 
-            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-              تابع حالة طلبات الخدمات الأكاديمية والاستشارية الخاصة بك، واستعرض الفواتير والدفعات والملفات المستلمة.
-            </p>
+            <Link
+              to="/services"
+              className="inline-flex min-h-8 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#142B5F] hover:bg-[#1a3675] px-3 py-1 text-[11px] font-bold font-['Cairo',sans-serif] text-[#F2CD78] shadow-2xs transition-colors border border-[#D6A43B]/40"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
+              <span>استكشف الخدمات</span>
+            </Link>
           </div>
         </section>
 
-        <nav
-          aria-label="تصفية الطلبات والفواتير"
-          className="-mt-px grid grid-cols-3 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs"
-        >
-          {[
-            { label: 'طلبات معروضة', number: requests.length, tab: 'REQUESTS' as const, key: 'all-req' },
-            { label: 'قيد المتابعة', number: pendingCount, tab: 'REQUESTS' as const, key: 'pending-req' },
-            { label: 'فواتير معروضة', number: invoices.length, tab: 'INVOICES' as const, key: 'invoices' },
-          ].map((stat) => {
-            const active = activeTab === stat.tab && (stat.key !== 'pending-req');
-            return (
-              <button
-                key={stat.key}
-                type="button"
-                aria-label={`${stat.label}: ${stat.number}، عرض التفاصيل`}
-                onClick={() => setActiveTab(stat.tab)}
-                className={`flex min-h-12 items-center justify-center gap-1.5 px-2 py-2 text-center transition-all cursor-pointer font-['Cairo',sans-serif] ${
-                  active
-                    ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner font-bold'
-                    : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] font-semibold hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
-                }`}
-              >
-                <span className="whitespace-normal break-words text-[11px] sm:text-[12px] leading-[1.35]">{stat.label} ({stat.number})</span>
-              </button>
-            );
-          })}
-        </nav>
+        {/* Unified Horizontal Swipe Sub-Tabs */}
+        <HorizontalSwipeTabs
+          ariaLabel="أقسام طلباتي ومدفوعاتي"
+          items={serviceSubTabs}
+          activeId={activeTab}
+          onChange={setActiveTab}
+        />
       </div>
 
-      <section
-        aria-label="تصفية طلبات الخدمات"
-        className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] px-3.5 py-3.5 shadow-2xs mn-panel dark:border-white/10 sm:px-5 sm:py-4 font-['Cairo',sans-serif]"
-      >
-        <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2">
-          <div className="flex min-w-0 items-center gap-2">
-            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F] dark:bg-[#0c1a3b]">
-              <Settings2 className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
-            </span>
-            <h3 className="text-[12.5px] sm:text-[13px] font-bold font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
-              تصفية الطلبات
-            </h3>
+      {activeTab === 'REQUESTS' && (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3.5 py-2.5">
+          <div className="flex items-center gap-2">
+            <Filter className="h-3.5 w-3.5 text-[#0E7C86]" />
+            <label htmlFor="service-status-select" className="text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+              حالة الطلب:
+            </label>
           </div>
-          <span role="status" className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2 py-0.5 text-[10.5px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
-            {totalRequests === requests.length ? `${requests.length} طلب` : `عرض ${requests.length} من ${totalRequests} طلب`}
-          </span>
-        </div>
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <label className="min-w-[185px] flex-1 text-[11.5px] font-bold font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC] sm:max-w-[320px]">
-            حالة الطلب
+          <div className="flex items-center gap-2">
             <select
+              id="service-status-select"
               value={statusFilter}
               onChange={(event) => onStatusFilterChange(event.target.value)}
-              className="mt-1.5 block min-h-9 w-full rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-1.5 text-[11.5px] font-medium font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC] outline-none transition-colors focus:border-[#0E7C86] dark:bg-[var(--mn-surface-elevated)]"
+              className="min-h-8 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2.5 py-1 text-[11px] font-bold text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
             >
-              <option value="" className="font-['Cairo',sans-serif] text-[11.5px]">جميع الحالات</option>
+              <option value="">جميع الحالات</option>
               {['REQUESTED','ACCEPTED','IN_PROGRESS','AWAITING_PAYMENT','COMPLETED','CANCELLED'].map((status) => (
-                <option key={status} value={status} className="font-['Cairo',sans-serif] text-[11.5px]">{getServiceRequestStatusBadge(status).label}</option>
+                <option key={status} value={status}>{getServiceRequestStatusBadge(status).label}</option>
               ))}
             </select>
-          </label>
+            <span role="status" className="rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2 py-1 text-[10.5px] font-semibold text-[#475569] dark:text-[#CBD5E1]">
+              {totalRequests === requests.length ? `${requests.length} طلب` : `${requests.length} من ${totalRequests}`}
+            </span>
+          </div>
         </div>
-      </section>
-
-      {hasAnyRequestsOrInvoices && (
-        <nav
-          aria-label="عرض طلبات الخدمات والفواتير"
-          className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] grid grid-cols-2 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs font-['Cairo',sans-serif]"
-        >
-          <button
-            type="button"
-            onClick={() => setActiveTab('REQUESTS')}
-            aria-pressed={activeTab === 'REQUESTS'}
-            className={`min-h-11 min-w-0 px-2 py-2 text-[12px] font-bold leading-[1.4] font-['Cairo',sans-serif] transition-colors cursor-pointer ${
-              activeTab === 'REQUESTS'
-                ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner'
-                : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
-            }`}
-          >
-            طلبات الخدمات ({requests.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('INVOICES')}
-            aria-pressed={activeTab === 'INVOICES'}
-            className={`min-h-11 min-w-0 px-2 py-2 text-[12px] font-bold leading-[1.4] font-['Cairo',sans-serif] transition-colors cursor-pointer ${
-              activeTab === 'INVOICES'
-                ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner'
-                : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
-            }`}
-          >
-            الفواتير والمدفوعات ({invoices.length})
-          </button>
-        </nav>
       )}
 
       {serviceError && (
@@ -2764,60 +2596,76 @@ function ServiceRequestsView({
         </div>
       )}
 
-      {/* Loading doesn't unmount the main view, so the active tab stays selected. */}
       {serviceLoading && (
         <p role="status" className="rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[11px] font-semibold text-[var(--mn-text-muted)]">
           جارٍ تحديث الطلبات…
         </p>
       )}
 
-      {/* 3. Main Content View */}
-      {serviceLoading && activeTab === 'REQUESTS' ? (
-        <div role="status" className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] p-4 text-center text-[12px] font-semibold text-[var(--mn-text-muted)]">
-          جارٍ تحميل بيانات الطلبات…
-        </div>
-      ) : !hasAnyRequestsOrInvoices && serviceError ? (
-        <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] p-4 text-center text-[12px] text-[var(--mn-text-muted)]">
-          تعذر جلب الطلبات حاليًا. يمكنك إعادة المحاولة دون فقدان اختيارك.
-        </div>
-      ) : !hasAnyRequestsOrInvoices ? (
-        <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 sm:p-7 text-center mn-panel shadow-2xs">
-          <div className="w-10 h-10 rounded-xl bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/40 flex items-center justify-center text-[#F2CD78] mx-auto mb-3 shadow-xs">
-            <ClipboardList className="w-5 h-5 text-[#F2CD78]" />
-          </div>
-          <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">{statusFilter ? 'لا توجد طلبات مطابقة للحالة المختارة' : 'لا توجد طلبات خدمات أو فواتير مسجلة'}</h3>
-          <p className="mt-1.5 text-[11px] leading-[1.8] text-[var(--mn-text-muted)]">
-            {statusFilter ? 'اختر «جميع الحالات» لعرض الطلبات الأخرى، أو تصفح دليل الخدمات.' : 'يمكنك استكشاف الخدمات الأكاديمية والاستشارية، وستظهر طلباتك وفواتيرك هنا عند توفرها.'}
-          </p>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to="/services"
-              className="px-3.5 py-2 rounded-xl bg-[#142B5F] text-white text-[11.5px] font-bold hover:bg-[#1a3675] transition-all shadow-2xs inline-flex items-center gap-2 border border-[#D6A43B]/40"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-[#F2CD78]" />
-              <span>استكشف دليل الخدمات والاستشارات</span>
-            </Link>
-          </div>
-        </div>
-      ) : activeTab === 'REQUESTS' ? (
-        requests.length === 0 && !selected && !requestedNotFoundId ? (
-          <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 text-center mn-panel">
-            <ClipboardList className="w-7 h-7 mx-auto text-[#0E7C86] mb-1.5" />
-            <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">{serviceError ? 'تعذر تحميل طلباتك حاليًا' : statusFilter ? 'لا توجد طلبات مطابقة للحالة المختارة' : 'لا توجد طلبات خدمات معروضة حاليًا'}</h3>
-            <p className="mt-1 text-[11px] leading-[1.8] text-[var(--mn-text-muted)]">
-              {serviceError
-                ? 'يمكنك إعادة تحميل الطلبات من الزر أعلاه. ستبقى الفواتير المحمّلة متاحة هنا.'
-                : 'يمكنك اختيار حالة أخرى أو الاطلاع على الفواتير والمدفوعات أو تقديم طلب جديد عبر دليل الخدمات.'}
-            </p>
-            <Link
-              to="/services"
-              className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#142B5F] text-white text-[11.5px] font-bold hover:bg-[#1a3675] transition-all border border-[#D6A43B]/40"
-            >
-              <span>دليل الخدمات</span>
-            </Link>
-          </div>
+      {/* Sub-Tab 2: BOOKINGS (الحجوزات والمواعيد) */}
+      {activeTab === 'BOOKINGS' && (
+        selected || requests[0] ? (
+          <StudentServiceBookingPanel requestId={(selected || requests[0]).id} />
         ) : (
-          <div className="space-y-4">
+          <ServiceSectionCard title="الحجوزات والمواعيد الاستشارية" icon={<CalendarClock className="h-3.5 w-3.5 text-[#F2CD78]" />}>
+            <p className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-4 text-center text-[11.5px] font-medium text-[var(--mn-text-muted)]">
+              عند تقديم طلب خدمة استشارية ستتمكن من حجز موعد الجلسة وإدارته مباشرة من هنا.
+            </p>
+          </ServiceSectionCard>
+        )
+      )}
+
+      {/* Sub-Tab 3: DELIVERABLES (الملفات المستلمة) */}
+      {activeTab === 'DELIVERABLES' && <ServiceDeliverablesPanel requests={requests} />}
+
+      {/* Sub-Tab 1 & 4: REQUESTS or INVOICES */}
+      {activeTab !== 'BOOKINGS' && activeTab !== 'DELIVERABLES' && (
+        serviceLoading && activeTab === 'REQUESTS' ? (
+          <div role="status" className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] p-4 text-center text-[12px] font-semibold text-[var(--mn-text-muted)]">
+            جارٍ تحميل بيانات الطلبات…
+          </div>
+        ) : !hasAnyRequestsOrInvoices && serviceError ? (
+          <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] p-4 text-center text-[12px] text-[var(--mn-text-muted)]">
+            تعذر جلب الطلبات حاليًا. يمكنك إعادة المحاولة دون فقدان اختيارك.
+          </div>
+        ) : !hasAnyRequestsOrInvoices ? (
+          <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 sm:p-7 text-center mn-panel shadow-2xs">
+            <div className="w-10 h-10 rounded-xl bg-[#142B5F] dark:bg-[#0c1a3b] border border-[#D6A43B]/40 flex items-center justify-center text-[#F2CD78] mx-auto mb-3 shadow-xs">
+              <ClipboardList className="w-5 h-5 text-[#F2CD78]" />
+            </div>
+            <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">{statusFilter ? 'لا توجد طلبات مطابقة للحالة المختارة' : 'لا توجد طلبات خدمات أو فواتير مسجلة'}</h3>
+            <p className="mt-1.5 text-[11px] leading-[1.8] text-[var(--mn-text-muted)]">
+              {statusFilter ? 'اختر «جميع الحالات» لعرض الطلبات الأخرى، أو تصفح دليل الخدمات.' : 'يمكنك استكشاف الخدمات الأكاديمية والاستشارية، وستظهر طلباتك وفواتيرك هنا عند توفرها.'}
+            </p>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to="/services"
+                className="px-3.5 py-2 rounded-xl bg-[#142B5F] text-white text-[11.5px] font-bold hover:bg-[#1a3675] transition-all shadow-2xs inline-flex items-center gap-2 border border-[#D6A43B]/40"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#F2CD78]" />
+                <span>استكشف دليل الخدمات والاستشارات</span>
+              </Link>
+            </div>
+          </div>
+        ) : activeTab === 'REQUESTS' ? (
+          requests.length === 0 && !selected && !requestedNotFoundId ? (
+            <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] p-5 text-center mn-panel">
+              <ClipboardList className="w-7 h-7 mx-auto text-[#0E7C86] mb-1.5" />
+              <h3 className="text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">{serviceError ? 'تعذر تحميل طلباتك حاليًا' : statusFilter ? 'لا توجد طلبات مطابقة للحالة المختارة' : 'لا توجد طلبات خدمات معروضة حاليًا'}</h3>
+              <p className="mt-1 text-[11px] leading-[1.8] text-[var(--mn-text-muted)]">
+                {serviceError
+                  ? 'يمكنك إعادة تحميل الطلبات من الزر أعلاه. ستبقى الفواتير المحمّلة متاحة هنا.'
+                  : 'يمكنك اختيار حالة أخرى أو الاطلاع على الفواتير والمدفوعات أو تقديم طلب جديد عبر دليل الخدمات.'}
+              </p>
+              <Link
+                to="/services"
+                className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#142B5F] text-white text-[11.5px] font-bold hover:bg-[#1a3675] transition-all border border-[#D6A43B]/40"
+              >
+                <span>دليل الخدمات</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
             {/* Requests List Section */}
             <ServiceSectionCard title="سجل الطلبات المقدمة" icon={<ClipboardList className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />} count={`${requests.length} طلب`}>
 
@@ -3201,7 +3049,7 @@ function ServiceRequestsView({
             </div>
           )}
         </ServiceSectionCard>
-      )}
+      ))}
       {activeTab === 'REQUESTS' && selected && !serviceLoading && (
         <StudentServiceBookingPanel requestId={selected.id} />
       )}
@@ -3248,6 +3096,8 @@ function ServiceSectionCard({
 }
 
 
+type VaultSubTab = 'ALL' | 'COLLECTIONS' | 'COMPARISONS' | 'TOOLS' | 'DOCUMENTS';
+
 function VaultView({
   dashboard,
   hydratedSavedItems,
@@ -3258,6 +3108,7 @@ function VaultView({
   onMoveSavedItem,
   onRemoveSavedItem,
   setTab,
+  trackers = [],
 }: {
   dashboard: StudentDashboardSummaryDto;
   hydratedSavedItems: HydratedStudentSavedItemDto[];
@@ -3268,8 +3119,10 @@ function VaultView({
   onMoveSavedItem: (itemId: string, collectionId: string | null) => void;
   onRemoveSavedItem: (item: StudentSavedItemDto) => void;
   setTab?: (tab: CanonicalWorkspaceTab) => void;
+  trackers?: StudentApplicationTrackerDto[];
 }) {
   const { language } = useTranslation();
+  const [subTab, setSubTab] = useState<VaultSubTab>('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [collectionFilter, setCollectionFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -3406,242 +3259,152 @@ function VaultView({
     [savedItems],
   );
 
+  const vaultSubTabs = [
+    { id: 'ALL' as const, label: 'الكل', count: savedItems.length, icon: Bookmark },
+    { id: 'COLLECTIONS' as const, label: 'المجموعات', count: collections.length, icon: Folder },
+    { id: 'COMPARISONS' as const, label: 'المقارنات والقرارات', icon: Scale },
+    { id: 'TOOLS' as const, label: 'نتائج الأدوات', count: typeCounts.STUDENT_TOOL || 0, icon: Sparkles },
+    { id: 'DOCUMENTS' as const, label: 'مستنداتي', icon: FileText },
+  ];
+
   return (
-    <div className="mn-student-vault-page mt-0 space-y-4 font-['Cairo',sans-serif]">
-      {/* Header box attached directly to the 8-tab bar above and stretched edge-to-edge right & left */}
+    <div className="mn-student-vault-page mt-0 space-y-3.5 font-['Cairo',sans-serif]">
+      {/* Header box attached directly to the 8-tab bar above */}
       <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
         <section
           aria-label="محفوظاتي ومجموعاتي"
           className="mn-student-vault-hero relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
         >
-          {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
+          {/* Selective Start-of-Box Accent Line (Navy) */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
           />
 
-          <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-2.5">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
-                  <Heart className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
-                </span>
+          <div className="px-3.5 py-3 pr-4 sm:px-5 sm:py-3.5 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
+                <Heart className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
+              </span>
+              <div>
                 <h2 className="mn-student-vault-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
                   محفوظاتي ومجموعاتي
                 </h2>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
-                  {savedItems.length} محفوظات
-                </span>
-                <Link
-                  to="/scholarships"
-                  className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-lg bg-[#142B5F] hover:bg-[#163D76] px-3 py-1 text-[11.5px] font-bold text-[#F2CD78] border border-[#D6A43B]/40 transition-all shadow-2xs font-['Cairo',sans-serif]"
-                >
-                  <Sparkles className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
-                  <span>استكشف المنح</span>
-                </Link>
+                <p className="text-[10.5px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                  العناصر المحفوظة، المجموعات، المقارنات، نتائج الأدوات والمستندات
+                </p>
               </div>
             </div>
 
-            <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-              احتفظ بالمنح والجامعات والدورات والفرص التي تهمك في مجموعات منظمة للرجوع إليها ومقارنتها في أي وقت.
-            </p>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2.5 py-1 text-[11px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
+                {savedItems.length} محفوظات
+              </span>
+            </div>
           </div>
         </section>
 
-        {/* Quick filter bar outside the header box, attached from the top and stretched edge-to-edge */}
-        <nav
-          aria-label="تصفية سريعة للمحفوظات"
-          className="-mt-px grid grid-cols-3 divide-x divide-x-reverse divide-[var(--mn-border)] dark:divide-white/10 rounded-b-2xl border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] overflow-hidden shadow-2xs"
-        >
-          {[
-            { label: 'جميع المحفوظات', count: savedItems.length, active: collectionFilter === 'ALL' && typeFilter === 'ALL', onClick: () => { setTypeFilter('ALL'); setCollectionFilter('ALL'); } },
-            { label: 'دون مجموعة', count: uncollectedCount, active: collectionFilter === 'UNCOLLECTED', onClick: () => setCollectionFilter('UNCOLLECTED') },
-            { label: 'مجموعاتي', count: collections.length, active: isCollectionsOpen || (collectionFilter !== 'ALL' && collectionFilter !== 'UNCOLLECTED'), onClick: () => setIsCollectionsOpen((prev) => !prev) },
-          ].map((item) => (
-            <button
-              key={item.label}
-              type="button"
-              aria-pressed={item.active}
-              onClick={item.onClick}
-              className={`flex min-h-12 items-center justify-center gap-1.5 px-2 py-2 text-center transition-all cursor-pointer font-['Cairo',sans-serif] ${
-                item.active
-                  ? 'bg-gradient-to-l from-[#142B5F] to-[#0E7C86] text-white shadow-inner font-bold'
-                  : 'bg-transparent text-[#1E293B] dark:text-[#F1F5F9] font-semibold hover:bg-[var(--mn-surface)] dark:hover:bg-white/5'
-              }`}
-            >
-              <span className="whitespace-normal break-words text-[11px] sm:text-[12px] leading-[1.35]">{item.label} ({item.count})</span>
-            </button>
-          ))}
-        </nav>
+        {/* Horizontal Swipe Sub-Tabs */}
+        <HorizontalSwipeTabs
+          ariaLabel="أقسام محفوظاتي ومجموعاتي"
+          items={vaultSubTabs}
+          activeId={subTab}
+          onChange={(next) => {
+            setSubTab(next);
+            if (next === 'COLLECTIONS') setIsCollectionsOpen(true);
+          }}
+        />
       </div>
 
-      {/* 3. Saved Items List Section stretched edge-to-edge */}
-      <section
-        aria-label="العناصر المحفوظة"
-        className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif]"
-      >
+      {/* Sub-Tab 3: COMPARISONS (المقارنات والقرارات) */}
+      {subTab === 'COMPARISONS' && (
+        <VaultComparisonsPanel
+          savedItems={savedItems}
+          onOpenApplications={() => setTab?.('OPPORTUNITIES')}
+        />
+      )}
+
+      {/* Sub-Tab 4: TOOLS (نتائج الأدوات) */}
+      {subTab === 'TOOLS' && (
+        <VaultToolsResultsPanel
+          savedItems={savedItems}
+          hydratedSavedItems={hydratedSavedItems}
+        />
+      )}
+
+      {/* Sub-Tab 5: DOCUMENTS (مستنداتي) */}
+      {subTab === 'DOCUMENTS' && <StudentDocumentsLibraryPanel trackers={trackers} />}
+
+      {/* Sub-Tab 1 & 2: ALL & COLLECTIONS */}
+      {(subTab === 'ALL' || subTab === 'COLLECTIONS') && (
+        <section
+          aria-label="العناصر المحفوظة"
+          className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel font-['Cairo',sans-serif]"
+        >
         {/* Top Controls Container */}
         <div className="relative pb-0.5">
           <div className="mb-3 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F] dark:bg-[#0c1a3b]">
                 <Bookmark className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
               </span>
-              <h3 className="text-[12.5px] sm:text-[13px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
+              <h3 className="text-[13px] sm:text-[14px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif] border-b-2 border-[#D6A43B] pb-0.5">
                 العناصر المحفوظة ({filteredItems.length})
               </h3>
             </div>
 
-            {collectionFilter !== 'ALL' && (
+            <div className="flex items-center gap-1.5">
+              {(typeFilter !== 'ALL' || collectionFilter !== 'ALL') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTypeFilter('ALL');
+                    setCollectionFilter('ALL');
+                  }}
+                  className="inline-flex min-h-7 items-center gap-1 rounded-lg border border-[#0E7C86]/40 bg-[#0E7C86]/10 px-2 py-0.5 text-[10px] font-bold text-[#0E7C86] dark:text-[#55CBC5] cursor-pointer"
+                >
+                  <span>عرض الكل</span>
+                  <span>✕</span>
+                </button>
+              )}
               <button
                 type="button"
-                onClick={() => setCollectionFilter('ALL')}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[#0E7C86]/40 bg-[#0E7C86]/10 px-2.5 py-1 text-[10.5px] font-bold text-[#0E7C86] dark:text-[#55CBC5] hover:bg-[#0E7C86]/15 transition-colors cursor-pointer"
+                onClick={() => {
+                  setIsFilterOpen((prev) => !prev);
+                  setIsCollectionsOpen(false);
+                }}
+                aria-expanded={isFilterOpen}
+                className={`inline-flex min-h-7 items-center gap-1 rounded-lg border px-2.5 py-1 text-[10.5px] font-bold transition-colors cursor-pointer ${
+                  isFilterOpen || isFilterActive
+                    ? 'border-[#142B5F] bg-[#142B5F] text-[#F2CD78]'
+                    : 'border-[var(--mn-border)] bg-[var(--mn-page)] text-[#142B5F] dark:text-[#F8FAFC] hover:border-[#0E7C86]'
+                }`}
               >
-                <span>المجموعة: {collectionFilter === 'UNCOLLECTED' ? 'دون مجموعة' : collections.find((c) => c.id === collectionFilter)?.name || 'محددة'}</span>
-                <span className="text-[11px] leading-none">✕</span>
+                <Filter className="h-3 w-3 text-[#0E7C86]" aria-hidden="true" />
+                <span>{isFilterActive ? activeTypeObj?.label : 'فلترة النوع'}</span>
               </button>
-            )}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCollectionsOpen((prev) => !prev);
+                  setIsFilterOpen(false);
+                }}
+                aria-expanded={isCollectionsOpen}
+                className={`inline-flex min-h-7 items-center gap-1 rounded-lg border px-2.5 py-1 text-[10.5px] font-bold transition-colors cursor-pointer ${
+                  isCollectionsOpen || isCollectionActive
+                    ? 'border-[#0E7C86] bg-[#0E7C86] text-white'
+                    : 'border-[var(--mn-border)] bg-[var(--mn-page)] text-[#142B5F] dark:text-[#F8FAFC] hover:border-[#0E7C86]'
+                }`}
+              >
+                <Folder className="h-3 w-3 text-[#0E7C86]" aria-hidden="true" />
+                <span>مجموعاتي ({collections.length})</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* 3 Equal Independent Boxes in one row from Right to Left: 1. الكل  2. فلترة  3. مجموعاتي */}
-        <div className="space-y-2.5 mb-4 font-['Cairo',sans-serif]">
-          <div
-            role="toolbar"
-            aria-label="تصفية المحفوظات"
-            className="grid grid-cols-3 gap-1.5 sm:gap-2.5"
-          >
-            {/* Box 1 (Right): الكل */}
-            <button
-              type="button"
-              onClick={() => {
-                setTypeFilter('ALL');
-                setCollectionFilter('ALL');
-                setIsFilterOpen(false);
-                setIsCollectionsOpen(false);
-              }}
-              aria-pressed={isAllActive}
-              className={`group relative flex min-h-[64px] sm:min-h-[70px] w-full flex-col items-center justify-center rounded-xl border p-1.5 sm:p-2 text-center transition-all cursor-pointer font-['Cairo',sans-serif] ${
-                isAllActive
-                  ? 'border-[#142B5F] bg-[#142B5F] text-white dark:border-[#D6A43B] dark:bg-[#D6A43B] dark:text-[#142B5F] shadow-2xs'
-                  : 'border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] text-[var(--mn-heading)] hover:border-[#D6A43B]/60'
-              }`}
-            >
-              <Layers
-                className={`h-4 w-4 mb-1 shrink-0 ${
-                  isAllActive
-                    ? 'text-[#E5B54F] dark:text-[#142B5F]'
-                    : 'text-[#142B5F] dark:text-[#E5B54F]'
-                }`}
-                aria-hidden="true"
-              />
-              <span className="text-[11.5px] sm:text-[13px] font-bold leading-tight">
-                الكل
-              </span>
-              <span
-                className={`text-[9.5px] sm:text-[11px] font-semibold mt-0.5 ${
-                  isAllActive ? 'opacity-90' : 'text-[var(--mn-text-muted)]'
-                }`}
-              >
-                ({savedItems.length})
-              </span>
-            </button>
-
-            {/* Box 2 (Center): فلترة */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsFilterOpen((prev) => !prev);
-                setIsCollectionsOpen(false);
-              }}
-              aria-expanded={isFilterOpen}
-              aria-label="قائمة فلترة نوع المحفوظات"
-              className={`group relative flex min-h-[64px] sm:min-h-[70px] w-full flex-col items-center justify-center rounded-xl border p-1.5 sm:p-2 text-center transition-all cursor-pointer font-['Cairo',sans-serif] ${
-                isFilterActive
-                  ? 'border-[#D6A43B] bg-[#142B5F]/5 dark:bg-[#D6A43B]/15 text-[#142B5F] dark:text-[#E5B54F] ring-1 ring-[#D6A43B]/40 shadow-2xs'
-                  : isFilterOpen
-                  ? 'border-[#D6A43B] bg-[var(--mn-surface)] text-[var(--mn-heading)] shadow-2xs'
-                  : 'border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] text-[var(--mn-heading)] hover:border-[#D6A43B]/60'
-              }`}
-            >
-              <Filter
-                className="h-4 w-4 mb-1 shrink-0 text-[#D6A43B]"
-                aria-hidden="true"
-              />
-              <div className="flex items-center justify-center gap-1 leading-tight">
-                <span className="text-[11.5px] sm:text-[13px] font-bold">
-                  فلترة
-                </span>
-                <ChevronDown
-                  className={`h-3 w-3 shrink-0 transition-transform ${
-                    isFilterOpen ? 'rotate-180' : ''
-                  }`}
-                  aria-hidden="true"
-                />
-              </div>
-              <span
-                className={`text-[9.5px] sm:text-[11px] font-semibold mt-0.5 truncate max-w-full px-0.5 ${
-                  isFilterActive
-                    ? 'text-[#D6A43B] dark:text-[#E5B54F] font-bold'
-                    : 'text-[var(--mn-text-muted)]'
-                }`}
-              >
-                {isFilterActive
-                  ? `${activeTypeObj?.label} (${typeCounts[typeFilter] || 0})`
-                  : 'حسب النوع'}
-              </span>
-            </button>
-
-            {/* Box 3 (Left in RTL): مجموعاتي */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsCollectionsOpen((prev) => !prev);
-                setIsFilterOpen(false);
-              }}
-              aria-expanded={isCollectionsOpen}
-              aria-label="قائمة مجموعاتي الشخصية"
-              className={`group relative flex min-h-[64px] sm:min-h-[70px] w-full flex-col items-center justify-center rounded-xl border p-1.5 sm:p-2 text-center transition-all cursor-pointer font-['Cairo',sans-serif] ${
-                isCollectionActive
-                  ? 'border-[#0E7C86] bg-[#0E7C86]/5 dark:bg-[#0E7C86]/15 text-[#0E7C86] dark:text-[#55CBC5] ring-1 ring-[#0E7C86]/40 shadow-2xs'
-                  : isCollectionsOpen
-                  ? 'border-[#0E7C86] bg-[var(--mn-surface)] text-[var(--mn-heading)] shadow-2xs'
-                  : 'border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] text-[var(--mn-heading)] hover:border-[#D6A43B]/60'
-              }`}
-            >
-              <Folder
-                className="h-4 w-4 mb-1 shrink-0 text-[#0E7C86] dark:text-[#55CBC5]"
-                aria-hidden="true"
-              />
-              <div className="flex items-center justify-center gap-1 leading-tight">
-                <span className="text-[11.5px] sm:text-[13px] font-bold">
-                  مجموعاتي
-                </span>
-                <ChevronDown
-                  className={`h-3 w-3 shrink-0 transition-transform ${
-                    isCollectionsOpen ? 'rotate-180' : ''
-                  }`}
-                  aria-hidden="true"
-                />
-              </div>
-              <span
-                className={`text-[9.5px] sm:text-[11px] font-semibold mt-0.5 truncate max-w-full px-0.5 ${
-                  isCollectionActive
-                    ? 'text-[#0E7C86] dark:text-[#55CBC5] font-bold'
-                    : 'text-[var(--mn-text-muted)]'
-                }`}
-              >
-                {isCollectionActive
-                  ? activeCollectionLabel
-                  : `(${collections.length})`}
-              </span>
-            </button>
-          </div>
+        <div className="space-y-2.5 mb-3 font-['Cairo',sans-serif]">
 
           {/* Dropdown Panel for Box 2: Filter by 9 Types */}
           {isFilterOpen && (
@@ -4139,6 +3902,7 @@ function VaultView({
           </div>
         )}
       </section>
+      )}
 
       {/* Move to Collection Modal / Sheet */}
       {movingItem && (
@@ -4561,6 +4325,8 @@ function ProfileToggle({
   );
 }
 
+type ProfileSubTab = 'ACADEMIC' | 'SETTINGS' | 'CALENDAR' | 'SUPPORT';
+
 function ProfileView({
   dashboard,
   identity,
@@ -4577,6 +4343,9 @@ function ProfileView({
   onClearSearch,
   onDirtyChange,
   dirty,
+  trackers = [],
+  requestedSubTab,
+  onClearRequestedSubTab,
 }: {
   onDirtyChange: (dirty: boolean) => void;
   dirty: boolean;
@@ -4594,35 +4363,60 @@ function ProfileView({
   onResetLayout: () => void;
   onClearSearch: () => void;
   onBack?: () => void;
+  trackers?: StudentApplicationTrackerDto[];
+  requestedSubTab?: ProfileSubTab | null;
+  onClearRequestedSubTab?: () => void;
 }) {
+  const [subTab, setSubTab] = useState<ProfileSubTab>(requestedSubTab || 'ACADEMIC');
+  const [showAdvancedBackups, setShowAdvancedBackups] = useState(false);
+
+  useEffect(() => {
+    if (requestedSubTab) {
+      setSubTab(requestedSubTab);
+      onClearRequestedSubTab?.();
+    }
+  }, [requestedSubTab, onClearRequestedSubTab]);
+
   function handleClearSearch() {
     if (window.confirm('هل أنت متأكد من مسح كامل سجل البحث الشخصي؟ لا يمكن التراجع عن هذا الإجراء.')) {
       onClearSearch();
     }
   }
 
-  return (
-    <div className="mn-student-profile-page mt-0 space-y-4 font-['Cairo',sans-serif]">
-      {/* Unified inline section header attached directly to the 8-tab bar above and stretched edge-to-edge */}
-      <section
-        aria-label="إعداداتي وملفي الشخصي"
-        className="mn-student-profile-hero relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px overflow-hidden rounded-b-2xl rounded-t-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
-      >
-        {/* Royal Navy (#142B5F) vertical line on the right edge before the box */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
-        />
+  const profileSubTabs = [
+    { id: 'ACADEMIC' as const, label: 'ملفي الأكاديمي', icon: GraduationCap },
+    { id: 'SETTINGS' as const, label: 'الإعدادات والخصوصية', icon: Settings2 },
+    { id: 'CALENDAR' as const, label: 'التقويم والمهام', icon: CalendarClock },
+    { id: 'SUPPORT' as const, label: 'الدعم والمساعدة', icon: HelpCircle },
+  ];
 
-        <div className="px-3.5 pt-3.5 pb-3.5 pr-4 sm:px-5 sm:pt-4 sm:pb-4">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+  return (
+    <div className="mn-student-profile-page mt-0 space-y-3.5 font-['Cairo',sans-serif]">
+      {/* Unified inline section header attached directly to the 8-tab bar above */}
+      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
+        <section
+          aria-label="إعداداتي وملفي الشخصي"
+          className="mn-student-profile-hero relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel font-['Cairo',sans-serif]"
+        >
+          {/* Selective Start-of-Box Accent Line (Navy) */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
+          />
+
+          <div className="px-3.5 py-3 pr-4 sm:px-5 sm:py-3.5 flex flex-wrap items-center justify-between gap-2">
             <div className="flex min-w-0 items-center gap-2.5">
               <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
                 <User className="h-4 w-4 text-[#F2CD78]" aria-hidden="true" />
               </span>
-              <h2 className="mn-student-profile-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
-                إعداداتي وملفي الشخصي
-              </h2>
+              <div>
+                <h2 className="mn-student-profile-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
+                  إعداداتي وملفي الشخصي
+                </h2>
+                <p className="text-[10.5px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                  الملف الأكاديمي، تفضيلات الحساب، التقويم والدعم الفني
+                </p>
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -4635,7 +4429,7 @@ function ProfileView({
                 type="button"
                 disabled={saving}
                 onClick={onLogout}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-rose-300 dark:border-rose-900/40 bg-rose-50 dark:bg-rose-950/30 px-2.5 py-1 text-[11.5px] font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-rose-300 dark:border-rose-900/40 bg-rose-50 dark:bg-rose-950/30 px-2.5 py-1 text-[11px] font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
                 title="تسجيل الخروج من الحساب"
               >
                 <LogOut className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" aria-hidden="true" />
@@ -4643,355 +4437,341 @@ function ProfileView({
               </button>
             </div>
           </div>
+        </section>
 
-          <p className="mt-2.5 text-[11.5px] sm:text-[12px] font-medium leading-[1.75] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-            حدّث بياناتك الشخصية والأكاديمية، واضبط تفضيلات الإشعارات والخصوصية وإعدادات العرض في حسابك.
-          </p>
-        </div>
-      </section>
+        {/* Horizontal Swipe Sub-Tabs */}
+        <HorizontalSwipeTabs
+          ariaLabel="أقسام إعداداتي وملفي"
+          items={profileSubTabs}
+          activeId={subTab}
+          onChange={setSubTab}
+        />
+      </div>
 
-      {/* Profile Form */}
-      <form onSubmit={onSave} onChange={() => onDirtyChange(true)} className="space-y-4 font-['Cairo',sans-serif]">
-        <fieldset disabled={saving} className="space-y-4 min-w-0 border-0 p-0">
+      {/* Sub-Tab 3: CALENDAR (التقويم والمهام) */}
+      {subTab === 'CALENDAR' && <StudentCalendarTasksPanel trackers={trackers} />}
+
+      {/* Sub-Tab 4: SUPPORT (الدعم والمساعدة) */}
+      {subTab === 'SUPPORT' && <StudentSupportCenterPanel />}
+
+      {/* Sub-Tab 1 & 2: ACADEMIC & SETTINGS (Keep form mounted so saving works from either view) */}
+      {subTab === 'ACADEMIC' && <AcademicProfileSummaryCard />}
+
+      <form
+        onSubmit={onSave}
+        onChange={() => onDirtyChange(true)}
+        className={subTab === 'ACADEMIC' || subTab === 'SETTINGS' ? "space-y-3.5 font-['Cairo',sans-serif]" : 'hidden'}
+      >
+        <fieldset disabled={saving} className="space-y-3.5 min-w-0 border-0 p-0">
           {dirty && (
-            <p role="status" className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-[12px] font-bold text-amber-900 dark:text-amber-200 font-['Cairo',sans-serif]">
+            <p role="status" className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] rounded-none border-x-0 border-t border-b border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-2.5 text-[11.5px] font-bold text-amber-900 dark:text-amber-200 font-['Cairo',sans-serif]">
               لديك تعديلات غير محفوظة، اضغط على زر الحفظ بالأسفل لتطبيقها سحابياً.
             </p>
           )}
 
-          <div className="space-y-4">
-            {/* Section 1: بياناتي والهوية */}
-            <ProfileSectionCard
-              title="بياناتي والهوية"
-              icon={<User className="w-4 h-4 text-[#F2CD78]" />}
-              subtitle="معلومات الحساب المعتمدة في منصة منارتك"
-            >
-              <div className="space-y-3.5">
-                {/* Avatar Asset Picker */}
-                <StudentAvatarAssetPicker currentAssetId={dashboard.workspace.avatarAssetId ?? null} />
+          <div className="space-y-3.5">
+            {/* Section 1: بياناتي والهوية (Shown in ACADEMIC sub-tab) */}
+            <div className={subTab === 'ACADEMIC' ? 'block' : 'hidden'}>
+              <ProfileSectionCard
+                title="بياناتي والهوية"
+                icon={<User className="w-4 h-4 text-[#F2CD78]" />}
+                subtitle="معلومات الحساب المعتمدة في منصة منارتك"
+              >
+                <div className="space-y-3">
+                  <StudentAvatarAssetPicker currentAssetId={dashboard.workspace.avatarAssetId ?? null} />
 
-                {/* Display Name - Editable */}
-                <div>
-                  <label className="block text-[12px] font-bold text-[var(--mn-heading)] mb-1 font-['Cairo',sans-serif]">
-                    الاسم الظاهر
-                  </label>
-                  <input
-                    name="displayName"
-                    defaultValue={dashboard.workspace.displayName || ''}
-                    maxLength={120}
-                    placeholder="أدخل اسمك الظاهر"
-                    className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] font-medium text-[var(--mn-text)] outline-none focus:border-[#D6A43B] focus:ring-2 focus:ring-[#D6A43B]/20 transition-all font-['Cairo',sans-serif]"
-                  />
-                  <p className="mt-1 text-[11px] text-[var(--mn-text-muted)] font-['Cairo',sans-serif]">
-                    الاسم الظاهر في مساحة حسابك؛ الشهادات الصادرة تحتفظ ببيانات إصدارها المعتمدة.
-                  </p>
-                </div>
-
-                {/* Email Address - Read only */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-[12px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
-                      البريد الإلكتروني الأساسي
+                  <div>
+                    <label className="block text-[11.5px] font-bold text-[var(--mn-heading)] mb-1 font-['Cairo',sans-serif]">
+                      الاسم الظاهر
                     </label>
-                    <span className="text-[10px] font-semibold text-[var(--mn-text-muted)] bg-[var(--mn-page)] px-2 py-0.5 rounded-md flex items-center gap-1 border border-[var(--mn-border)] dark:border-white/10">
-                      <LockKeyhole className="w-3 h-3 text-[var(--mn-text-muted)]" /> للقراءة فقط
-                    </span>
+                    <input
+                      name="displayName"
+                      defaultValue={dashboard.workspace.displayName || ''}
+                      maxLength={120}
+                      placeholder="أدخل اسمك الظاهر"
+                      className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] font-medium text-[var(--mn-text)] outline-none focus:border-[#0E7C86] transition-all font-['Cairo',sans-serif]"
+                    />
                   </div>
-                  <input
-                    type="text"
-                    readOnly
-                    disabled
-                    value={identity?.primaryEmail || 'غير مسجل'}
-                    className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] px-3 py-2 text-[12px] text-[var(--mn-text-muted)] font-mono cursor-not-allowed"
-                  />
-                </div>
 
-                {/* Academic Account Role Badge */}
-                <div className="pt-1">
-                  <div className="p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] flex items-center justify-between font-['Cairo',sans-serif]">
-                    <div>
-                      <span className="text-[11px] font-semibold text-[var(--mn-text-muted)] block">حالة الحساب الأكاديمي</span>
-                      <span className="text-[12px] font-bold text-[#142B5F] dark:text-[#E0B244] mt-0.5 inline-flex items-center gap-1.5">
-                        <ShieldCheck className="w-3.5 h-3.5 text-[var(--mn-success-text)]" />
-                        {arabicStatus(dashboard.workspace.status)}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[11.5px] font-bold text-[var(--mn-heading)] font-['Cairo',sans-serif]">
+                        البريد الإلكتروني الأساسي
+                      </label>
+                      <span className="text-[10px] font-semibold text-[var(--mn-text-muted)] bg-[var(--mn-page)] px-2 py-0.5 rounded-md flex items-center gap-1 border border-[var(--mn-border)] dark:border-white/10">
+                        <LockKeyhole className="w-3 h-3 text-[var(--mn-text-muted)]" /> للقراءة فقط
                       </span>
                     </div>
-                    <span className="text-[11px] font-bold text-[var(--mn-text-muted)] bg-[var(--mn-surface)] px-2.5 py-0.5 rounded-md border border-[var(--mn-border)] dark:border-white/10">
-                      حساب طالب
-                    </span>
+                    <input
+                      type="text"
+                      readOnly
+                      disabled
+                      value={identity?.primaryEmail || 'غير مسجل'}
+                      className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] px-3 py-2 text-[12px] text-[var(--mn-text-muted)] font-mono cursor-not-allowed"
+                    />
                   </div>
                 </div>
-              </div>
-            </ProfileSectionCard>
+              </ProfileSectionCard>
+            </div>
 
-            {/* Section 2: تفضيلات التجربة والعرض */}
-            <ProfileSectionCard
-              title="تفضيلات التجربة والعرض"
-              icon={<Sparkles className="w-4 h-4 text-[#E5B54F]" />}
-              subtitle="تخصيص اللغة والمظهر والوصول"
-            >
-              <div className="space-y-3.5">
-                <div className="grid gap-3 sm:grid-cols-2">
+            {/* Sections 2, 3, 4, 5: Shown in SETTINGS sub-tab */}
+            <div className={subTab === 'SETTINGS' ? 'space-y-3.5' : 'hidden'}>
+              {/* Section 2: تفضيلات التجربة والعرض */}
+              <ProfileSectionCard
+                title="تفضيلات التجربة والعرض"
+                icon={<Sparkles className="w-4 h-4 text-[#E5B54F]" />}
+                subtitle="تخصيص اللغة والمظهر والوصول"
+              >
+                <div className="space-y-3">
+                  <div className="grid gap-2.5 sm:grid-cols-2">
+                    <div>
+                      <label className="block text-[11.5px] font-bold text-[var(--mn-heading)] mb-1 flex items-center gap-1.5 font-['Cairo',sans-serif]">
+                        <Languages className="w-3.5 h-3.5 text-[#142B5F] dark:text-[#F2CD78]" />
+                        اللغة المفضلة
+                      </label>
+                      <select
+                        name="preferredLanguage"
+                        defaultValue={dashboard.workspace.preferredLanguage || 'ar'}
+                        className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] text-[var(--mn-text)] font-medium outline-none focus:border-[#0E7C86] font-['Cairo',sans-serif]"
+                      >
+                        <option value="ar">العربية (الافتراضية)</option>
+                        <option value="en">English (الإنجليزية)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11.5px] font-bold text-[var(--mn-heading)] mb-1 flex items-center gap-1.5 font-['Cairo',sans-serif]">
+                        <Clock3 className="w-3.5 h-3.5 text-[#142B5F] dark:text-[#F2CD78]" />
+                        المنطقة الزمنية
+                      </label>
+                      <select
+                        name="timezone"
+                        defaultValue={dashboard.workspace.timezone || 'Asia/Aden'}
+                        className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] text-[var(--mn-text)] font-medium outline-none focus:border-[#0E7C86] font-['Cairo',sans-serif]"
+                      >
+                        {dashboard.workspace.timezone && !['Asia/Aden','Asia/Riyadh','Asia/Dubai','Africa/Cairo','UTC'].includes(dashboard.workspace.timezone) && <option value={dashboard.workspace.timezone}>{dashboard.workspace.timezone}</option>}
+                        <option value="Asia/Aden">عدن (GMT+3)</option>
+                        <option value="Asia/Riyadh">الرياض (GMT+3)</option>
+                        <option value="Asia/Dubai">دبي (GMT+4)</option>
+                        <option value="Africa/Cairo">القاهرة (حسب التوقيت المحلي)</option>
+                        <option value="UTC">التوقيت العالمي الموحد (UTC)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11.5px] font-bold text-[var(--mn-heading)] mb-1 flex items-center gap-1.5 font-['Cairo',sans-serif]">
+                        <Moon className="w-3.5 h-3.5 text-[#142B5F] dark:text-[#F2CD78]" />
+                        المظهر العام
+                      </label>
+                      <select
+                        name="theme"
+                        defaultValue={dashboard.workspace.theme || 'SYSTEM'}
+                        className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] text-[var(--mn-text)] font-medium outline-none focus:border-[#0E7C86] font-['Cairo',sans-serif]"
+                      >
+                        <option value="SYSTEM">تلقائي (حسب نظام الجهاز)</option>
+                        <option value="LIGHT">المظهر الفاتح</option>
+                        <option value="DARK">المظهر الداكن</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11.5px] font-bold text-[var(--mn-heading)] mb-1 flex items-center gap-1.5 font-['Cairo',sans-serif]">
+                        <Settings2 className="w-3.5 h-3.5 text-[#142B5F] dark:text-[#F2CD78]" />
+                        حجم خط الواجهة
+                      </label>
+                      <select
+                        name="textScale"
+                        defaultValue={String(accessibility.textScale || 'DEFAULT')}
+                        className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] text-[var(--mn-text)] font-medium outline-none focus:border-[#0E7C86] font-['Cairo',sans-serif]"
+                      >
+                        <option value="SMALL">خط صغير (Compact)</option>
+                        <option value="DEFAULT">الافتراضي (Standard)</option>
+                        <option value="LARGE">خط كبير (Large)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-[var(--mn-border)] dark:border-white/10 space-y-2">
+                    <span className="text-[11.5px] font-bold text-[var(--mn-heading)] block font-['Cairo',sans-serif]">إمكانية الوصول والراحة</span>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <ProfileToggle
+                        name="reduceMotion"
+                        label="تقليل الحركة والتأثيرات"
+                        defaultChecked={Boolean(accessibility.reduceMotion)}
+                      />
+                      <ProfileToggle
+                        name="highContrast"
+                        label="وضع التباين المرتفع"
+                        defaultChecked={Boolean(accessibility.highContrast)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </ProfileSectionCard>
+
+              {/* Section 3: إعدادات الإشعارات والتنبيهات */}
+              <ProfileSectionCard
+                title="إعدادات الإشعارات والتنبيهات"
+                icon={<Bell className="w-4 h-4 text-[#E5B54F]" />}
+                subtitle="اختر القنوات والفئات التي تهمك"
+              >
+                <div className="space-y-3 font-['Cairo',sans-serif]">
                   <div>
-                    <label className="block text-[12px] font-bold text-[var(--mn-heading)] mb-1 flex items-center gap-1.5 font-['Cairo',sans-serif]">
-                      <Languages className="w-3.5 h-3.5 text-[#D6A43B]" />
-                      اللغة المفضلة
-                    </label>
-                    <select
-                      name="preferredLanguage"
-                      defaultValue={dashboard.workspace.preferredLanguage || 'ar'}
-                      className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] text-[var(--mn-text)] font-medium outline-none focus:border-[#D6A43B] focus:ring-2 focus:ring-[#D6A43B]/20 font-['Cairo',sans-serif]"
+                    <span className="text-[11.5px] font-bold text-[var(--mn-heading)] block mb-1.5 font-['Cairo',sans-serif]">قنوات الاستقبال</span>
+                    <div className="grid gap-2 grid-cols-1 sm:grid-cols-3">
+                      <ProfileToggle
+                        name="notifyInApp"
+                        label="داخل المنصة"
+                        defaultChecked={notifications.inApp ?? true}
+                      />
+                      <ProfileToggle
+                        name="notifyEmail"
+                        label="البريد الإلكتروني"
+                        defaultChecked={notifications.email ?? true}
+                      />
+                      <ProfileToggle
+                        name="notifyPush"
+                        label="الإشعارات الفورية"
+                        defaultChecked={notifications.push ?? false}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-[var(--mn-border)] dark:border-white/10">
+                    <span className="text-[11.5px] font-bold text-[var(--mn-heading)] block mb-1.5 font-['Cairo',sans-serif]">فئات التنبيهات</span>
+                    <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
+                      <ProfileToggle
+                        name="notifyLearning"
+                        label="تحديثات التعلم والدورات"
+                        defaultChecked={notifications.learning ?? true}
+                      />
+                      <ProfileToggle
+                        name="notifyCertificates"
+                        label="إصدار الشهادات والاعتمادات"
+                        defaultChecked={notifications.certificates ?? true}
+                      />
+                      <ProfileToggle
+                        name="notifyScholarships"
+                        label="المنح ومواعيد التقديم"
+                        defaultChecked={notifications.scholarships ?? true}
+                      />
+                      <ProfileToggle
+                        name="notifyPayments"
+                        label="الفواتير والطلبات المالية"
+                        defaultChecked={notifications.payments ?? true}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </ProfileSectionCard>
+
+              {/* Section 4: مركز الخصوصية وسجل البحث */}
+              <ProfileSectionCard
+                title="الخصوصية وسجل البحث"
+                icon={<Shield className="w-4 h-4 text-[#E5B54F]" />}
+                subtitle="إدارة خصوصية البحث والتوصيات"
+              >
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <ProfileToggle
+                      name="retainSearchHistory"
+                      label="الاحتفاظ بسجل البحث الشخصي"
+                      defaultChecked={privacy.retainSearchHistory ?? false}
+                    />
+                    <ProfileToggle
+                      name="allowPersonalization"
+                      label="السماح بتخصيص التوصيات الذكية"
+                      defaultChecked={privacy.allowPersonalization ?? false}
+                    />
+                    <ProfileToggle
+                      name="allowProductAnalytics"
+                      label="المساهمة في تحسين أداء المنصة"
+                      defaultChecked={privacy.allowProductAnalytics ?? false}
+                    />
+                  </div>
+
+                  <div className="p-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] flex items-center justify-between gap-3 font-['Cairo',sans-serif]">
+                    <div>
+                      <span className="text-[11.5px] font-bold text-[var(--mn-heading)] block">مسح سجل البحث</span>
+                      <span className="text-[10.5px] text-[var(--mn-text-muted)]">حذف عمليات البحث المحفوظة فوراً.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleClearSearch}
+                      disabled={saving}
+                      className="rounded-lg border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-3 py-1.5 text-[11px] font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-100 transition-colors shrink-0 disabled:opacity-50 cursor-pointer font-['Cairo',sans-serif]"
                     >
-                      <option value="ar">العربية (الافتراضية)</option>
-                      <option value="en">English (الإنجليزية)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-[12px] font-bold text-[var(--mn-heading)] mb-1 flex items-center gap-1.5 font-['Cairo',sans-serif]">
-                      <Clock3 className="w-3.5 h-3.5 text-[#D6A43B]" />
-                      المنطقة الزمنية
-                    </label>
-                    <select
-                      name="timezone"
-                      defaultValue={dashboard.workspace.timezone || 'Asia/Aden'}
-                      className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] text-[var(--mn-text)] font-medium outline-none focus:border-[#D6A43B] focus:ring-2 focus:ring-[#D6A43B]/20 font-['Cairo',sans-serif]"
-                    >
-                      {dashboard.workspace.timezone && !['Asia/Aden','Asia/Riyadh','Asia/Dubai','Africa/Cairo','UTC'].includes(dashboard.workspace.timezone) && <option value={dashboard.workspace.timezone}>{dashboard.workspace.timezone}</option>}
-                      <option value="Asia/Aden">عدن (GMT+3)</option>
-                      <option value="Asia/Riyadh">الرياض (GMT+3)</option>
-                      <option value="Asia/Dubai">دبي (GMT+4)</option>
-                      <option value="Africa/Cairo">القاهرة (حسب التوقيت المحلي)</option>
-                      <option value="UTC">التوقيت العالمي الموحد (UTC)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-[12px] font-bold text-[var(--mn-heading)] mb-1 flex items-center gap-1.5 font-['Cairo',sans-serif]">
-                      <Moon className="w-3.5 h-3.5 text-[#D6A43B]" />
-                      المظهر العام
-                    </label>
-                    <select
-                      name="theme"
-                      defaultValue={dashboard.workspace.theme || 'SYSTEM'}
-                      className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] text-[var(--mn-text)] font-medium outline-none focus:border-[#D6A43B] focus:ring-2 focus:ring-[#D6A43B]/20 font-['Cairo',sans-serif]"
-                    >
-                      <option value="SYSTEM">تلقائي (حسب نظام الجهاز)</option>
-                      <option value="LIGHT">المظهر الفاتح</option>
-                      <option value="DARK">المظهر الداكن</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-[12px] font-bold text-[var(--mn-heading)] mb-1 flex items-center gap-1.5 font-['Cairo',sans-serif]">
-                      <Settings2 className="w-3.5 h-3.5 text-[#D6A43B]" />
-                      حجم خط الواجهة
-                    </label>
-                    <select
-                      name="textScale"
-                      defaultValue={String(accessibility.textScale || 'DEFAULT')}
-                      className="w-full rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] text-[var(--mn-text)] font-medium outline-none focus:border-[#D6A43B] focus:ring-2 focus:ring-[#D6A43B]/20 font-['Cairo',sans-serif]"
-                    >
-                      <option value="SMALL">خط صغير (Compact)</option>
-                      <option value="DEFAULT">الافتراضي (Standard)</option>
-                      <option value="LARGE">خط كبير (Large)</option>
-                    </select>
+                      مسح السجل الآن
+                    </button>
                   </div>
                 </div>
+              </ProfileSectionCard>
 
-                {/* Accessibility Toggles */}
-                <div className="pt-2 border-t border-[var(--mn-border)] dark:border-white/10 space-y-2">
-                  <span className="text-[12px] font-bold text-[var(--mn-heading)] block font-['Cairo',sans-serif]">إمكانية الوصول والراحة</span>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <ProfileToggle
-                      name="reduceMotion"
-                      label="تقليل الحركة والتأثيرات"
-                      defaultChecked={Boolean(accessibility.reduceMotion)}
-                    />
-                    <ProfileToggle
-                      name="highContrast"
-                      label="وضع التباين المرتفع"
-                      defaultChecked={Boolean(accessibility.highContrast)}
-                    />
-                  </div>
-                </div>
-
-                <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-2.5 text-[11px] text-amber-900 dark:text-amber-200 flex items-start gap-2 font-['Cairo',sans-serif]">
-                  <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                  <span>تُحفظ جميع التفضيلات سحابياً في حسابك وتُطبّق على الفور عبر جميع أجهزتك المتصلة.</span>
-                </div>
-              </div>
-            </ProfileSectionCard>
-
-            {/* Section 3: إعدادات الإشعارات والتنبيهات */}
-            <ProfileSectionCard
-              title="إعدادات الإشعارات والتنبيهات"
-              icon={<Bell className="w-4 h-4 text-[#E5B54F]" />}
-              subtitle="اختر القنوات والفئات التي تهمك"
-            >
-              <div className="space-y-3 font-['Cairo',sans-serif]">
-                <div>
-                  <span className="text-[12px] font-bold text-[var(--mn-heading)] block mb-1.5 font-['Cairo',sans-serif]">قنوات الاستقبال</span>
-                  <div className="grid gap-2 grid-cols-1 sm:grid-cols-3">
-                    <ProfileToggle
-                      name="notifyInApp"
-                      label="داخل المنصة"
-                      defaultChecked={notifications.inApp ?? true}
-                    />
-                    <ProfileToggle
-                      name="notifyEmail"
-                      label="البريد الإلكتروني"
-                      defaultChecked={notifications.email ?? true}
-                    />
-                    <ProfileToggle
-                      name="notifyPush"
-                      label="الإشعارات الفورية"
-                      defaultChecked={notifications.push ?? false}
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-[var(--mn-border)] dark:border-white/10">
-                  <span className="text-[12px] font-bold text-[var(--mn-heading)] block mb-1.5 font-['Cairo',sans-serif]">فئات التنبيهات</span>
-                  <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
-                    <ProfileToggle
-                      name="notifyLearning"
-                      label="تحديثات التعلم والدورات"
-                      defaultChecked={notifications.learning ?? true}
-                    />
-                    <ProfileToggle
-                      name="notifyCertificates"
-                      label="إصدار الشهادات والاعتمادات"
-                      defaultChecked={notifications.certificates ?? true}
-                    />
-                    <ProfileToggle
-                      name="notifyScholarships"
-                      label="المنح ومواعيد التقديم"
-                      defaultChecked={notifications.scholarships ?? true}
-                    />
-                    <ProfileToggle
-                      name="notifyPayments"
-                      label="الفواتير والطلبات المالية"
-                      defaultChecked={notifications.payments ?? true}
-                    />
-                  </div>
-                </div>
-              </div>
-            </ProfileSectionCard>
-
-            {/* Section 4: مركز الخصوصية وسجل البحث */}
-            <ProfileSectionCard
-              title="الخصوصية وسجل البحث"
-              icon={<Shield className="w-4 h-4 text-[#E5B54F]" />}
-              subtitle="إدارة خصوصية البحث والتوصيات والبيانات المحفوظة"
-            >
-              <div className="space-y-3.5">
-                <div className="space-y-2">
-                  <span className="text-[12px] font-bold text-[var(--mn-heading)] block font-['Cairo',sans-serif]">خيارات الخصوصية والبيانات</span>
-                  <ProfileToggle
-                    name="retainSearchHistory"
-                    label="الاحتفاظ بسجل البحث الشخصي"
-                    description="حفظ كلمات البحث للوصول السريع"
-                    defaultChecked={privacy.retainSearchHistory ?? false}
-                  />
-                  <ProfileToggle
-                    name="allowPersonalization"
-                    label="السماح بتخصيص التوصيات الذكية"
-                    description="عرض فرص ودورات ملائمة لاهتماماتك"
-                    defaultChecked={privacy.allowPersonalization ?? false}
-                  />
-                  <ProfileToggle
-                    name="allowProductAnalytics"
-                    label="المساهمة في تحسين أداء المنصة"
-                    description="مشاركة بيانات أداء مجهولة الهوية"
-                    defaultChecked={privacy.allowProductAnalytics ?? false}
-                  />
-                </div>
-
-                <div className="p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] flex items-center justify-between gap-3 font-['Cairo',sans-serif]">
-                  <div>
-                    <span className="text-[11.5px] font-bold text-[var(--mn-heading)] block">مسح سجل البحث</span>
-                    <span className="text-[10.5px] text-[var(--mn-text-muted)]">حذف عمليات البحث المحفوظة من حسابك فوراً.</span>
-                  </div>
+              {/* Section 5: Collapsible Advanced Settings & Backups */}
+              <ProfileSectionCard
+                title="إعدادات متقدمة والنسخ الاحتياطية"
+                icon={<Settings2 className="w-3.5 h-3.5 text-[#E5B54F]" />}
+                action={
                   <button
                     type="button"
-                    onClick={handleClearSearch}
-                    disabled={saving}
-                    className="rounded-lg border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-3 py-1.5 text-[11px] font-bold text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors shrink-0 disabled:opacity-50 cursor-pointer font-['Cairo',sans-serif]"
+                    onClick={() => setShowAdvancedBackups((prev) => !prev)}
+                    className="inline-flex items-center gap-1 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-2.5 py-1 text-[10.5px] font-bold text-[#142B5F] dark:text-[#F8FAFC] cursor-pointer"
                   >
-                    مسح السجل الآن
+                    <span>{showAdvancedBackups ? 'إخفاء' : 'عرض الخيارات'}</span>
+                    {showAdvancedBackups ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                   </button>
-                </div>
-              </div>
-            </ProfileSectionCard>
+                }
+              >
+                {showAdvancedBackups ? (
+                  <div className="space-y-3 font-['Cairo',sans-serif]">
+                    <div className="grid gap-2.5 sm:grid-cols-2 text-xs">
+                      <div className="p-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)]">
+                        <span className="text-[10px] font-semibold text-[var(--mn-text-muted)] block">معرّف النظام الداخلي</span>
+                        <span className="text-[11px] font-mono text-[var(--mn-heading)] mt-0.5 block truncate select-all">
+                          {identity?.principalId || '—'}
+                        </span>
+                      </div>
 
-            {/* Section 5: إعدادات متقدمة والنسخ الاحتياطية */}
-            <ProfileSectionCard
-              title="إعدادات متقدمة والنسخ الاحتياطية"
-              icon={<Settings2 className="w-3.5 h-3.5 text-[#E5B54F]" />}
-              subtitle="معرّفات النظام، تفاصيل التزامن السحابي، وإدارة نسخ مساحة العمل"
-              className="lg:col-span-2"
-            >
-              <div className="space-y-4 font-['Cairo',sans-serif]">
-                {/* Internal Identifiers & Technical Sync Details */}
-                <div className="grid gap-3 sm:grid-cols-2 text-xs">
-                  <div className="p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)]">
-                    <span className="text-[10.5px] font-semibold text-[var(--mn-text-muted)] block">معرّف النظام الداخلي (Principal ID)</span>
-                    <span className="text-[11.5px] font-mono text-[var(--mn-heading)] mt-1 block truncate select-all" title={identity?.principalId}>
-                      {identity?.principalId || '—'}
-                    </span>
-                    <span className="text-[10px] text-[var(--mn-text-muted)] mt-0.5 block">معرّف تقني فريد يُستخدم في ربط وتأمين الخدمات</span>
-                  </div>
+                      <div className="p-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)]">
+                        <span className="text-[10px] font-semibold text-[var(--mn-text-muted)] block">إصدار مساحة العمل</span>
+                        <span className="text-[11px] font-bold text-[var(--mn-heading)] mt-0.5 inline-flex items-center gap-1.5 font-mono">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[var(--mn-success-text)]" />
+                          الإصدار #{dashboard.workspace.version}
+                        </span>
+                      </div>
+                    </div>
 
-                  <div className="p-3 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)]">
-                    <span className="text-[10.5px] font-semibold text-[var(--mn-text-muted)] block">إصدار تكوين مساحة العمل</span>
-                    <span className="text-[11.5px] font-bold text-[var(--mn-heading)] mt-1 inline-flex items-center gap-1.5 font-mono">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[var(--mn-success-text)]" />
-                      الإصدار #{dashboard.workspace.version}
-                    </span>
-                    <span className="text-[10px] text-[var(--mn-text-muted)] mt-0.5 block">
-                      آخر مزامنة سحابية: {formatDate(dashboard.workspace.updatedAt)}
-                    </span>
-                  </div>
-                </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={onSnapshot}
+                        disabled={saving}
+                        className="rounded-xl border border-[#D6A43B]/40 bg-[#D6A43B]/10 hover:bg-[#D6A43B]/20 px-3 py-2 text-[11.5px] font-bold text-[#8C600B] dark:text-[#E0B244] transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Save className="w-3.5 h-3.5" />
+                        <span>حفظ نسخة إعدادات</span>
+                      </button>
 
-                {/* Workspace Snapshot & Layout Management */}
-                <div className="pt-2 border-t border-[var(--mn-border)] dark:border-white/10 space-y-3">
-                  <span className="text-[12px] font-bold text-[var(--mn-heading)] block">النسخ الاحتياطية وإعادة التعيين</span>
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <button
-                      type="button"
-                      onClick={onSnapshot}
-                      disabled={saving}
-                      className="rounded-xl border border-[#D6A43B]/40 bg-[#D6A43B]/10 hover:bg-[#D6A43B]/20 px-3 py-2 text-[12px] font-bold text-[#8C600B] dark:text-[#E0B244] transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer font-['Cairo',sans-serif]"
-                    >
-                      <Save className="w-3.5 h-3.5" />
-                      <span>حفظ نسخة إعدادات</span>
-                    </button>
+                      <button
+                        type="button"
+                        onClick={onResetLayout}
+                        disabled={saving}
+                        className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] hover:bg-[var(--mn-surface-muted)] px-3 py-2 text-[11.5px] font-bold text-[var(--mn-text)] transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>استعادة التخطيط</span>
+                      </button>
+                    </div>
 
-                    <button
-                      type="button"
-                      onClick={onResetLayout}
-                      disabled={saving}
-                      className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface-elevated)] hover:bg-[var(--mn-surface-muted)] px-3 py-2 text-[12px] font-bold text-[var(--mn-text)] transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer font-['Cairo',sans-serif]"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      <span>استعادة التخطيط</span>
-                    </button>
-                  </div>
-
-                  {/* Snapshots List */}
-                  {snapshots.length > 0 && (
-                    <div className="space-y-1.5 pt-1">
-                      <span className="text-[11px] font-bold text-[var(--mn-text-muted)] block">النسخ الاحتياطية المسجلة:</span>
-                      <div className="space-y-1.5 max-h-36 overflow-y-auto">
+                    {snapshots.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
                         {snapshots.slice(0, 4).map((snapshot) => (
                           <div
                             key={snapshot.id}
-                            className="flex items-center justify-between p-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] text-xs"
+                            className="flex items-center justify-between p-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] text-xs"
                           >
                             <div className="min-w-0 pr-1">
-                              <span className="font-bold text-[var(--mn-heading)] block truncate text-[12px]">
+                              <span className="font-bold text-[var(--mn-heading)] block truncate text-[11.5px]">
                                 {snapshot.label || 'نسخة إعدادات مساحة العمل'}
                               </span>
                               <span className="text-[10px] text-[var(--mn-text-muted)]">
@@ -5002,30 +4782,33 @@ function ProfileView({
                               type="button"
                               onClick={() => onRestoreSnapshot(snapshot.id)}
                               disabled={saving}
-                              className="rounded-lg bg-[var(--mn-surface)] hover:bg-[#D6A43B] hover:text-white border border-[var(--mn-border)] dark:border-white/10 px-2.5 py-1 text-[11px] font-bold text-[var(--mn-primary)] dark:text-[#E0B244] transition-colors cursor-pointer shrink-0 disabled:opacity-50 font-['Cairo',sans-serif]"
+                              className="rounded-lg bg-[var(--mn-surface)] hover:bg-[#142B5F] hover:text-white border border-[var(--mn-border)] px-2.5 py-1 text-[10.5px] font-bold text-[#142B5F] dark:text-[#E0B244] transition-colors cursor-pointer shrink-0 disabled:opacity-50"
                             >
                               استعادة
                             </button>
                           </div>
                         ))}
                       </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </ProfileSectionCard>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                    يتضمن النسخ الاحتياطية لإعدادات مساحة العمل واستعادة التخطيط الافتراضي.
+                  </p>
+                )}
+              </ProfileSectionCard>
+            </div>
           </div>
 
           {/* End-of-form save bar stretched edge-to-edge */}
-          <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-['Cairo',sans-serif]">
+          <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] px-3.5 py-3 sm:px-5 sm:py-3.5 shadow-2xs mn-panel flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 font-['Cairo',sans-serif]">
             <div className="flex items-center gap-2 text-right">
               <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F]">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#F2CD78]" />
               </span>
-              <div>
-                <p className="text-[12px] sm:text-[12.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">هل قمت بتعديل بياناتك أو إعداداتك؟</p>
-                <p className="text-[10.5px] sm:text-[11px] font-medium text-[var(--mn-text-muted)]">اضغط لحفظ التعديلات وتطبيقها ومزامنتها سحابياً فوراً عبر حسابك.</p>
-              </div>
+              <p className="text-[11.5px] sm:text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+                حفظ التعديلات ومزامنتها سحابياً عبر حسابك
+              </p>
             </div>
             <button
               type="submit"
@@ -5194,72 +4977,66 @@ function InvoicePanel({
   const content = (
     <>
       {invoices.length ? (
-        <div className={compactSummary ? 'space-y-2.5' : 'space-y-3'}>
+        <div className={compactSummary ? 'space-y-2' : 'space-y-3'}>
           {invoices.map((invoice) => (
             <div
               key={invoice.id}
               className={
                 compactSummary
-                  ? 'relative overflow-hidden rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] pr-3.5 pl-3 py-2.5 shadow-2xs'
+                  ? 'rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 dark:hover:bg-[#142342] hover:border-[#0E7C86]/45 px-3 py-2.5 transition-all duration-200'
                   : 'rounded-2xl border border-[var(--mn-border)] bg-[var(--mn-surface)] p-4'
               }
             >
-              {compactSummary && (
-                /* Authentic Horizon Petrol (#0E7C86) Geometric Corner Line from top-right down the right edge to middle-bottom */
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute top-0 right-0 w-4 sm:w-5 h-[68%] rounded-tr-xl border-t-[3px] border-r-[3.5px] border-[#0E7C86] dark:border-[#55CBC5]"
-                />
-              )}
-              <div className="flex items-start justify-between gap-2.5">
-                <div className="flex min-w-0 items-start gap-2">
+              <div className="flex items-center justify-between gap-2.5">
+                <div className="flex min-w-0 items-center gap-2.5">
                   {compactSummary && (
-                    <span className="mt-0.5 w-6 h-6 rounded-md bg-[#0E7C86] border-[1.5px] border-[#142B5F] ring-1 ring-[#142B5F]/40 text-white mn-sub-item-icon flex items-center justify-center shrink-0 shadow-2xs">
+                    <span className="grid h-6.5 w-6.5 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-[0_2px_6px_rgba(20,43,95,0.14)]">
                       <Receipt className="h-3.5 w-3.5 text-white" />
                     </span>
                   )}
                   <div className="min-w-0">
-                    <h3 className={compactSummary ? 'text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] break-words' : 'font-bold'}>
-                      {invoice.invoiceNumber}
-                    </h3>
-                    <p className={compactSummary ? 'mt-0.5 text-[9.5px] sm:text-[10px] font-bold leading-snug text-[var(--mn-text-muted)]' : 'mt-1 text-sm text-[var(--mn-text-muted)]'}>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <h3 className={compactSummary ? 'text-[10.5px] sm:text-[12px] font-bold leading-snug text-[#142B5F] dark:text-[#F1F5F9] break-words tabular-nums' : 'font-bold'}>
+                        {invoice.invoiceNumber}
+                      </h3>
+                      <span
+                        className={`text-[9.5px] font-bold ${
+                          invoice.status === 'PAID'
+                            ? 'text-[#0E7C86] dark:text-[#38C6D4]'
+                            : 'text-[#142B5F]/75 dark:text-[#F2CD78]'
+                        }`}
+                      >
+                        · {arabicStatus(invoice.status)}
+                      </span>
+                    </div>
+                    <p className={compactSummary ? 'mt-0.5 text-[9.5px] sm:text-[10.5px] font-semibold leading-snug text-[#5C707C] dark:text-[#9BB4C7] tabular-nums' : 'mt-1 text-sm text-[var(--mn-text-muted)]'}>
                       المستحق {formatMoney(invoice.amountDue)}
                     </p>
                   </div>
                 </div>
-                <span
-                  className={`h-fit shrink-0 rounded-lg ${compactSummary ? 'px-2.5 py-0.5 text-[9.5px]' : 'px-3 py-1 text-xs'} font-bold font-['Cairo',sans-serif] ${
-                    invoice.status === 'PAID'
-                      ? 'border border-[var(--mn-success-border)] bg-[var(--mn-success-soft)] text-[var(--mn-success-text)]'
-                      : invoice.status === 'ISSUED'
-                        ? 'border border-[#142B5F] bg-[#142B5F] text-white'
-                        : 'border border-[var(--mn-warning-border)] bg-[var(--mn-warning-soft)] text-[var(--mn-warning-text)]'
-                  }`}
+
+                <button
+                  type="button"
+                  onClick={() => onToggle(invoice.id)}
+                  className={
+                    compactSummary
+                      ? 'mn-summary-cta-secondary shrink-0 inline-flex items-center justify-center rounded-lg border border-[#0E7C86]/32 dark:border-[#38C6D4]/35 bg-white hover:bg-gradient-to-l hover:from-[#142B5F] hover:via-[#133A6A] hover:to-[#0E7C86] hover:border-transparent dark:bg-[#111E38] px-2.5 text-[10px] sm:text-[11px] font-bold text-[#142B5F] hover:text-white dark:text-[#EDF5F5] transition-all cursor-pointer whitespace-nowrap'
+                      : 'text-xs font-semibold text-[var(--mn-secondary)]'
+                  }
                 >
-                  {arabicStatus(invoice.status)}
-                </span>
+                  {paymentsByInvoice[invoice.id] ? 'إخفاء الدفعات' : 'عرض الدفعات'}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => onToggle(invoice.id)}
-                className={
-                  compactSummary
-                    ? "mn-student-summary-primary-action mt-2 inline-flex items-center justify-center rounded-lg bg-[#142B5F] hover:bg-[#203D74] border border-[#142B5F] px-2.5 py-1 text-[10px] font-bold text-white transition-colors font-['Cairo',sans-serif] cursor-pointer"
-                    : 'mt-3 text-xs font-semibold text-[var(--mn-secondary)]'
-                }
-              >
-                {paymentsByInvoice[invoice.id] ? 'إخفاء الدفعات' : 'عرض الدفعات'}
-              </button>
               {paymentsByInvoice[invoice.id] && (
-                <div className="mt-2.5 space-y-1.5 border-t border-[var(--mn-border)] pt-2.5">
+                <div className="mt-2 space-y-1.5 border-t border-[#142B5F]/8 dark:border-white/10 pt-2">
                   {paymentsByInvoice[invoice.id].length ? (
                     paymentsByInvoice[invoice.id].map((payment) => (
-                      <p key={payment.id} className="rounded-lg bg-[var(--mn-surface-muted)] p-2 text-[10.5px] font-semibold">
+                      <p key={payment.id} className="rounded-lg bg-white dark:bg-[#111E38] border border-[#142B5F]/8 dark:border-white/10 px-2.5 py-1.5 text-[10px] font-semibold text-[#142B5F] dark:text-[#DCE7F0] tabular-nums">
                         {formatMoney(payment.amount)} — {arabicStatus(payment.status)}
                       </p>
                     ))
                   ) : (
-                    <p className="text-[10.5px] text-[var(--mn-text-muted)]">لا توجد دفعات مسجلة.</p>
+                    <p className="text-[10px] text-[#5C707C] dark:text-[#9BB4C7]">لا توجد دفعات مسجلة.</p>
                   )}
                 </div>
               )}
@@ -5279,26 +5056,13 @@ function InvoicePanel({
   }
 
   return (
-    <section
-      aria-label="الفواتير والدفعات"
-      className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] py-3 sm:py-3.5 shadow-2xs mn-panel font-['Cairo',sans-serif]"
+    <SummarySectionCard
+      title="الفواتير والدفعات"
+      icon={Receipt}
+      metaLabel={`${invoices.length} فاتورة`}
     >
-      <div className="mb-2.5 flex min-w-0 items-center justify-between gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5 px-3 sm:px-4">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[9px] border border-[#D6A43B]/75 bg-[#142B5F] text-[#F2CD78] shadow-[0_2px_8px_rgba(20,43,95,0.16)]">
-            <span className="pointer-events-none absolute top-0 right-0 h-2.5 w-2.5 rounded-bl-md bg-[#D6A43B]" />
-            <Receipt className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" />
-          </span>
-          <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[14px] sm:text-[15px] font-bold leading-snug font-['Cairo',sans-serif] text-[#1E293B] dark:text-[#F8FAFC]">
-            الفواتير والدفعات
-          </h3>
-        </div>
-        <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2 py-0.5 text-[10px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
-          {invoices.length} فاتورة
-        </span>
-      </div>
-      <div className="px-2.5 sm:px-4">{content}</div>
-    </section>
+      {content}
+    </SummarySectionCard>
   );
 }
 
