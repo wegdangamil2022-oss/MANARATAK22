@@ -140,7 +140,7 @@ export const ServicesLandingPage: React.FC<ServicesLandingPageProps> = ({ onBack
               <div className="w-10 md:w-14 h-0.5 bg-gradient-to-r from-[#D6A43B] via-[#F2CD78] to-[#D6A43B] rounded-full" />
             </div>
 
-            <p className="text-[11px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto truncate">
+            <p className="text-[10px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto px-2 line-clamp-2">
               {publicT('public_support_throughout_your_study_journey_from_choosing_and')}
             </p>
           </div>
@@ -152,25 +152,25 @@ export const ServicesLandingPage: React.FC<ServicesLandingPageProps> = ({ onBack
             <button
               type="button"
               onClick={() => onOpenTrack?.('student')}
-              className="relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel"
+              className="relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel"
             >
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
                 <GraduationCap className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
-                <span className="truncate">{publicT('public_student_services')}</span>
+                <span className="min-w-0 truncate">{publicT('public_student_services')}</span>
               </div>
-              <span className="text-[9px] sm:text-[9.5px] font-bold text-[#5C707C] dark:text-[#9BB4C7] mt-0.5 truncate w-full">استشارات وتجهيز أكاديمي</span>
+              <span className="text-[9px] sm:text-[9.5px] font-bold text-[#5C707C] dark:text-[#9BB4C7] mt-0.5 truncate max-w-full">استشارات وتجهيز أكاديمي</span>
             </button>
 
             <button
               type="button"
               onClick={() => onOpenTrack?.('general')}
-              className="relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel"
+              className="relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel"
             >
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
                 <FileText className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
-                <span className="truncate">{publicT('public_general_services_and_support')}</span>
+                <span className="min-w-0 truncate">{publicT('public_general_services_and_support')}</span>
               </div>
-              <span className="text-[9px] sm:text-[9.5px] font-bold text-[#5C707C] dark:text-[#9BB4C7] mt-0.5 truncate w-full">ترجمة وتوثيق وإجراءات</span>
+              <span className="text-[9px] sm:text-[9.5px] font-bold text-[#5C707C] dark:text-[#9BB4C7] mt-0.5 truncate max-w-full">ترجمة وتوثيق وإجراءات</span>
             </button>
           </div>
         </div>

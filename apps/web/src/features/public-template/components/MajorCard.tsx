@@ -227,23 +227,23 @@ export const MajorCard: React.FC<MajorCardProps> = ({
       <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-[#142B5F]/8 dark:border-white/8 mt-auto">
         {/* 1. الكلية / المجال الأكاديمي */}
         <div
-          className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]"
+          className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]"
           title={facultyCategory}
         >
           <School className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-          <span className="truncate">{facultyCategory}</span>
+          <span className="min-w-0 leading-tight line-clamp-2 break-words">{facultyCategory}</span>
         </div>
 
         {/* 2. الدرجة العلمية */}
-        <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]">
+        <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]">
           <GraduationCap className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-          <span className="truncate">{primaryDegree}</span>
+          <span className="min-w-0 truncate">{primaryDegree}</span>
         </div>
 
         {/* 3. المدة الدراسية */}
-        <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]">
+        <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]">
           <Clock className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-          <span className="truncate">{durationText}</span>
+          <span className="min-w-0 truncate">{durationText}</span>
         </div>
 
         {/* 4. زر عرض التفاصيل */}
@@ -253,13 +253,13 @@ export const MajorCard: React.FC<MajorCardProps> = ({
             e.stopPropagation();
             if (onSelectMajor) onSelectMajor(major);
           }}
-          className="bg-[#142B5F] hover:bg-[#0E7C86] dark:bg-[#162A52] dark:hover:bg-[#1C3566] text-white dark:text-[#F2CD78] border border-transparent dark:border-[#F2CD78]/35 rounded-lg px-2.5 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs shrink-0"
+          className="min-w-0 overflow-hidden bg-[#142B5F] hover:bg-[#0E7C86] dark:bg-[#162A52] dark:hover:bg-[#1C3566] text-white dark:text-[#F2CD78] border border-transparent dark:border-[#F2CD78]/35 rounded-lg px-2 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs"
           data-mn-design="26ecd1db9e"
         >
-          <span className="text-[10px] sm:text-[11px] font-bold text-center font-['Cairo',sans-serif] leading-tight text-white dark:text-[#F2CD78]">
+          <span className="text-[10px] sm:text-[11px] font-bold text-center font-['Cairo',sans-serif] leading-tight text-white dark:text-[#F2CD78] truncate">
             {publicT('public_view_details')}
           </span>
-          <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[#F2CD78]" />
+          <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[#F2CD78] shrink-0" />
         </button>
       </div>
     </div>

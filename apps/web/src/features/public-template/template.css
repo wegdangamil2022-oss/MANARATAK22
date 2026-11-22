@@ -288,7 +288,7 @@
   --mn-border: #e1e5e8;
   --mn-border-strong: var(--mn-border-brand);
   --mn-border-brand: rgb(14 124 134 / 28%);
-  --mn-focus: rgb(214 164 59 / 42%);
+  --mn-focus: rgb(14 124 134 / 28%);
   --mn-on-primary: #ffffff;
   --mn-on-accent: #142b5f;
   --mn-shadow-card: 0 6px 22px rgb(20 43 95 / 6%);
@@ -341,7 +341,7 @@
   --mn-border: rgb(242 205 120 / 42%);
   --mn-border-brand: rgb(242 205 120 / 62%);
   --mn-border-gold: rgb(242 205 120 / 68%);
-  --mn-focus: rgb(242 205 120 / 46%);
+  --mn-focus: rgb(56 198 212 / 34%);
   --mn-on-primary: #ffffff;
   --mn-on-accent: #142b5f;
   --mn-shadow-card: 0 6px 22px rgb(0 0 0 / 18%);
@@ -354,9 +354,13 @@
 
 .manaratak-public :where(input, textarea, select):focus-visible,
 .manaratak-public :where(button, a):focus-visible {
-  outline: 2px solid var(--mn-accent);
+  outline: 2px solid #0E7C86;
   outline-offset: 2px;
   box-shadow: 0 0 0 3px var(--mn-focus);
+}
+.dark .manaratak-public :where(input, textarea, select):focus-visible,
+.dark .manaratak-public :where(button, a):focus-visible {
+  outline-color: #38C6D4;
 }
 
 .manaratak-public .mn-search-hero {

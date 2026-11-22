@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { Major } from '../types';
 import { MajorCard } from './MajorCard';
-import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
+import { PublicCardsPagination, PublicInlineFilterPanel, usePaginatedCatalog } from './DetailUi';
 
 interface MajorsSearchPageProps {
   locale?: 'ar'|'en';
@@ -198,7 +198,7 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
             </div>
 
             {/* Subtitle */}
-            <p className="text-[11px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto truncate">
+            <p className="text-[10px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto px-2 line-clamp-2">
               {publicT('public_browse_available_majors_and_discover_faculties_and_degrees')}
             </p>
           </div>
@@ -251,18 +251,20 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('faculty');
+                  setActiveFilterModal((prev) => (prev === 'faculty' ? null : 'faculty'));
                 }
               }}
-              onClick={() => setActiveFilterModal('faculty')}
+              onClick={() => setActiveFilterModal((prev) => (prev === 'faculty' ? null : 'faculty'))}
               className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedFaculty !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
-              } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
+                activeFilterModal === 'faculty'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedFaculty !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif] min-w-0 overflow-hidden`}
               title={publicT('public_choose_faculty')}
             >
-              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full min-w-0 overflow-hidden px-0.5">
                 <Layers
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedFaculty !== 'الكل'
@@ -270,11 +272,11 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
                       : 'text-[#0E7C86] dark:text-[#34BFC9]'
                   }`}
                 />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedFaculty === 'الكل' ? publicT('public_choose_faculty') : selectedFaculty}
                 </span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3.5 h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'faculty' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
 
             {/* Tile 2: الدرجة العلمية */}
@@ -284,18 +286,20 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('degree');
+                  setActiveFilterModal((prev) => (prev === 'degree' ? null : 'degree'));
                 }
               }}
-              onClick={() => setActiveFilterModal('degree')}
+              onClick={() => setActiveFilterModal((prev) => (prev === 'degree' ? null : 'degree'))}
               className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedDegree !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
-              } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
+                activeFilterModal === 'degree'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedDegree !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif] min-w-0 overflow-hidden`}
               title={publicT('public_choose_degree')}
             >
-              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full min-w-0 overflow-hidden px-0.5">
                 <GraduationCap
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedDegree !== 'الكل'
@@ -303,7 +307,7 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
                       : 'text-[#0E7C86] dark:text-[#34BFC9]'
                   }`}
                 />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedDegree === 'الكل'
                     ? publicT('public_degree_2')
                     : selectedDegree === 'زمالة أبحاث'
@@ -311,7 +315,7 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
                       : selectedDegree}
                 </span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3.5 h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'degree' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
           </div>
         </div>
@@ -319,6 +323,35 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
 
       {/* Official Gold Divider Ribbon Line */}
       <div className="w-full h-[1.5px] bg-gradient-to-r from-[#D6A43B]/45 via-[#F2CD78] to-[#D6A43B]/45 dark:from-[#D6A43B]/30 dark:via-[#F2CD78]/65 dark:to-[#D6A43B]/30 mb-3 md:mb-5" />
+
+      {/* Inline Attached Filter Panels */}
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'faculty'}
+        title={publicT('public_choose_faculty')}
+        icon={Layers}
+        selectedValue={selectedFaculty}
+        onSelect={(val) => setSelectedFaculty(val)}
+        onClose={() => setActiveFilterModal(null)}
+        dir={publicDir}
+        options={faculties.map((faculty) => ({
+          value: faculty,
+          label: faculty === 'الكل' ? (locale === 'en' ? 'All Faculties' : 'جميع الكليات') : faculty,
+        }))}
+      />
+
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'degree'}
+        title={publicT('public_choose_degree')}
+        icon={GraduationCap}
+        selectedValue={selectedDegree}
+        onSelect={(val) => setSelectedDegree(val)}
+        onClose={() => setActiveFilterModal(null)}
+        dir={publicDir}
+        options={degreeLevels.map((lvl) => ({
+          value: lvl,
+          label: lvl === 'الكل' ? publicT('public_all_degrees') : lvl === 'زمالة أبحاث' ? 'الزمالة' : lvl,
+        }))}
+      />
 
       {/* ========================================================================= */}
       {/* RESULTS LIST SECTION                                                      */}
@@ -421,33 +454,6 @@ export const MajorsSearchPage: React.FC<MajorsSearchPageProps> = ({
         )}
       </div>
 
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'faculty'}
-        title={publicT('public_choose_faculty')}
-        icon={Layers}
-        selectedValue={selectedFaculty}
-        onSelect={(val) => setSelectedFaculty(val)}
-        onClose={() => setActiveFilterModal(null)}
-        dir={publicDir}
-        options={faculties.map((faculty) => ({
-          value: faculty,
-          label: faculty === 'الكل' ? publicT('public_choose_faculty') : faculty,
-        }))}
-      />
-
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'degree'}
-        title={publicT('public_choose_degree')}
-        icon={GraduationCap}
-        selectedValue={selectedDegree}
-        onSelect={(val) => setSelectedDegree(val)}
-        onClose={() => setActiveFilterModal(null)}
-        dir={publicDir}
-        options={degreeLevels.map((lvl) => ({
-          value: lvl,
-          label: lvl === 'الكل' ? publicT('public_all_degrees') : lvl === 'زمالة أبحاث' ? 'الزمالة' : lvl,
-        }))}
-      />
     </div>
   );
 };

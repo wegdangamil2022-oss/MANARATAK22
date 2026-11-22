@@ -158,7 +158,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onBackToWorkspace }) => {
               />
             </div>
 
-            <h2 className="text-[15px] sm:text-[17px] font-bold text-white leading-tight font-['Cairo',sans-serif]">
+            <h2 className="!text-[15px] sm:!text-[17px] font-bold text-white leading-tight font-['Cairo',sans-serif] outline-none">
               {isLogin ? (
                 <>
                   تسجيل الدخول <span className="text-[#F2CD78]">إلى حسابك</span>
@@ -284,7 +284,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onBackToWorkspace }) => {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="block w-full !min-h-[36px] h-[36px] pl-3 pr-9 py-1 !text-[11.5px] border border-[#142B5F]/14 dark:border-white/12 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] placeholder-[#5C707C]/70 dark:placeholder-[#9BB4C7]/65 focus:bg-white dark:focus:bg-[#0B1529] focus:outline-none focus:ring-1 focus:ring-[#0E7C86] focus:border-[#0E7C86] dark:focus:border-[#38C6D4] transition-all"
+                    className="block w-full !min-h-[36px] h-[36px] pl-3 pr-9 py-1 !text-[11.5px] placeholder:!text-[11.5px] border border-[#142B5F]/14 dark:border-white/12 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] placeholder-[#5C707C]/70 dark:placeholder-[#9BB4C7]/65 focus:bg-white dark:focus:bg-[#0B1529] focus:outline-none focus-visible:!outline-none focus-visible:!shadow-none focus:ring-2 focus:ring-[#0E7C86]/25 dark:focus:ring-[#38C6D4]/28 focus:border-[#0E7C86] dark:focus:border-[#38C6D4] transition-all"
                     placeholder="أدخل اسمك الكامل"
                   />
                 </div>
@@ -303,7 +303,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onBackToWorkspace }) => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full !min-h-[36px] h-[36px] pl-3 pr-9 py-1 !text-[11.5px] border border-[#142B5F]/14 dark:border-white/12 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] placeholder-[#5C707C]/70 dark:placeholder-[#9BB4C7]/65 focus:bg-white dark:focus:bg-[#0B1529] focus:outline-none focus:ring-1 focus:ring-[#0E7C86] focus:border-[#0E7C86] dark:focus:border-[#38C6D4] transition-all"
+                  className="block w-full !min-h-[36px] h-[36px] pl-3 pr-9 py-1 !text-[11.5px] placeholder:!text-[11.5px] border border-[#142B5F]/14 dark:border-white/12 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] placeholder-[#5C707C]/70 dark:placeholder-[#9BB4C7]/65 focus:bg-white dark:focus:bg-[#0B1529] focus:outline-none focus-visible:!outline-none focus-visible:!shadow-none focus:ring-2 focus:ring-[#0E7C86]/25 dark:focus:ring-[#38C6D4]/28 focus:border-[#0E7C86] dark:focus:border-[#38C6D4] transition-all"
                   placeholder="name@example.com"
                 />
               </div>
@@ -334,7 +334,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onBackToWorkspace }) => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full !min-h-[36px] h-[36px] pl-3 pr-9 py-1 !text-[11.5px] border border-[#142B5F]/14 dark:border-white/12 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] placeholder-[#5C707C]/70 dark:placeholder-[#9BB4C7]/65 focus:bg-white dark:focus:bg-[#0B1529] focus:outline-none focus:ring-1 focus:ring-[#0E7C86] focus:border-[#0E7C86] dark:focus:border-[#38C6D4] transition-all"
+                  className="block w-full !min-h-[36px] h-[36px] pl-3 pr-9 py-1 !text-[11.5px] placeholder:!text-[11.5px] border border-[#142B5F]/14 dark:border-white/12 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] placeholder-[#5C707C]/70 dark:placeholder-[#9BB4C7]/65 focus:bg-white dark:focus:bg-[#0B1529] focus:outline-none focus-visible:!outline-none focus-visible:!shadow-none focus:ring-2 focus:ring-[#0E7C86]/25 dark:focus:ring-[#38C6D4]/28 focus:border-[#0E7C86] dark:focus:border-[#38C6D4] transition-all"
                   placeholder={isLogin ? '••••••••' : '8 أحرف على الأقل'}
                 />
               </div>
@@ -354,7 +354,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onBackToWorkspace }) => {
                       type="password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="block w-full !min-h-[36px] h-[36px] pl-3 pr-9 py-1 !text-[11.5px] border border-[#142B5F]/14 dark:border-white/12 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] placeholder-[#5C707C]/70 dark:placeholder-[#9BB4C7]/65 focus:bg-white dark:focus:bg-[#0B1529] focus:outline-none focus:ring-1 focus:ring-[#0E7C86] focus:border-[#0E7C86] dark:focus:border-[#38C6D4] transition-all"
+                      className="block w-full !min-h-[36px] h-[36px] pl-3 pr-9 py-1 !text-[11.5px] placeholder:!text-[11.5px] border border-[#142B5F]/14 dark:border-white/12 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] placeholder-[#5C707C]/70 dark:placeholder-[#9BB4C7]/65 focus:bg-white dark:focus:bg-[#0B1529] focus:outline-none focus-visible:!outline-none focus-visible:!shadow-none focus:ring-2 focus:ring-[#0E7C86]/25 dark:focus:ring-[#38C6D4]/28 focus:border-[#0E7C86] dark:focus:border-[#38C6D4] transition-all"
                       placeholder="أعد كتابة كلمة المرور"
                     />
                   </div>
@@ -374,7 +374,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onBackToWorkspace }) => {
                         inputMode="numeric"
                         value={verificationCode}
                         onChange={(e) => setVerificationCode(e.target.value)}
-                        className="block w-full !min-h-[36px] h-[36px] pl-3 pr-9 py-1 !text-[11.5px] border border-[#142B5F]/14 dark:border-white/12 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] placeholder-[#5C707C]/70 dark:placeholder-[#9BB4C7]/65 focus:bg-white dark:focus:bg-[#0B1529] focus:outline-none focus:ring-1 focus:ring-[#0E7C86] focus:border-[#0E7C86] dark:focus:border-[#38C6D4] transition-all"
+                        className="block w-full !min-h-[36px] h-[36px] pl-3 pr-9 py-1 !text-[11.5px] placeholder:!text-[11.5px] border border-[#142B5F]/14 dark:border-white/12 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/80 text-[#142B5F] dark:text-[#F1F5F9] placeholder-[#5C707C]/70 dark:placeholder-[#9BB4C7]/65 focus:bg-white dark:focus:bg-[#0B1529] focus:outline-none focus-visible:!outline-none focus-visible:!shadow-none focus:ring-2 focus:ring-[#0E7C86]/25 dark:focus:ring-[#38C6D4]/28 focus:border-[#0E7C86] dark:focus:border-[#38C6D4] transition-all"
                         placeholder="أدخل رمز التحقق"
                       />
                     </div>

@@ -81,7 +81,7 @@ export const FeaturedCountries: React.FC<FeaturedCountriesProps> = ({
             </div>
 
             {/* Clean Navy Country Name */}
-            <h4 className="font-extrabold text-[10px] sm:text-[11.5px] md:text-[12.5px] text-[#142B5F] dark:text-[#F1F5F9] group-hover:text-[#0E7C86] dark:group-hover:text-[#38C6D4] transition-colors truncate max-w-full leading-tight font-['Cairo',sans-serif]">
+            <h4 className="font-extrabold text-[9.5px] sm:text-[11.5px] md:text-[12.5px] text-[#142B5F] dark:text-[#F1F5F9] group-hover:text-[#0E7C86] dark:group-hover:text-[#38C6D4] transition-colors w-full leading-snug break-words text-center font-['Cairo',sans-serif]">
               {item.name}
             </h4>
           </div>

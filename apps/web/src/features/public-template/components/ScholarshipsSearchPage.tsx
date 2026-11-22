@@ -186,10 +186,10 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
   const [draftNoIelts, setDraftNoIelts] = useState(false);
   const [draftEnglishOnly, setDraftEnglishOnly] = useState(false);
 
-  // Inline attached filter drawer & exclusive accordion state
+  // Inline attached filter drawer & exclusive accordion state (starts collapsed on mobile)
   const [openFilterTab, setOpenFilterTab] = useState<'smart' | 'degree' | 'funding' | null>(null);
   const isFilterOpen = openFilterTab === 'smart';
-  const [activeAccordion, setActiveAccordion] = useState<'country' | 'major' | 'language' | null>('country');
+  const [activeAccordion, setActiveAccordion] = useState<'country' | 'major' | 'language' | null>(null);
 
   const toggleSmartFilterPanel = () => {
     if (openFilterTab === 'smart') {
@@ -200,7 +200,7 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
     setDraftMajor(selectedMajor);
     setDraftNoIelts(noIeltsOnly);
     setDraftEnglishOnly(englishOnly);
-    setActiveAccordion('country');
+    setActiveAccordion(null);
     setOpenFilterTab('smart');
   };
 
@@ -606,7 +606,7 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
             </div>
 
             {/* Subtitle */}
-            <p className="text-[11px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto truncate">
+            <p className="text-[10px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto px-2 line-clamp-2">
               {publicT('public_discover_scholarships_worldwide_and_build_your_future_with')}
             </p>
           </div>
@@ -670,9 +670,9 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   : smartFiltersCount > 0
                     ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
                     : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45'
-              } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
+              } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif] min-w-0 overflow-hidden`}
             >
-              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full min-w-0 overflow-hidden px-0.5">
                 <SlidersHorizontal
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     smartFiltersCount > 0
@@ -680,10 +680,10 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                       : 'text-[#0E7C86] dark:text-[#38C6D4]'
                   }`}
                 />
-                <span className="truncate font-['Cairo',sans-serif]">{smartTileLabel}</span>
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">{smartTileLabel}</span>
               </div>
               <ChevronDown
-                className={`w-3.5 h-3.5 mt-0.5 transition-transform duration-200 ${
+                className={`w-3.5 h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${
                   openFilterTab === 'smart'
                     ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]'
                     : 'text-[#5C707C] dark:text-[#9BB4C7]'
@@ -709,10 +709,10 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   : selectedDegree !== 'الكل'
                     ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
                     : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45'
-              } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
+              } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif] min-w-0 overflow-hidden`}
               title={publicT('public_choose_degree')}
             >
-              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full min-w-0 overflow-hidden px-0.5">
                 <GraduationCap
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedDegree !== 'الكل'
@@ -720,7 +720,7 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                       : 'text-[#0E7C86] dark:text-[#38C6D4]'
                   }`}
                 />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedDegree === 'الكل'
                     ? publicT('public_degree')
                     : selectedDegree === 'زمالة أبحاث'
@@ -729,7 +729,7 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                 </span>
               </div>
               <ChevronDown
-                className={`w-3.5 h-3.5 mt-0.5 transition-transform duration-200 ${
+                className={`w-3.5 h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${
                   openFilterTab === 'degree'
                     ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]'
                     : 'text-[#5C707C] dark:text-[#9BB4C7]'
@@ -755,10 +755,10 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   : selectedFunding !== 'الكل'
                     ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
                     : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45'
-              } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
+              } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif] min-w-0 overflow-hidden`}
               title={publicT('public_choose_funding_type')}
             >
-              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full min-w-0 overflow-hidden px-0.5">
                 <Coins
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedFunding !== 'الكل'
@@ -766,12 +766,12 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                       : 'text-[#0E7C86] dark:text-[#38C6D4]'
                   }`}
                 />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedFunding === 'الكل' ? publicT('public_funding') : selectedFunding}
                 </span>
               </div>
               <ChevronDown
-                className={`w-3.5 h-3.5 mt-0.5 transition-transform duration-200 ${
+                className={`w-3.5 h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${
                   openFilterTab === 'funding'
                     ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]'
                     : 'text-[#5C707C] dark:text-[#9BB4C7]'
@@ -789,27 +789,27 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
       {/* INLINE ATTACHED EXPANDABLE FILTER PANEL (No Full-Screen Dimmed Overlay)   */}
       {/* ========================================================================= */}
       {openFilterTab && (
-        <div className="w-full max-w-4xl md:max-w-[1120px] lg:max-w-[1160px] mx-auto px-1.5 sm:px-2.5 md:px-4 mb-3">
-          <div className="relative overflow-hidden bg-white dark:bg-[#111E38] border border-[#142B5F]/14 dark:border-white/12 rounded-2xl shadow-[0_8px_24px_rgba(20,43,95,0.08)] dark:shadow-[0_10px_28px_rgba(0,0,0,0.35)] p-3 sm:p-4 font-['Cairo',sans-serif] mn-panel">
+        <div className="w-full max-w-4xl md:max-w-[1120px] lg:max-w-[1160px] mx-auto px-1.5 sm:px-2 md:px-4 -mt-1.5 sm:-mt-2.5 mb-2.5 sm:mb-3">
+          <div className="relative overflow-hidden bg-white dark:bg-[#111E38] border border-[#142B5F]/10 dark:border-white/10 rounded-xl shadow-[0_1px_6px_rgba(20,43,95,0.035)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.2)] px-2.5 py-2 sm:px-3.5 sm:py-2.5 font-['Cairo',sans-serif] mn-panel">
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#0E7C86]/65 to-transparent"
+              className="pointer-events-none absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#0E7C86]/45 to-transparent"
             />
 
-            {/* Drawer Header */}
-            <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#142B5F]/10 dark:border-white/10">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="relative w-7 h-7 rounded-lg bg-[#142B5F] text-[#F2CD78] flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
-                  <span aria-hidden="true" className="pointer-events-none absolute top-0 right-0 w-2 h-2 bg-[#D6A43B] rounded-bl-[4px]" />
+            {/* Compact Drawer Header */}
+            <div className="flex items-center justify-between gap-2 pb-1.5 mb-1.5 border-b border-[#142B5F]/8 dark:border-white/8">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="relative w-6 h-6 rounded-md bg-[#142B5F] text-[#F2CD78] flex items-center justify-center shrink-0 overflow-hidden">
+                  <span aria-hidden="true" className="pointer-events-none absolute top-0 right-0 w-1.5 h-1.5 bg-[#D6A43B] rounded-bl-[3px]" />
                   {openFilterTab === 'smart' ? (
-                    <SlidersHorizontal className="w-3.5 h-3.5 relative z-10" />
+                    <SlidersHorizontal className="w-3 h-3 relative z-10" />
                   ) : openFilterTab === 'degree' ? (
-                    <GraduationCap className="w-3.5 h-3.5 relative z-10" />
+                    <GraduationCap className="w-3 h-3 relative z-10" />
                   ) : (
-                    <Coins className="w-3.5 h-3.5 relative z-10" />
+                    <Coins className="w-3 h-3 relative z-10" />
                   )}
                 </span>
-                <h4 className="text-[12px] sm:text-[13px] font-extrabold text-[#142B5F] dark:text-[#F1F5F9] truncate">
+                <h4 className="text-[11px] sm:text-[12px] font-extrabold text-[#142B5F] dark:text-[#F1F5F9] truncate">
                   {openFilterTab === 'smart'
                     ? publicT('public_smart_filter_options')
                     : openFilterTab === 'degree'
@@ -822,24 +822,24 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                 type="button"
                 onClick={() => setOpenFilterTab(null)}
                 aria-label={publicT('public_close')}
-                className="w-7 h-7 rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529] border border-[#142B5F]/12 dark:border-white/12 text-[#142B5F] dark:text-[#EDF5F5] hover:border-[#0E7C86] hover:text-[#0E7C86] flex items-center justify-center transition-all cursor-pointer active:scale-95 shrink-0"
+                className="w-6 h-6 !min-h-[24px] rounded-md bg-[#F6F8FA] dark:bg-[#0B1529] border border-[#142B5F]/10 dark:border-white/10 text-[#142B5F] dark:text-[#EDF5F5] hover:border-[#0E7C86] hover:text-[#0E7C86] flex items-center justify-center transition-colors cursor-pointer active:scale-95 shrink-0"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3 h-3" />
               </button>
             </div>
 
             {/* Panel Body: Smart Multi-Criteria Filter */}
             {openFilterTab === 'smart' && (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {draftFiltersCount > 0 && (
-                  <div className="flex flex-wrap items-center gap-1.5 pb-2 border-b border-[#142B5F]/10 dark:border-white/10">
+                  <div className="flex flex-wrap items-center gap-1 pb-1.5 border-b border-[#142B5F]/8 dark:border-white/8">
                     {draftCountry !== 'الكل' && (
                       <button
                         type="button"
                         onClick={() => setDraftCountry('الكل')}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#142B5F]/8 dark:bg-[#F2CD78]/12 text-[#142B5F] dark:text-[#F2CD78] border border-[#142B5F]/18 dark:border-[#F2CD78]/30 text-[10px] font-bold cursor-pointer hover:opacity-80"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#142B5F]/8 dark:bg-[#F2CD78]/12 text-[#142B5F] dark:text-[#F2CD78] border border-[#142B5F]/15 dark:border-[#F2CD78]/25 text-[9.5px] font-bold cursor-pointer hover:opacity-80"
                       >
-                        <span className="truncate max-w-[110px]">{draftCountryLabel}</span>
+                        <span className="truncate max-w-[100px]">{draftCountryLabel}</span>
                         <X className="w-2.5 h-2.5 shrink-0" />
                       </button>
                     )}
@@ -847,9 +847,9 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                       <button
                         type="button"
                         onClick={() => setDraftMajor('الكل')}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#0E7C86]/10 dark:bg-[#38C6D4]/15 text-[#0E7C86] dark:text-[#38C6D4] border border-[#0E7C86]/25 text-[10px] font-bold cursor-pointer hover:opacity-80"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#0E7C86]/10 dark:bg-[#38C6D4]/15 text-[#0E7C86] dark:text-[#38C6D4] border border-[#0E7C86]/20 text-[9.5px] font-bold cursor-pointer hover:opacity-80"
                       >
-                        <span className="truncate max-w-[110px]">{draftMajor}</span>
+                        <span className="truncate max-w-[100px]">{draftMajor}</span>
                         <X className="w-2.5 h-2.5 shrink-0" />
                       </button>
                     )}
@@ -857,7 +857,7 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                       <button
                         type="button"
                         onClick={() => setDraftNoIelts(false)}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#142B5F]/8 dark:bg-[#F2CD78]/12 text-[#142B5F] dark:text-[#F2CD78] border border-[#142B5F]/18 text-[10px] font-bold cursor-pointer hover:opacity-80"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#142B5F]/8 dark:bg-[#F2CD78]/12 text-[#142B5F] dark:text-[#F2CD78] border border-[#142B5F]/15 text-[9.5px] font-bold cursor-pointer hover:opacity-80"
                       >
                         <span>{publicT('public_without_ielts')}</span>
                         <X className="w-2.5 h-2.5 shrink-0" />
@@ -867,7 +867,7 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                       <button
                         type="button"
                         onClick={() => setDraftEnglishOnly(false)}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#0E7C86]/10 dark:bg-[#38C6D4]/15 text-[#0E7C86] dark:text-[#38C6D4] border border-[#0E7C86]/25 text-[10px] font-bold cursor-pointer hover:opacity-80"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#0E7C86]/10 dark:bg-[#38C6D4]/15 text-[#0E7C86] dark:text-[#38C6D4] border border-[#0E7C86]/20 text-[9.5px] font-bold cursor-pointer hover:opacity-80"
                       >
                         <span>{publicT('public_english_language')}</span>
                         <X className="w-2.5 h-2.5 shrink-0" />
@@ -881,21 +881,21 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   <button
                     type="button"
                     onClick={() => setActiveAccordion(activeAccordion === 'country' ? null : 'country')}
-                    className={`w-full flex items-center justify-between gap-2 py-2 px-3 rounded-xl border transition-all cursor-pointer ${
+                    className={`w-full !min-h-[34px] flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg border transition-colors cursor-pointer ${
                       activeAccordion === 'country'
-                        ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent shadow-xs'
-                        : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/10 dark:border-white/10'
+                        ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent'
+                        : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/8 dark:border-white/8'
                     }`}
                   >
-                    <span className="flex items-center gap-2 min-w-0">
+                    <span className="flex items-center gap-1.5 min-w-0">
                       <Globe2 className={`w-3.5 h-3.5 shrink-0 ${activeAccordion === 'country' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`} />
-                      <span className={`text-[11px] font-bold truncate ${activeAccordion === 'country' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
+                      <span className={`text-[10.5px] sm:text-[11px] font-bold truncate ${activeAccordion === 'country' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
                         {publicT('public_filter_by_country')}
                       </span>
                     </span>
                     <span className="flex items-center gap-1.5 shrink-0">
                       {draftCountry !== 'الكل' && (
-                        <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md truncate max-w-[92px] ${
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded truncate max-w-[90px] ${
                           activeAccordion === 'country'
                             ? 'bg-white/15 text-[#F2CD78]'
                             : 'bg-[#0E7C86]/10 text-[#0E7C86] dark:bg-[#38C6D4]/15 dark:text-[#38C6D4]'
@@ -908,8 +908,15 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   </button>
 
                   {activeAccordion === 'country' && (
-                    <div className="rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/10 dark:border-white/10 p-1.5">
-                      <div className="max-h-[168px] overflow-y-auto overscroll-contain grid grid-cols-2 sm:grid-cols-3 gap-1.5" style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}>
+                    <div className="rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/8 dark:border-white/8 p-1.5">
+                      <div
+                        className={`max-h-[188px] overflow-y-auto overscroll-contain py-0.5 pe-0.5 grid ${
+                          countryOptions.some((c) => c.label.trim().length > 16)
+                            ? 'grid-cols-1 sm:grid-cols-2'
+                            : 'grid-cols-2 sm:grid-cols-3'
+                        } gap-1.5`}
+                        style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
+                      >
                         {countryOptions.map((country) => {
                           const isSelected = draftCountry === country.id;
                           return (
@@ -917,13 +924,13 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                               key={country.id}
                               type="button"
                               onClick={() => setDraftCountry(isSelected ? 'الكل' : country.id)}
-                              className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer text-start ${
+                              className={`min-w-0 w-full overflow-hidden !min-h-[32px] flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-md text-[10px] sm:text-[10.5px] font-bold transition-colors cursor-pointer text-start ${
                                 isSelected
-                                  ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
-                                  : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/45 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/10 dark:border-white/10'
+                                  ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white'
+                                  : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/40 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
                               }`}
                             >
-                              <span className="truncate">{country.label}</span>
+                              <span className="min-w-0 flex-1 leading-snug break-words">{country.label}</span>
                               {isSelected ? <Check className="w-3 h-3 text-[#38C6D4] shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
                             </button>
                           );
@@ -938,21 +945,21 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   <button
                     type="button"
                     onClick={() => setActiveAccordion(activeAccordion === 'major' ? null : 'major')}
-                    className={`w-full flex items-center justify-between gap-2 py-2 px-3 rounded-xl border transition-all cursor-pointer ${
+                    className={`w-full !min-h-[34px] flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg border transition-colors cursor-pointer ${
                       activeAccordion === 'major'
-                        ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent shadow-xs'
-                        : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/10 dark:border-white/10'
+                        ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent'
+                        : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/8 dark:border-white/8'
                     }`}
                   >
-                    <span className="flex items-center gap-2 min-w-0">
+                    <span className="flex items-center gap-1.5 min-w-0">
                       <BookOpen className={`w-3.5 h-3.5 shrink-0 ${activeAccordion === 'major' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`} />
-                      <span className={`text-[11px] font-bold truncate ${activeAccordion === 'major' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
+                      <span className={`text-[10.5px] sm:text-[11px] font-bold truncate ${activeAccordion === 'major' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
                         {publicT('public_by_major')}
                       </span>
                     </span>
                     <span className="flex items-center gap-1.5 shrink-0">
                       {draftMajor !== 'الكل' && (
-                        <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md truncate max-w-[92px] ${
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded truncate max-w-[90px] ${
                           activeAccordion === 'major'
                             ? 'bg-white/15 text-[#F2CD78]'
                             : 'bg-[#0E7C86]/10 text-[#0E7C86] dark:bg-[#38C6D4]/15 dark:text-[#38C6D4]'
@@ -965,13 +972,20 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   </button>
 
                   {activeAccordion === 'major' && (
-                    <div className="rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/10 dark:border-white/10 p-1.5">
+                    <div className="rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/8 dark:border-white/8 p-1.5">
                       {majorOptions.length === 0 ? (
                         <span className="text-[10px] text-[#5C707C] dark:text-[#9BB4C7] block p-2 text-center">
                           {publicT('public_no_classified_majors_currently_available')}
                         </span>
                       ) : (
-                        <div className="max-h-[168px] overflow-y-auto overscroll-contain grid grid-cols-2 sm:grid-cols-3 gap-1.5" style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}>
+                        <div
+                          className={`max-h-[188px] overflow-y-auto overscroll-contain py-0.5 pe-0.5 grid ${
+                            majorOptions.some((m) => m.trim().length > 15)
+                              ? 'grid-cols-1 sm:grid-cols-2'
+                              : 'grid-cols-2 sm:grid-cols-3'
+                          } gap-1.5`}
+                          style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
+                        >
                           {majorOptions.map((major) => {
                             const isSelected = draftMajor === major;
                             return (
@@ -979,13 +993,13 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                                 key={major}
                                 type="button"
                                 onClick={() => setDraftMajor(isSelected ? 'الكل' : major)}
-                                className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer text-start ${
+                                className={`min-w-0 w-full overflow-hidden !min-h-[32px] flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-md text-[10px] sm:text-[10.5px] font-bold transition-colors cursor-pointer text-start ${
                                   isSelected
-                                    ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
-                                    : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/45 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/10 dark:border-white/10'
+                                    ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white'
+                                    : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/40 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
                                 }`}
                               >
-                                <span className="truncate">{major}</span>
+                                <span className="min-w-0 flex-1 leading-snug break-words">{major}</span>
                                 {isSelected ? <Check className="w-3 h-3 text-[#38C6D4] shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
                               </button>
                             );
@@ -1001,21 +1015,21 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   <button
                     type="button"
                     onClick={() => setActiveAccordion(activeAccordion === 'language' ? null : 'language')}
-                    className={`w-full flex items-center justify-between gap-2 py-2 px-3 rounded-xl border transition-all cursor-pointer ${
+                    className={`w-full !min-h-[34px] flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg border transition-colors cursor-pointer ${
                       activeAccordion === 'language'
-                        ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent shadow-xs'
-                        : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/10 dark:border-white/10'
+                        ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent'
+                        : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/8 dark:border-white/8'
                     }`}
                   >
-                    <span className="flex items-center gap-2 min-w-0">
+                    <span className="flex items-center gap-1.5 min-w-0">
                       <Languages className={`w-3.5 h-3.5 shrink-0 ${activeAccordion === 'language' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`} />
-                      <span className={`text-[11px] font-bold truncate ${activeAccordion === 'language' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
+                      <span className={`text-[10.5px] sm:text-[11px] font-bold truncate ${activeAccordion === 'language' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
                         {publicT('public_filter_by_language_requirements')}
                       </span>
                     </span>
                     <span className="flex items-center gap-1.5 shrink-0">
                       {(draftNoIelts || draftEnglishOnly) && (
-                        <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md ${
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
                           activeAccordion === 'language'
                             ? 'bg-white/15 text-[#F2CD78]'
                             : 'bg-[#0E7C86]/10 text-[#0E7C86] dark:bg-[#38C6D4]/15 dark:text-[#38C6D4]'
@@ -1028,45 +1042,45 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   </button>
 
                   {activeAccordion === 'language' && (
-                    <div className="rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/10 dark:border-white/10 p-1.5 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    <div className="rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/8 dark:border-white/8 p-1.5 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                       <button
                         type="button"
                         onClick={() => setDraftNoIelts(!draftNoIelts)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer text-start ${
+                        className={`min-w-0 w-full overflow-hidden !min-h-[34px] flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md text-[10px] sm:text-[10.5px] font-bold transition-colors cursor-pointer text-start ${
                           draftNoIelts
-                            ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
-                            : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/45 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/10 dark:border-white/10'
+                            ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white'
+                            : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/40 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
                         }`}
                       >
-                        <span className="truncate">{publicT('public_filter_for_no_ielts_or_toefl_requirement')}</span>
-                        {draftNoIelts ? <Check className="w-3.5 h-3.5 text-[#38C6D4] shrink-0" /> : <span className="w-2 h-2 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
+                        <span className="min-w-0 flex-1 leading-snug break-words">{publicT('public_filter_for_no_ielts_or_toefl_requirement')}</span>
+                        {draftNoIelts ? <Check className="w-3 h-3 text-[#38C6D4] shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
                       </button>
 
                       <button
                         type="button"
                         onClick={() => setDraftEnglishOnly(!draftEnglishOnly)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer text-start ${
+                        className={`min-w-0 w-full overflow-hidden !min-h-[34px] flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md text-[10px] sm:text-[10.5px] font-bold transition-colors cursor-pointer text-start ${
                           draftEnglishOnly
-                            ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
-                            : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/45 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/10 dark:border-white/10'
+                            ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white'
+                            : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/40 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
                         }`}
                       >
-                        <span className="truncate">{publicT('public_filter_for_study_in_english_only')}</span>
-                        {draftEnglishOnly ? <Check className="w-3.5 h-3.5 text-[#38C6D4] shrink-0" /> : <span className="w-2 h-2 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
+                        <span className="min-w-0 flex-1 leading-snug break-words">{publicT('public_filter_for_study_in_english_only')}</span>
+                        {draftEnglishOnly ? <Check className="w-3 h-3 text-[#38C6D4] shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
                       </button>
                     </div>
                   )}
                 </div>
 
-                {/* Action Footer */}
-                <div className="pt-2 border-t border-[#142B5F]/10 dark:border-white/10 flex items-center gap-2">
+                {/* Compact Action Footer */}
+                <div className="pt-1.5 border-t border-[#142B5F]/8 dark:border-white/8 flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={applySmartFilters}
-                    className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 text-white text-[11.5px] font-bold shadow-xs transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 !min-h-[34px] py-1.5 px-3 rounded-lg bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 text-white text-[11px] font-bold transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <span>تطبيق الفلترة</span>
-                    <span className="px-1.5 py-0.5 rounded-md bg-white/15 text-[#F2CD78] text-[10px] font-extrabold leading-none">
+                    <span className="px-1.5 py-0.5 rounded bg-white/15 text-[#F2CD78] text-[9.5px] font-extrabold leading-none">
                       {draftMatchesCount}
                     </span>
                   </button>
@@ -1075,7 +1089,7 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                     <button
                       type="button"
                       onClick={resetDraftFilters}
-                      className="px-3 py-2 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529] hover:border-[#0E7C86]/45 border border-[#142B5F]/12 dark:border-white/12 text-[#142B5F] dark:text-[#EDF5F5] text-[11px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer shrink-0"
+                      className="!min-h-[34px] px-2.5 py-1.5 rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529] hover:border-[#0E7C86]/45 border border-[#142B5F]/10 dark:border-white/10 text-[#142B5F] dark:text-[#EDF5F5] text-[10.5px] font-bold transition-colors active:scale-95 flex items-center justify-center gap-1 cursor-pointer shrink-0"
                     >
                       <RotateCcw className="w-3 h-3 text-[#0E7C86] dark:text-[#38C6D4]" />
                       <span>مسح</span>
@@ -1104,15 +1118,15 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                         setSelectedDegree(degree);
                         setOpenFilterTab(null);
                       }}
-                      className={`flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer text-start ${
+                      className={`min-w-0 w-full overflow-hidden !min-h-[34px] flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-lg text-[10.5px] sm:text-[11.5px] font-bold transition-colors cursor-pointer text-start ${
                         isSelected
-                          ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
-                          : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border border-[#142B5F]/10 dark:border-white/10 hover:border-[#0E7C86]/45'
+                          ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white'
+                          : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#DCE7F0] border border-[#142B5F]/8 dark:border-white/8 hover:border-[#0E7C86]/40'
                       }`}
                     >
-                      <span className="truncate">{label}</span>
+                      <span className="min-w-0 flex-1 truncate">{label}</span>
                       {isSelected ? (
-                        <Check className="w-3.5 h-3.5 text-[#38C6D4] shrink-0" />
+                        <Check className="w-3 h-3 text-[#38C6D4] shrink-0" />
                       ) : (
                         <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />
                       )}
@@ -1124,7 +1138,13 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
 
             {/* Panel Body: Funding Type Selector (Instant 1-Tap) */}
             {openFilterTab === 'funding' && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+              <div
+                className={`grid ${
+                  fundingTypes.some((f) => (f === 'الكل' ? publicT('public_all_funding_types') : f).trim().length > 15)
+                    ? 'grid-cols-1 sm:grid-cols-2'
+                    : 'grid-cols-2 sm:grid-cols-3'
+                } gap-1.5`}
+              >
                 {fundingTypes.map((funding) => {
                   const isSelected = selectedFunding === funding;
                   const label = funding === 'الكل' ? publicT('public_all_funding_types') : funding;
@@ -1136,15 +1156,15 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                         setSelectedFunding(funding);
                         setOpenFilterTab(null);
                       }}
-                      className={`flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer text-start ${
+                      className={`min-w-0 w-full overflow-hidden !min-h-[34px] flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-lg text-[10.5px] sm:text-[11.5px] font-bold transition-colors cursor-pointer text-start ${
                         isSelected
-                          ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
-                          : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border border-[#142B5F]/10 dark:border-white/10 hover:border-[#0E7C86]/45'
+                          ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white'
+                          : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#DCE7F0] border border-[#142B5F]/8 dark:border-white/8 hover:border-[#0E7C86]/40'
                       }`}
                     >
-                      <span className="truncate">{label}</span>
+                      <span className="min-w-0 flex-1 leading-snug break-words">{label}</span>
                       {isSelected ? (
-                        <Check className="w-3.5 h-3.5 text-[#38C6D4] shrink-0" />
+                        <Check className="w-3 h-3 text-[#38C6D4] shrink-0" />
                       ) : (
                         <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />
                       )}
@@ -1265,15 +1285,15 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   {/* Bottom Row: 4 Structured Tiles (3 info tiles + View Details CTA Button) in 2x2 Grid */}
                   <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-[#142B5F]/8 dark:border-white/8 mt-auto">
                     {/* 1. التمويل */}
-                    <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]">
+                    <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]">
                       <Coins className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                      <span className="truncate">{scholarship.fundingType}</span>
+                      <span className="min-w-0 leading-tight line-clamp-2 break-words">{scholarship.fundingType}</span>
                     </div>
 
                     {/* 2. الدرجة العلمية */}
-                    <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]">
+                    <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]">
                       <GraduationCap className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                      <span className="truncate" dir={scholarship.degreeLevel.length >= 3 ? 'ltr' : undefined}>
+                      <span className="min-w-0 leading-tight line-clamp-2 break-words" dir={scholarship.degreeLevel.length >= 3 ? 'ltr' : undefined}>
                         {scholarship.degreeLevel.length >= 3
                           ? scholarship.degreeLevel
                               .map((deg) => {
@@ -1290,9 +1310,9 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                     </div>
 
                     {/* 3. الموعد النهائي */}
-                    <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]">
+                    <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif]">
                       <Calendar className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                      <span className="truncate">{publicT('public_closes')}{' '}{scholarship.deadline}</span>
+                      <span className="min-w-0 leading-tight line-clamp-2 break-words">{publicT('public_closes')}{' '}{scholarship.deadline}</span>
                     </div>
 
                     {/* 4. زر عرض التفاصيل */}
@@ -1301,13 +1321,13 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                         e.stopPropagation();
                         if (onSelectScholarship) onSelectScholarship(scholarship);
                       }}
-                      className="bg-[#142B5F] hover:bg-[#0E7C86] dark:bg-[#162A52] dark:hover:bg-[#1C3566] text-white dark:text-[#F2CD78] border border-transparent dark:border-[#F2CD78]/35 rounded-lg px-2.5 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs shrink-0"
+                      className="min-w-0 overflow-hidden bg-[#142B5F] hover:bg-[#0E7C86] dark:bg-[#162A52] dark:hover:bg-[#1C3566] text-white dark:text-[#F2CD78] border border-transparent dark:border-[#F2CD78]/35 rounded-lg px-2 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs"
                       data-mn-design="26ecd1db9e"
                     >
-                      <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight text-white dark:text-[#F2CD78]">
+                      <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight text-white dark:text-[#F2CD78] truncate">
                         {publicT('public_view_details')}
                       </span>
-                      <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[#F2CD78]" />
+                      <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[#F2CD78] shrink-0" />
                     </button>
                   </div>
                 </div>

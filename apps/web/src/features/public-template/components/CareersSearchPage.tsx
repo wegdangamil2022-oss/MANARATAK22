@@ -6,6 +6,7 @@ import {
   BookOpen,
   Briefcase,
   Building2,
+  Check,
   CheckCircle2,
   ChevronDown,
   ChevronLeft,
@@ -30,7 +31,7 @@ import {
   CategoryType,
 } from '../types';
 import { FavoriteButton } from './FavoriteButton';
-import { DetailBackButton, DetailSectionHeader, PublicCardsPagination, PublicFilterSelectModal, useDetailSearchTarget, usePaginatedCatalog } from './DetailUi';
+import { DetailBackButton, DetailSectionHeader, PublicCardsPagination, PublicInlineFilterPanel, useDetailSearchTarget, usePaginatedCatalog } from './DetailUi';
 
 interface CareersSearchPageProps {
   live?: boolean;
@@ -107,28 +108,28 @@ const CareerOpportunityCard: React.FC<{
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
-        <span className="inline-flex items-center gap-1 rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 px-2 py-1 text-[9.5px] sm:text-[10px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
-          <MapPin className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9]" />
-          {opportunity.countryFlag} {opportunity.city || opportunity.country}
+        <span className="max-w-full inline-flex items-center gap-1 rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 px-2 py-1 text-[9.5px] sm:text-[10px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
+          <MapPin className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
+          <span className="min-w-0 break-words leading-tight">{opportunity.countryFlag} {opportunity.city || opportunity.country}</span>
         </span>
-        <span className="inline-flex items-center gap-1 rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 px-2 py-1 text-[9.5px] sm:text-[10px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
-          {opportunity.workMode === 'عن بعد' ? <Laptop className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9]" /> : <Building2 className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9]" />}
-          {opportunity.workMode}
+        <span className="max-w-full inline-flex items-center gap-1 rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 px-2 py-1 text-[9.5px] sm:text-[10px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
+          {opportunity.workMode === 'عن بعد' ? <Laptop className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" /> : <Building2 className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />}
+          <span className="min-w-0 break-words leading-tight">{opportunity.workMode}</span>
         </span>
-        <span className="inline-flex items-center gap-1 rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 px-2 py-1 text-[9.5px] sm:text-[10px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
-          <Users className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9]" />
-          {opportunity.experienceLevel}
+        <span className="max-w-full inline-flex items-center gap-1 rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 px-2 py-1 text-[9.5px] sm:text-[10px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
+          <Users className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
+          <span className="min-w-0 break-words leading-tight">{opportunity.experienceLevel}</span>
         </span>
       </div>
 
       <div className="pt-2 border-t border-[#142B5F]/8 dark:border-white/8 flex items-center justify-between gap-2">
-        <div className="min-w-0 text-[9.5px] sm:text-[10px] text-[#5C707C] dark:text-[#9BB4C7] font-bold font-['Cairo',sans-serif] truncate">
+        <div className="min-w-0 flex-1 text-[9.5px] sm:text-[10px] text-[#5C707C] dark:text-[#9BB4C7] font-bold font-['Cairo',sans-serif] leading-tight line-clamp-2 break-words">
           {opportunity.industry}
           {opportunity.durationLabel ? ` · ${opportunity.durationLabel}` : ''}
         </div>
         <span className="inline-flex items-center gap-1 rounded-lg bg-[#142B5F] group-hover:bg-[#0E7C86] dark:bg-[#162A52] dark:group-hover:bg-[#1C3566] border border-transparent dark:border-[#F2CD78]/35 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white dark:text-[#F2CD78] transition-colors shrink-0 font-['Cairo',sans-serif] shadow-2xs mn-inverse">
           {publicT('public_view_details')}
-          <ChevronLeft className="w-3.5 h-3.5 text-[#F2CD78]" />
+          <ChevronLeft className="w-3.5 h-3.5 text-[#F2CD78] shrink-0" />
         </span>
       </div>
     </button>
@@ -544,7 +545,7 @@ const LocalCareersSearchPage: React.FC<CareersSearchPageProps> = ({
               <div className="w-10 md:w-14 h-0.5 bg-gradient-to-r from-[#D6A43B] via-[#F2CD78] to-[#D6A43B] rounded-full" />
             </div>
 
-            <p className="text-[11px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto truncate">
+            <p className="text-[10px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto px-2 line-clamp-2">
               {publicT('public_jobs_internships_and_graduate_programs_in_one_directory')}
             </p>
           </div>
@@ -589,175 +590,381 @@ const LocalCareersSearchPage: React.FC<CareersSearchPageProps> = ({
             {/* Tile 1: نوع الفرصة */}
             <button
               type="button"
-              onClick={() => setOpenFilterModal('kind')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedKind !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => {
+                setShowAdvancedFilters(false);
+                setOpenFilterModal((prev) => (prev === 'kind' ? null : 'kind'));
+              }}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                openFilterModal === 'kind'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedKind !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel`}
             >
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
                 <Briefcase className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                <span className="truncate">{selectedKind === 'الكل' ? publicT('public_opportunity_type') : selectedKind}</span>
+                <span className="min-w-0 truncate">{selectedKind === 'الكل' ? publicT('public_opportunity_type') : selectedKind}</span>
               </div>
-              <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${openFilterModal === 'kind' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </button>
 
             {/* Tile 2: الدولة */}
             <button
               type="button"
-              onClick={() => setOpenFilterModal('country')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedCountry !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => {
+                setShowAdvancedFilters(false);
+                setOpenFilterModal((prev) => (prev === 'country' ? null : 'country'));
+              }}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                openFilterModal === 'country'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedCountry !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel`}
             >
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
                 <Globe2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                <span className="truncate">{selectedCountry === 'الكل' ? publicT('public_country') : selectedCountry}</span>
+                <span className="min-w-0 truncate">{selectedCountry === 'الكل' ? publicT('public_country') : selectedCountry}</span>
               </div>
-              <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${openFilterModal === 'country' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </button>
 
             {/* Tile 3: تصفية متقدمة */}
             <button
               type="button"
-              onClick={() => setShowAdvancedFilters((value) => !value)}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel ${
-                showAdvancedFilters || advancedFiltersCount > 0
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => {
+                setShowAdvancedFilters((value) => {
+                  setOpenFilterModal(null);
+                  return !value;
+                });
+              }}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel ${
+                showAdvancedFilters
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : advancedFiltersCount > 0
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               }`}
             >
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
                 <Filter className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                <span className="truncate">{advancedFiltersCount > 0 ? publicT('public_filter_count', { v0: advancedFiltersCount }) : publicT('public_filter')}</span>
+                <span className="min-w-0 truncate">{advancedFiltersCount > 0 ? publicT('public_filter_count', { v0: advancedFiltersCount }) : publicT('public_filter')}</span>
               </div>
-              <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 mt-0.5 transition-transform text-[#5C707C] dark:text-[#9BB4C7] ${showAdvancedFilters ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${showAdvancedFilters ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </button>
           </div>
-
-          <PublicFilterSelectModal
-            isOpen={openFilterModal === 'kind'}
-            onClose={() => setOpenFilterModal(null)}
-            title={publicT('public_choose_opportunity_type')}
-            icon={Briefcase}
-            selectedValue={selectedKind}
-            onSelect={(val) => setSelectedKind(val as 'الكل' | CareerOpportunityKind)}
-            options={kinds.map((kind) => ({
-              value: kind,
-              label: kind === 'الكل' ? publicT('public_all_opportunities') : kind,
-            }))}
-          />
-
-          <PublicFilterSelectModal
-            isOpen={openFilterModal === 'country'}
-            onClose={() => setOpenFilterModal(null)}
-            title={publicT('public_choose_country')}
-            icon={Globe2}
-            selectedValue={selectedCountry}
-            onSelect={setSelectedCountry}
-            options={countries.map((country) => ({
-              value: country,
-              label: country === 'الكل' ? publicT('public_all_countries') : country,
-            }))}
-          />
-
-          <PublicFilterSelectModal
-            isOpen={openFilterModal === 'industry'}
-            onClose={() => setOpenFilterModal(null)}
-            title={publicT('public_domain')}
-            icon={Layers3}
-            selectedValue={selectedIndustry}
-            onSelect={setSelectedIndustry}
-            options={industries.map((item) => ({
-              value: item,
-              label: item === 'الكل' ? publicT('public_all_domains') : item,
-            }))}
-          />
-
-          <PublicFilterSelectModal
-            isOpen={openFilterModal === 'workMode'}
-            onClose={() => setOpenFilterModal(null)}
-            title={publicT('public_work_arrangement')}
-            icon={Laptop}
-            selectedValue={selectedWorkMode}
-            onSelect={(val) => setSelectedWorkMode(val as 'الكل' | CareerWorkMode)}
-            options={workModes.map((item) => ({
-              value: item,
-              label: item === 'الكل' ? publicT('public_all_arrangements') : item,
-            }))}
-          />
-
-          <PublicFilterSelectModal
-            isOpen={openFilterModal === 'experience'}
-            onClose={() => setOpenFilterModal(null)}
-            title={publicT('public_experience')}
-            icon={Users}
-            selectedValue={selectedExperience}
-            onSelect={(val) => setSelectedExperience(val as 'الكل' | CareerExperienceLevel)}
-            options={experienceLevels.map((item) => ({
-              value: item,
-              label: item === 'الكل' ? publicT('public_all_levels') : item,
-            }))}
-          />
-
-          <PublicFilterSelectModal
-            isOpen={openFilterModal === 'employmentType'}
-            onClose={() => setOpenFilterModal(null)}
-            title={publicT('public_employment_type')}
-            icon={Clock3}
-            selectedValue={selectedEmploymentType}
-            onSelect={setSelectedEmploymentType}
-            options={employmentTypes.map((item) => ({
-              value: item,
-              label: item === 'الكل' ? publicT('public_all_types') : item,
-            }))}
-          />
-
-          {showAdvancedFilters && (
-            <div className="mt-2 bg-white dark:bg-[#111E38] border border-[#142B5F]/12 dark:border-white/12 rounded-2xl p-2 shadow-sm mn-panel">
-            <div className="grid grid-cols-2 gap-1.5">
-              <button
-                type="button"
-                onClick={() => setOpenFilterModal('industry')}
-                className="relative rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529] hover:border-[#0E7C86]/45 p-2 text-center cursor-pointer font-['Cairo',sans-serif] transition-colors mn-panel"
-              >
-                <div className="flex items-center justify-center gap-1"><Layers3 className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9]" /><span className="truncate text-[10.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5]">{selectedIndustry === 'الكل' ? publicT('public_domain') : selectedIndustry}</span></div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setOpenFilterModal('workMode')}
-                className="relative rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529] hover:border-[#0E7C86]/45 p-2 text-center cursor-pointer font-['Cairo',sans-serif] transition-colors mn-panel"
-              >
-                <div className="flex items-center justify-center gap-1"><Laptop className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9]" /><span className="truncate text-[10.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5]">{selectedWorkMode === 'الكل' ? publicT('public_work_arrangement') : selectedWorkMode}</span></div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setOpenFilterModal('experience')}
-                className="relative rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529] hover:border-[#0E7C86]/45 p-2 text-center cursor-pointer font-['Cairo',sans-serif] transition-colors mn-panel"
-              >
-                <div className="flex items-center justify-center gap-1"><Users className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9]" /><span className="truncate text-[10.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5]">{selectedExperience === 'الكل' ? publicT('public_experience') : selectedExperience}</span></div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setOpenFilterModal('employmentType')}
-                className="relative rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529] hover:border-[#0E7C86]/45 p-2 text-center cursor-pointer font-['Cairo',sans-serif] transition-colors mn-panel"
-              >
-                <div className="flex items-center justify-center gap-1"><Clock3 className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9]" /><span className="truncate text-[10.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5]">{selectedEmploymentType === 'الكل' ? publicT('public_employment_type') : selectedEmploymentType}</span></div>
-              </button>
-            </div>
-          </div>
-          )}
         </div>
       </div>
 
       {/* Gold Divider Ribbon Line */}
       <div className="w-full h-[1.5px] bg-gradient-to-r from-[#D6A43B]/45 via-[#F2CD78] to-[#D6A43B]/45 dark:from-[#D6A43B]/30 dark:via-[#F2CD78]/65 dark:to-[#D6A43B]/30 mb-3 md:mb-5" />
+
+      {/* Inline Attached Quick Filter Panels */}
+      <PublicInlineFilterPanel
+        isOpen={!showAdvancedFilters && openFilterModal === 'kind'}
+        onClose={() => setOpenFilterModal(null)}
+        title={publicT('public_choose_opportunity_type')}
+        icon={Briefcase}
+        selectedValue={selectedKind}
+        onSelect={(val) => setSelectedKind(val as 'الكل' | CareerOpportunityKind)}
+        dir={publicDir}
+        options={kinds.map((kind) => ({
+          value: kind,
+          label: kind === 'الكل' ? publicT('public_all_opportunities') : kind,
+        }))}
+      />
+
+      <PublicInlineFilterPanel
+        isOpen={!showAdvancedFilters && openFilterModal === 'country'}
+        onClose={() => setOpenFilterModal(null)}
+        title={publicT('public_choose_country')}
+        icon={Globe2}
+        selectedValue={selectedCountry}
+        onSelect={setSelectedCountry}
+        dir={publicDir}
+        options={countries.map((country) => ({
+          value: country,
+          label: country === 'الكل' ? publicT('public_all_countries') : country,
+        }))}
+      />
+
+      {/* Inline Attached Advanced Filter Panel (Collapsed Accordions by Default) */}
+      {showAdvancedFilters && (
+        <div className="w-full max-w-4xl md:max-w-[1120px] lg:max-w-[1160px] mx-auto px-1.5 sm:px-2 md:px-4 -mt-1.5 sm:-mt-2.5 mb-2.5 sm:mb-3">
+          <div className="relative overflow-hidden bg-white dark:bg-[#111E38] border border-[#142B5F]/10 dark:border-white/10 rounded-xl shadow-[0_1px_6px_rgba(20,43,95,0.035)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.2)] px-2.5 py-2 sm:px-3.5 sm:py-2.5 font-['Cairo',sans-serif] mn-panel">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#0E7C86]/45 to-transparent"
+            />
+            <div className="flex items-center justify-between gap-2 pb-1.5 mb-1.5 border-b border-[#142B5F]/8 dark:border-white/8">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="relative w-6 h-6 rounded-md bg-[#142B5F] text-[#F2CD78] flex items-center justify-center shrink-0 overflow-hidden">
+                  <span aria-hidden="true" className="pointer-events-none absolute top-0 right-0 w-1.5 h-1.5 bg-[#D6A43B] rounded-bl-[3px]" />
+                  <Filter className="w-3 h-3 relative z-10" />
+                </span>
+                <h4 className="text-[11px] sm:text-[12px] font-extrabold text-[#142B5F] dark:text-[#F1F5F9] truncate">
+                  {publicT('public_filter')}
+                </h4>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAdvancedFilters(false);
+                  setOpenFilterModal(null);
+                }}
+                aria-label={publicT('public_close')}
+                className="w-6 h-6 !min-h-[24px] rounded-md bg-[#F6F8FA] dark:bg-[#0B1529] border border-[#142B5F]/10 dark:border-white/10 text-[#142B5F] dark:text-[#EDF5F5] hover:border-[#0E7C86] hover:text-[#0E7C86] flex items-center justify-center transition-colors cursor-pointer active:scale-95 shrink-0"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+
+            <div className="space-y-1.5">
+              {/* Industry Accordion */}
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => setOpenFilterModal((prev) => (prev === 'industry' ? null : 'industry'))}
+                  className={`w-full !min-h-[34px] flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg border transition-colors cursor-pointer ${
+                    openFilterModal === 'industry'
+                      ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent'
+                      : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/8 dark:border-white/8'
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5 min-w-0">
+                    <Layers3 className={`w-3.5 h-3.5 shrink-0 ${openFilterModal === 'industry' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`} />
+                    <span className="text-[10.5px] sm:text-[11px] font-bold truncate">{publicT('public_domain')}</span>
+                  </span>
+                  <span className="flex items-center gap-1.5 shrink-0">
+                    {selectedIndustry !== 'الكل' && (
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded truncate max-w-[90px] ${openFilterModal === 'industry' ? 'bg-white/15 text-[#F2CD78]' : 'bg-[#0E7C86]/10 text-[#0E7C86] dark:bg-[#38C6D4]/15 dark:text-[#38C6D4]'}`}>
+                        {selectedIndustry}
+                      </span>
+                    )}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openFilterModal === 'industry' ? 'rotate-180 text-[#F2CD78]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
+                  </span>
+                </button>
+                {openFilterModal === 'industry' && (
+                  <div className="rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/8 dark:border-white/8 p-1.5">
+                    <div
+                      className={`max-h-[188px] overflow-y-auto overscroll-contain grid gap-1.5 py-0.5 pe-0.5 ${
+                        industries.some((item) => (item === 'الكل' ? publicT('public_all_domains') : item).trim().length > 15)
+                          ? 'grid-cols-1 sm:grid-cols-2'
+                          : 'grid-cols-2 sm:grid-cols-3'
+                      }`}
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
+                    >
+                      {industries.map((item) => {
+                        const isSelected = selectedIndustry === item;
+                        return (
+                          <button
+                            key={item}
+                            type="button"
+                            onClick={() => {
+                              setSelectedIndustry(item);
+                              setOpenFilterModal(null);
+                            }}
+                            className={`min-w-0 w-full overflow-hidden !min-h-[34px] flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-md text-[10px] sm:text-[10.5px] font-bold transition-colors cursor-pointer text-start ${
+                              isSelected
+                                ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white'
+                                : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/40 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
+                            }`}
+                          >
+                            <span className="min-w-0 flex-1 leading-snug break-words">{item === 'الكل' ? publicT('public_all_domains') : item}</span>
+                            {isSelected ? <Check className="w-3 h-3 text-[#38C6D4] shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Work Mode Accordion */}
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => setOpenFilterModal((prev) => (prev === 'workMode' ? null : 'workMode'))}
+                  className={`w-full !min-h-[34px] flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg border transition-colors cursor-pointer ${
+                    openFilterModal === 'workMode'
+                      ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent'
+                      : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/8 dark:border-white/8'
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5 min-w-0">
+                    <Laptop className={`w-3.5 h-3.5 shrink-0 ${openFilterModal === 'workMode' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`} />
+                    <span className="text-[10.5px] sm:text-[11px] font-bold truncate">{publicT('public_work_arrangement')}</span>
+                  </span>
+                  <span className="flex items-center gap-1.5 shrink-0">
+                    {selectedWorkMode !== 'الكل' && (
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded truncate max-w-[90px] ${openFilterModal === 'workMode' ? 'bg-white/15 text-[#F2CD78]' : 'bg-[#0E7C86]/10 text-[#0E7C86] dark:bg-[#38C6D4]/15 dark:text-[#38C6D4]'}`}>
+                        {selectedWorkMode}
+                      </span>
+                    )}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openFilterModal === 'workMode' ? 'rotate-180 text-[#F2CD78]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
+                  </span>
+                </button>
+                {openFilterModal === 'workMode' && (
+                  <div className="rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/8 dark:border-white/8 p-1.5">
+                    <div
+                      className={`max-h-[188px] overflow-y-auto overscroll-contain grid gap-1.5 py-0.5 pe-0.5 ${
+                        workModes.some((item) => (item === 'الكل' ? publicT('public_all_arrangements') : item).trim().length > 15)
+                          ? 'grid-cols-1 sm:grid-cols-2'
+                          : 'grid-cols-2 sm:grid-cols-3'
+                      }`}
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
+                    >
+                      {workModes.map((item) => {
+                        const isSelected = selectedWorkMode === item;
+                        return (
+                          <button
+                            key={item}
+                            type="button"
+                            onClick={() => {
+                              setSelectedWorkMode(item as 'الكل' | CareerWorkMode);
+                              setOpenFilterModal(null);
+                            }}
+                            className={`min-w-0 w-full overflow-hidden !min-h-[32px] flex items-center justify-between gap-1 px-2 py-1 rounded-md text-[10px] sm:text-[10.5px] font-bold transition-colors cursor-pointer text-start ${
+                              isSelected
+                                ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white'
+                                : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/40 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
+                            }`}
+                          >
+                            <span className="min-w-0 flex-1 leading-snug break-words">{item === 'الكل' ? publicT('public_all_arrangements') : item}</span>
+                            {isSelected ? <Check className="w-3 h-3 text-[#38C6D4] shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Experience Accordion */}
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => setOpenFilterModal((prev) => (prev === 'experience' ? null : 'experience'))}
+                  className={`w-full !min-h-[34px] flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg border transition-colors cursor-pointer ${
+                    openFilterModal === 'experience'
+                      ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent'
+                      : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/8 dark:border-white/8'
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5 min-w-0">
+                    <Users className={`w-3.5 h-3.5 shrink-0 ${openFilterModal === 'experience' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`} />
+                    <span className="text-[10.5px] sm:text-[11px] font-bold truncate">{publicT('public_experience')}</span>
+                  </span>
+                  <span className="flex items-center gap-1.5 shrink-0">
+                    {selectedExperience !== 'الكل' && (
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded truncate max-w-[90px] ${openFilterModal === 'experience' ? 'bg-white/15 text-[#F2CD78]' : 'bg-[#0E7C86]/10 text-[#0E7C86] dark:bg-[#38C6D4]/15 dark:text-[#38C6D4]'}`}>
+                        {selectedExperience}
+                      </span>
+                    )}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openFilterModal === 'experience' ? 'rotate-180 text-[#F2CD78]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
+                  </span>
+                </button>
+                {openFilterModal === 'experience' && (
+                  <div className="rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/8 dark:border-white/8 p-1.5">
+                    <div
+                      className={`max-h-[188px] overflow-y-auto overscroll-contain grid gap-1.5 py-0.5 pe-0.5 ${
+                        experienceLevels.some((item) => (item === 'الكل' ? publicT('public_all_levels') : item).trim().length > 15)
+                          ? 'grid-cols-1 sm:grid-cols-2'
+                          : 'grid-cols-2 sm:grid-cols-3'
+                      }`}
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
+                    >
+                      {experienceLevels.map((item) => {
+                        const isSelected = selectedExperience === item;
+                        return (
+                          <button
+                            key={item}
+                            type="button"
+                            onClick={() => {
+                              setSelectedExperience(item as 'الكل' | CareerExperienceLevel);
+                              setOpenFilterModal(null);
+                            }}
+                            className={`min-w-0 w-full overflow-hidden !min-h-[32px] flex items-center justify-between gap-1 px-2 py-1 rounded-md text-[10px] sm:text-[10.5px] font-bold transition-colors cursor-pointer text-start ${
+                              isSelected
+                                ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white'
+                                : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/40 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
+                            }`}
+                          >
+                            <span className="min-w-0 flex-1 leading-snug break-words">{item === 'الكل' ? publicT('public_all_levels') : item}</span>
+                            {isSelected ? <Check className="w-3 h-3 text-[#38C6D4] shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Employment Type Accordion */}
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => setOpenFilterModal((prev) => (prev === 'employmentType' ? null : 'employmentType'))}
+                  className={`w-full !min-h-[34px] flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg border transition-colors cursor-pointer ${
+                    openFilterModal === 'employmentType'
+                      ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent'
+                      : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/8 dark:border-white/8'
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5 min-w-0">
+                    <Clock3 className={`w-3.5 h-3.5 shrink-0 ${openFilterModal === 'employmentType' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`} />
+                    <span className="text-[10.5px] sm:text-[11px] font-bold truncate">{publicT('public_employment_type')}</span>
+                  </span>
+                  <span className="flex items-center gap-1.5 shrink-0">
+                    {selectedEmploymentType !== 'الكل' && (
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded truncate max-w-[90px] ${openFilterModal === 'employmentType' ? 'bg-white/15 text-[#F2CD78]' : 'bg-[#0E7C86]/10 text-[#0E7C86] dark:bg-[#38C6D4]/15 dark:text-[#38C6D4]'}`}>
+                        {selectedEmploymentType}
+                      </span>
+                    )}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openFilterModal === 'employmentType' ? 'rotate-180 text-[#F2CD78]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
+                  </span>
+                </button>
+                {openFilterModal === 'employmentType' && (
+                  <div className="rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/8 dark:border-white/8 p-1.5">
+                    <div
+                      className={`max-h-[188px] overflow-y-auto overscroll-contain grid gap-1.5 py-0.5 pe-0.5 ${
+                        employmentTypes.some((item) => (item === 'الكل' ? publicT('public_all_types') : item).trim().length > 15)
+                          ? 'grid-cols-1 sm:grid-cols-2'
+                          : 'grid-cols-2 sm:grid-cols-3'
+                      }`}
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
+                    >
+                      {employmentTypes.map((item) => {
+                        const isSelected = selectedEmploymentType === item;
+                        return (
+                          <button
+                            key={item}
+                            type="button"
+                            onClick={() => {
+                              setSelectedEmploymentType(item);
+                              setOpenFilterModal(null);
+                            }}
+                            className={`min-w-0 w-full overflow-hidden !min-h-[32px] flex items-center justify-between gap-1 px-2 py-1 rounded-md text-[10px] sm:text-[10.5px] font-bold transition-colors cursor-pointer text-start ${
+                              isSelected
+                                ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white'
+                                : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/40 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
+                            }`}
+                          >
+                            <span className="min-w-0 flex-1 leading-snug break-words">{item === 'الكل' ? publicT('public_all_types') : item}</span>
+                            {isSelected ? <Check className="w-3 h-3 text-[#38C6D4] shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="w-full max-w-4xl md:max-w-[1120px] lg:max-w-[1160px] mx-auto px-1 sm:px-2 md:px-4 pt-1 space-y-3 md:space-y-4">
         <div className="flex items-center justify-between px-1">

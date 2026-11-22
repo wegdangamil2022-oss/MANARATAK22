@@ -314,7 +314,7 @@ export function StudentAuthPage({ onAuthenticated }: { onAuthenticated: (destina
                     checked={rememberMe}
                     onChange={(event) => setRememberMe(event.target.checked)}
                     disabled={loading}
-                    className="h-4 w-4 rounded border-[var(--mn-border)] text-[var(--mn-accent-text)] focus:ring-[var(--mn-accent-text)] cursor-pointer"
+                    className="h-4 w-4 rounded border-[#142B5F]/20 text-[#0E7C86] focus:ring-[#0E7C86] cursor-pointer"
                   />
                   <label htmlFor="remember-me" className="text-xs font-semibold text-[var(--mn-text-muted)] cursor-pointer">
                     البقاء مسجّلًا على هذا الجهاز لمدة 30 يومًا

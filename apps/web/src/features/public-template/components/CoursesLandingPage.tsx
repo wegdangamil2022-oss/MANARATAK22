@@ -103,10 +103,10 @@ function CoursePathCard({ title, description, icon: Icon, features, cta, isRestr
           {features.map(({ label, icon: FeatureIcon }) => (
             <div
               key={label}
-              className="rounded-lg border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 group-hover:bg-white dark:group-hover:bg-[#142342] px-2.5 py-1.5 flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#DCE7F0] font-['Cairo',sans-serif] transition-colors"
+              className="min-w-0 overflow-hidden rounded-lg border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 group-hover:bg-white dark:group-hover:bg-[#142342] px-2.5 py-1.5 flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#DCE7F0] font-['Cairo',sans-serif] transition-colors"
             >
               <FeatureIcon className="w-3.5 h-3.5 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" />
-              <span className="truncate">{label}</span>
+              <span className="min-w-0 leading-tight break-words">{label}</span>
             </div>
           ))}
         </div>
@@ -204,32 +204,32 @@ export const CoursesLandingPage: React.FC<CoursesLandingPageProps> = ({ onBack, 
               <div className="w-10 md:w-14 h-0.5 bg-gradient-to-r from-[#D6A43B] via-[#F2CD78] to-[#D6A43B] rounded-full" />
             </div>
 
-            <p className="text-[11px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto truncate">
+            <p className="text-[10px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto px-2 line-clamp-2">
               {publicT('public_choose_a_training_path_that_fits_your_goals')}
             </p>
           </div>
         </div>
 
         <div className="w-full max-w-md md:max-w-2xl mx-auto mn-inline-gutter mt-2.5 sm:mt-3 md:mt-4 relative z-20 pb-0 md:pb-1">
-          <div className="grid grid-cols-3 gap-2 md:gap-3.5">
-            <div className="bg-white dark:bg-[#111E38] border-1.5 border-[#142B5F]/18 dark:border-white/14 rounded-xl sm:rounded-2xl px-1.5 py-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] h-[48px] sm:h-[62px] md:h-[70px] mn-panel">
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
-                <Globe2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
-                <span className="truncate">{publicT('public_global_platforms')}</span>
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 md:gap-3.5">
+            <div className="min-w-0 overflow-hidden bg-white dark:bg-[#111E38] border-1.5 border-[#142B5F]/18 dark:border-white/14 rounded-xl sm:rounded-2xl px-1 py-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] h-[48px] sm:h-[62px] md:h-[70px] mn-panel">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[9.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+                <Globe2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+                <span className="min-w-0 leading-tight break-words">{publicT('public_global_platforms')}</span>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#111E38] border-1.5 border-[#142B5F]/18 dark:border-white/14 rounded-xl sm:rounded-2xl px-1.5 py-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] h-[48px] sm:h-[62px] md:h-[70px] mn-panel">
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
-                <Award className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
-                <span className="truncate">{publicT('public_accredited_certificates')}</span>
+            <div className="min-w-0 overflow-hidden bg-white dark:bg-[#111E38] border-1.5 border-[#142B5F]/18 dark:border-white/14 rounded-xl sm:rounded-2xl px-1 py-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] h-[48px] sm:h-[62px] md:h-[70px] mn-panel">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[9.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+                <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+                <span className="min-w-0 leading-tight break-words">{publicT('public_accredited_certificates')}</span>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#111E38] border-1.5 border-[#142B5F]/18 dark:border-white/14 rounded-xl sm:rounded-2xl px-1.5 py-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] h-[48px] sm:h-[62px] md:h-[70px] mn-panel">
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
-                <TrendingUp className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
-                <span className="truncate">{publicT('public_progress_tracking')}</span>
+            <div className="min-w-0 overflow-hidden bg-white dark:bg-[#111E38] border-1.5 border-[#142B5F]/18 dark:border-white/14 rounded-xl sm:rounded-2xl px-1 py-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] h-[48px] sm:h-[62px] md:h-[70px] mn-panel">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[9.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+                <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+                <span className="min-w-0 leading-tight break-words">{publicT('public_progress_tracking')}</span>
               </div>
             </div>
           </div>

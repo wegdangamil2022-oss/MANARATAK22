@@ -17,7 +17,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { University } from '../types';
-import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
+import { PublicCardsPagination, PublicInlineFilterPanel, usePaginatedCatalog } from './DetailUi';
 
 interface UniversitiesSearchPageProps {
   dataMode?: 'api' | 'prototype';
@@ -231,7 +231,7 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
             </div>
 
             {/* Subtitle */}
-            <p className="text-[11px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto truncate">
+            <p className="text-[10px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto px-2 line-clamp-2">
               {publicT('public_discover_leading_universities_worldwide_with_clear_admission_requirements')}
             </p>
           </div>
@@ -284,18 +284,20 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('continent');
+                  setActiveFilterModal((prev) => (prev === 'continent' ? null : 'continent'));
                 }
               }}
-              onClick={() => setActiveFilterModal('continent')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedContinent !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => setActiveFilterModal((prev) => (prev === 'continent' ? null : 'continent'))}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                activeFilterModal === 'continent'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedContinent !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title={publicT('public_choose_continent')}
             >
-              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
                 <Globe2
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedContinent !== 'الكل'
@@ -303,11 +305,11 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
                       : 'text-[#0E7C86] dark:text-[#34BFC9]'
                   }`}
                 />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedContinent === 'الكل' ? publicT('public_continent') : selectedContinent}
                 </span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3.5 h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'continent' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
 
             {/* Tile 2: الدولة */}
@@ -317,18 +319,20 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('country');
+                  setActiveFilterModal((prev) => (prev === 'country' ? null : 'country'));
                 }
               }}
-              onClick={() => setActiveFilterModal('country')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedCountry !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => setActiveFilterModal((prev) => (prev === 'country' ? null : 'country'))}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                activeFilterModal === 'country'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedCountry !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title={publicT('public_choose_country')}
             >
-              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
                 <MapPin
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedCountry !== 'الكل'
@@ -336,11 +340,11 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
                       : 'text-[#0E7C86] dark:text-[#34BFC9]'
                   }`}
                 />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedCountry === 'الكل' ? publicT('public_country') : selectedCountry}
                 </span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3.5 h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'country' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
 
             {/* Tile 3: المدينة */}
@@ -350,18 +354,20 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('city');
+                  setActiveFilterModal((prev) => (prev === 'city' ? null : 'city'));
                 }
               }}
-              onClick={() => setActiveFilterModal('city')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedCity !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => setActiveFilterModal((prev) => (prev === 'city' ? null : 'city'))}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                activeFilterModal === 'city'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedCity !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title={publicT('public_choose_city')}
             >
-              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
                 <Building2
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedCity !== 'الكل'
@@ -369,9 +375,9 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
                       : 'text-[#0E7C86] dark:text-[#34BFC9]'
                   }`}
                 />
-                <span className="truncate font-['Cairo',sans-serif]">{selectedCity === 'الكل' ? publicT('public_city') : selectedCity}</span>
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">{selectedCity === 'الكل' ? publicT('public_city') : selectedCity}</span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3.5 h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'city' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
           </div>
         </div>
@@ -379,6 +385,49 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
 
       {/* Official Gold Divider Ribbon */}
       <div className="w-full h-[1.5px] bg-gradient-to-r from-[#D6A43B]/45 via-[#F2CD78] to-[#D6A43B]/45 dark:from-[#D6A43B]/30 dark:via-[#F2CD78]/65 dark:to-[#D6A43B]/30 mb-3 md:mb-5" />
+
+      {/* Inline Attached Filter Panels */}
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'continent'}
+        title={publicT('public_choose_continent')}
+        icon={Globe2}
+        selectedValue={selectedContinent}
+        onSelect={(val) => handleContinentChange(val)}
+        onClose={() => setActiveFilterModal(null)}
+        dir={publicDir}
+        options={continents.map((c) => ({
+          value: c,
+          label: c === 'الكل' ? publicT('public_all_continents') : c,
+        }))}
+      />
+
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'country'}
+        title={publicT('public_choose_country')}
+        icon={MapPin}
+        selectedValue={selectedCountry}
+        onSelect={(val) => handleCountryChange(val)}
+        onClose={() => setActiveFilterModal(null)}
+        dir={publicDir}
+        options={countries.map((cnt) => ({
+          value: cnt,
+          label: cnt === 'الكل' ? publicT('public_all_countries_2') : cnt,
+        }))}
+      />
+
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'city'}
+        title={publicT('public_choose_city')}
+        icon={Building2}
+        selectedValue={selectedCity}
+        onSelect={(val) => setSelectedCity(val)}
+        onClose={() => setActiveFilterModal(null)}
+        dir={publicDir}
+        options={cities.map((cty) => ({
+          value: cty,
+          label: cty === 'الكل' ? publicT('public_all_cities') : cty,
+        }))}
+      />
 
       {/* ========================================================================= */}
       {/* RESULTS LIST SECTION                                                      */}
@@ -439,7 +488,7 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
 
                       {/* Names with compact balanced typography */}
                       <div className="flex flex-col items-start text-start min-w-0 flex-1">
-                        <h3 className="text-[11.5px] sm:text-[12.5px] md:text-[14px] font-bold text-[#142B5F] dark:text-[#F1F5F9] font-['Cairo',sans-serif] leading-snug truncate w-full">
+                        <h3 className="text-[11.5px] sm:text-[12.5px] md:text-[14px] font-bold text-[#142B5F] dark:text-[#F1F5F9] font-['Cairo',sans-serif] leading-snug line-clamp-2 break-words w-full">
                           {univ.name}
                         </h3>
                         <span className="text-[10px] sm:text-[11px] font-medium text-[#5C707C] dark:text-[#9BB4C7] font-['Cairo',sans-serif] truncate w-full">
@@ -463,24 +512,24 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
                   {/* Bottom Row: 4 Boxes in 2x2 Grid */}
                   <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-[#142B5F]/8 dark:border-white/8">
                     {/* 1. Ownership / Type */}
-                    <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
+                    <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
                       <Briefcase className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                      <span className="truncate">{univ.ownership || univ.type || publicT('public_government')}</span>
+                      <span className="min-w-0 leading-tight line-clamp-2 break-words">{univ.ownership || univ.type || publicT('public_government')}</span>
                     </div>
 
                     {/* 2. Location */}
-                    <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
+                    <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
                       <MapPin className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                      <span className="truncate">
+                      <span className="min-w-0 leading-tight line-clamp-2 break-words">
                         {univ.country}
                         {univ.city ? publicT('public_city_suffix', { v0: univ.city }) : ''}
                       </span>
                     </div>
 
                     {/* 3. Foundation Year */}
-                    <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
+                    <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
                       <History className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                      <span className="truncate">
+                      <span className="min-w-0 leading-tight line-clamp-2 break-words">
                         {univ.foundationYear ? publicT('public_founded_year', { v0: univ.foundationYear }) : publicT('public_accredited_university')}
                       </span>
                     </div>
@@ -491,11 +540,11 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
                         e.stopPropagation();
                         onSelectUniversity?.(univ);
                       }}
-                      className="bg-[#142B5F] hover:bg-[#0E7C86] dark:bg-[#162A52] dark:hover:bg-[#1C3566] text-white dark:text-[#F2CD78] border border-transparent dark:border-[#F2CD78]/35 rounded-lg px-2.5 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs shrink-0 mn-inverse "
+                      className="min-w-0 overflow-hidden bg-[#142B5F] hover:bg-[#0E7C86] dark:bg-[#162A52] dark:hover:bg-[#1C3566] text-white dark:text-[#F2CD78] border border-transparent dark:border-[#F2CD78]/35 rounded-lg px-2 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs mn-inverse "
                       data-mn-design="26ecd1db9e"
                     >
-                      <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight text-white dark:text-[#F2CD78]">{publicT('public_view_details')}</span>
-                      <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[#F2CD78]" />
+                      <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight text-white dark:text-[#F2CD78] truncate">{publicT('public_view_details')}</span>
+                      <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[#F2CD78] shrink-0" />
                     </button>
                   </div>
                 </div>
@@ -517,47 +566,6 @@ const PrototypeUniversitiesSearchPage: React.FC<UniversitiesSearchPageProps> = (
         )}
       </div>
 
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'continent'}
-        title={publicT('public_choose_continent')}
-        icon={Globe2}
-        selectedValue={selectedContinent}
-        onSelect={(val) => handleContinentChange(val)}
-        onClose={() => setActiveFilterModal(null)}
-        dir={publicDir}
-        options={continents.map((c) => ({
-          value: c,
-          label: c === 'الكل' ? publicT('public_all_continents') : c,
-        }))}
-      />
-
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'country'}
-        title={publicT('public_choose_country')}
-        icon={MapPin}
-        selectedValue={selectedCountry}
-        onSelect={(val) => handleCountryChange(val)}
-        onClose={() => setActiveFilterModal(null)}
-        dir={publicDir}
-        options={countries.map((cnt) => ({
-          value: cnt,
-          label: cnt === 'الكل' ? publicT('public_all_countries_2') : cnt,
-        }))}
-      />
-
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'city'}
-        title={publicT('public_choose_city')}
-        icon={Building2}
-        selectedValue={selectedCity}
-        onSelect={(val) => setSelectedCity(val)}
-        onClose={() => setActiveFilterModal(null)}
-        dir={publicDir}
-        options={cities.map((cty) => ({
-          value: cty,
-          label: cty === 'الكل' ? publicT('public_all_cities') : cty,
-        }))}
-      />
     </div>
   );
 };

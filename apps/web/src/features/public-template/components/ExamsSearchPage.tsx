@@ -2,11 +2,10 @@ import { useTranslation as usePublicTemplateTranslation } from '../../../i18n/I1
 import { ApiClient } from '../../../api/client';
 import { mapExam } from '../publicLiveDataSource';
 import React, { useState, useMemo, useEffect } from 'react';
-import { ChevronLeft, ChevronDown, Award, Search, X, Clock, ShieldCheck, Globe2, Sparkles, RotateCcw, Filter, Check, Coins, Heart } from 'lucide-react';
+import { ChevronLeft, ChevronDown, Award, Search, X, ShieldCheck, Globe2, Sparkles, RotateCcw, BookOpenCheck, Heart } from 'lucide-react';
 import { Exam } from '../types';
-import { FavoriteButton } from './FavoriteButton';
 import { ExamVectorLogo } from './FeaturedExams';
-import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
+import { PublicCardsPagination, PublicInlineFilterPanel, usePaginatedCatalog } from './DetailUi';
 
 interface ExamsSearchPageProps {
   exams?: Exam[];
@@ -37,6 +36,20 @@ const CATEGORY_LABELS: Record<string, string> = {
   NATIONAL_INTERNATIONAL_ADMISSION: 'قبول وطني ودولي',
   SPECIALIZED_ADMISSION: 'قبول تخصصي',
   PROFESSIONAL_LICENSING_CERTIFICATION: 'ترخيص وشهادات مهنية',
+};
+
+const EXAM_TYPE_LABELS: Record<string, string> = {
+  ENGLISH_LANGUAGE: 'اختبار اللغة الإنجليزية',
+  NON_ENGLISH_LANGUAGE: 'اختبار لغات أخرى',
+  GENERAL_UNDERGRADUATE_ADMISSION: 'اختبار قبول بكالوريوس',
+  GRADUATE_ADMISSION: 'اختبار دراسات عليا',
+  NATIONAL_INTERNATIONAL_ADMISSION: 'اختبار قبول دولي',
+  SPECIALIZED_ADMISSION: 'اختبار قبول تخصصي',
+  PROFESSIONAL_LICENSING_CERTIFICATION: 'اختبار ترخيص مهني',
+  'لغة إنجليزية': 'اختبار اللغة الإنجليزية',
+  'اللغة الإنجليزية': 'اختبار اللغة الإنجليزية',
+  'لغة صينية': 'اختبار اللغة الصينية',
+  'اللغة الصينية': 'اختبار اللغة الصينية',
 };
 
 const DEFAULT_EXAM_COUNTRIES = [
@@ -253,7 +266,7 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
               <div className="w-10 md:w-14 h-0.5 bg-gradient-to-r from-[#D6A43B] via-[#F2CD78] to-[#D6A43B] rounded-full" />
             </div>
 
-            <p className="text-[11px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto truncate">
+            <p className="text-[10px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto px-2 line-clamp-2">
               {publicT('public_your_trusted_gateway_to_international_admission_prepare_for')}
             </p>
           </div>
@@ -266,7 +279,8 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={publicT('public_search_for_an_exam_e_g_ielts_toefl')}
-                className="w-full py-2 sm:py-2.5 md:py-3 pl-4 pr-10 md:pr-11 bg-white dark:bg-[#111E38] text-[#203442] dark:text-[#EDF5F5] rounded-full text-[12px] md:text-sm font-bold placeholder:text-[#5C707C] dark:placeholder:text-[#9BB4C7] focus:outline-none shadow-md border border-[#142B5F]/12 dark:border-white/14 focus:border-[#0E7C86] dark:focus:border-[#34BFC9] transition-all text-center font-['Cairo',sans-serif] mn-panel"
+                className="w-full py-2 sm:py-2.5 md:py-3 pl-4 pr-10 md:pr-11 bg-white dark:bg-[#111E38] text-[#203442] dark:text-[#EDF5F5] rounded-full text-[12px] md:text-sm font-bold placeholder:text-[#5C707C] dark:placeholder:text-[#9BB4C7] placeholder:text-[12px] md:placeholder:text-sm placeholder:font-bold placeholder:font-['Cairo',sans-serif] focus:outline-none focus-visible:!outline-none shadow-md border border-[#142B5F]/12 dark:border-white/14 focus:border-[#0E7C86] dark:focus:border-[#34BFC9] transition-all text-center font-['Cairo',sans-serif] mn-panel "
+                data-mn-design="cd18739893"
               />
               <Search className="w-4 h-4 md:w-4.5 md:h-4.5 text-[#0E7C86] dark:text-[#34BFC9] absolute right-3.5 md:right-4 top-1/2 -translate-y-1/2" />
               {searchQuery && (
@@ -309,24 +323,26 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('category');
+                  setActiveFilterModal((prev) => (prev === 'category' ? null : 'category'));
                 }
               }}
-              onClick={() => setActiveFilterModal('category')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedCategory !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => setActiveFilterModal((prev) => (prev === 'category' ? null : 'category'))}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                activeFilterModal === 'category'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedCategory !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title="اختر تصنيف الاختبار"
             >
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] leading-tight font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-[13px] leading-tight font-['Cairo',sans-serif] w-full">
                 <Award className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedCategory === 'الكل' ? 'تصنيف الاختبار' : (CATEGORY_LABELS[selectedCategory] ?? selectedCategory)}
                 </span>
               </div>
-              <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5 shrink-0" />
+              <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'category' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
 
             {/* Tile 2: الفلتر حسب الدولة */}
@@ -336,24 +352,26 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('country');
+                  setActiveFilterModal((prev) => (prev === 'country' ? null : 'country'));
                 }
               }}
-              onClick={() => setActiveFilterModal('country')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedCountry !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => setActiveFilterModal((prev) => (prev === 'country' ? null : 'country'))}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                activeFilterModal === 'country'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedCountry !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title="اختر الدولة"
             >
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] leading-tight font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-[13px] leading-tight font-['Cairo',sans-serif] w-full">
                 <Globe2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedCountry === 'الكل' ? 'حسب الدولة' : selectedCountry}
                 </span>
               </div>
-              <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5 shrink-0" />
+              <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'country' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
           </div>
         </div>
@@ -361,6 +379,33 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
 
       {/* Gold Divider Ribbon Line */}
       <div className="w-full h-[1.5px] bg-gradient-to-r from-[#D6A43B]/45 via-[#F2CD78] to-[#D6A43B]/45 dark:from-[#D6A43B]/30 dark:via-[#F2CD78]/65 dark:to-[#D6A43B]/30 mb-3 md:mb-5" />
+
+      {/* Inline Attached Filter Panels */}
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'category'}
+        title="اختر تصنيف الاختبار"
+        icon={Award}
+        selectedValue={selectedCategory}
+        onSelect={(val) => setSelectedCategory(val)}
+        onClose={() => setActiveFilterModal(null)}
+        options={categories.map((cat) => ({
+          value: cat,
+          label: cat === 'الكل' ? 'جميع التصنيفات' : (CATEGORY_LABELS[cat] ?? cat),
+        }))}
+      />
+
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'country'}
+        title="اختر الدولة"
+        icon={Globe2}
+        selectedValue={selectedCountry}
+        onSelect={(val) => setSelectedCountry(val)}
+        onClose={() => setActiveFilterModal(null)}
+        options={countries.map((country) => ({
+          value: country,
+          label: country === 'الكل' ? 'جميع الدول' : country,
+        }))}
+      />
 
       {/* ========================================================================= */}
       {/* EXAMS DIRECTORY RESULTS GRID                                              */}
@@ -412,14 +457,9 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
                     </div>
 
                     <div className="flex flex-col items-start text-start min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 w-full">
-                        <h3 className="text-[11.5px] sm:text-[13px] md:text-[13.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5] group-hover:text-[#0E7C86] dark:group-hover:text-[#F2CD78] transition-colors font-['Cairo',sans-serif] leading-snug truncate">
-                          {exam.name}
-                        </h3>
-                        <span className="shrink-0 px-1.5 py-0.5 rounded-md bg-[#DDEFF2]/85 dark:bg-[#0E7C86]/20 text-[#0E7C86] dark:text-[#34BFC9] border border-[#0E7C86]/18 dark:border-[#34BFC9]/25 text-[9px] sm:text-[9.5px] font-bold">
-                          {CATEGORY_LABELS[exam.category] ?? exam.category}
-                        </span>
-                      </div>
+                      <h3 className="text-[11.5px] sm:text-[13px] md:text-[13.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5] group-hover:text-[#0E7C86] dark:group-hover:text-[#F2CD78] transition-colors font-['Cairo',sans-serif] leading-snug line-clamp-2 break-words w-full">
+                        {exam.name}
+                      </h3>
                       <span className="text-[9.5px] sm:text-[10.5px] font-medium text-[#5C707C] dark:text-[#9BB4C7] font-['Cairo',sans-serif] truncate w-full">
                         {exam.nameEn}{exam.providerName ? ` · ${exam.providerName}` : ''}
                       </span>
@@ -444,35 +484,39 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
                   )}
                 </div>
 
-                {/* Bottom Row: 4 Boxes in 2x2 Grid (Score • Validity • Fees/Duration • CTA View Details) */}
+                {/* Bottom Row: 4 Boxes in 2x2 Grid (Exam Type • Score Scale • Validity • CTA View Details) */}
                 <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-[#142B5F]/8 dark:border-white/8">
-                  <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
-                    <Award className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                    <span className="truncate">{exam.scoreRange || 'مقياس معتمد'}</span>
+                  {/* Box 1 (Highest Priority): نوع الاختبار */}
+                  <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
+                    <BookOpenCheck className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+                    <span className="min-w-0 leading-tight line-clamp-2 break-words">{EXAM_TYPE_LABELS[exam.category] ?? CATEGORY_LABELS[exam.category] ?? exam.category}</span>
                   </div>
 
-                  <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                    <span className="truncate">{exam.validity || 'سنتان'}</span>
+                  {/* Box 2: درجة الاختبار / المقياس */}
+                  <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
+                    <Award className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+                    <span className="min-w-0 leading-tight line-clamp-2 break-words">{exam.scoreRange || 'مقياس معتمد'}</span>
                   </div>
 
-                  <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
-                    <Coins className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                    <span className="truncate">{exam.feeSummary || exam.duration || 'رسوم متغيرة'}</span>
+                  {/* Box 3: صلاحية الشهادة */}
+                  <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
+                    <span className="min-w-0 leading-tight line-clamp-2 break-words">{exam.validity || 'سنتان'}</span>
                   </div>
 
+                  {/* Box 4: عرض التفاصيل */}
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       onSelectExam?.(exam);
                     }}
-                    className="bg-[#142B5F] hover:bg-[#0E7C86] dark:bg-[#162A52] dark:hover:bg-[#1C3566] text-white dark:text-[#F2CD78] border border-transparent dark:border-[#F2CD78]/35 rounded-lg px-2.5 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs mn-inverse"
+                    className="min-w-0 overflow-hidden bg-[#142B5F] hover:bg-[#0E7C86] dark:bg-[#162A52] dark:hover:bg-[#1C3566] text-white dark:text-[#F2CD78] border border-transparent dark:border-[#F2CD78]/35 rounded-lg px-2 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs mn-inverse"
                   >
-                    <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight text-white dark:text-[#F2CD78]">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight text-white dark:text-[#F2CD78] truncate">
                       {publicT('public_view_details')}
                     </span>
-                    <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[#F2CD78]" />
+                    <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[#F2CD78] shrink-0" />
                   </button>
                 </div>
               </div>
@@ -497,31 +541,6 @@ export const ExamsSearchPage: React.FC<ExamsSearchPageProps> = ({
         )}
       </div>
 
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'category'}
-        title="اختر تصنيف الاختبار"
-        icon={Award}
-        selectedValue={selectedCategory}
-        onSelect={(val) => setSelectedCategory(val)}
-        onClose={() => setActiveFilterModal(null)}
-        options={categories.map((cat) => ({
-          value: cat,
-          label: cat === 'الكل' ? 'جميع التصنيفات' : (CATEGORY_LABELS[cat] ?? cat),
-        }))}
-      />
-
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'country'}
-        title="اختر الدولة"
-        icon={Globe2}
-        selectedValue={selectedCountry}
-        onSelect={(val) => setSelectedCountry(val)}
-        onClose={() => setActiveFilterModal(null)}
-        options={countries.map((country) => ({
-          value: country,
-          label: country === 'الكل' ? 'جميع الدول' : country,
-        }))}
-      />
     </div>
   );
 };

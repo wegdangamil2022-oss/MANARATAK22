@@ -20,7 +20,7 @@ import { CountryDestination } from '../types';
 import type { PublicCountryGraphDto } from '../../../api/client';
 import { CountryDetailModal } from './CountryDetailModal';
 import { FavoriteButton } from './FavoriteButton';
-import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
+import { PublicCardsPagination, PublicInlineFilterPanel, usePaginatedCatalog } from './DetailUi';
 
 interface CountriesSearchPageProps {
   dataMode?: 'api' | 'prototype';
@@ -616,7 +616,7 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
             </div>
 
             {/* Subtitle */}
-            <p className="text-[11px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto truncate">
+            <p className="text-[10px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto px-2 line-clamp-2">
               {publicT('public_discover_study_destinations_worldwide_and_find_the_best')}
             </p>
           </div>
@@ -672,18 +672,20 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('continent');
+                  setActiveFilterModal((prev) => (prev === 'continent' ? null : 'continent'));
                 }
               }}
-              onClick={() => setActiveFilterModal('continent')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedContinent !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => setActiveFilterModal((prev) => (prev === 'continent' ? null : 'continent'))}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                activeFilterModal === 'continent'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedContinent !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title={publicT('public_choose_continent')}
             >
-              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
                 <Globe2
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedContinent !== 'الكل'
@@ -691,11 +693,11 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
                       : 'text-[#0E7C86] dark:text-[#34BFC9]'
                   }`}
                 />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedContinent === 'الكل' ? publicT('public_continent') : regionLabel(selectedContinent)}
                 </span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3.5 h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'continent' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
 
             {/* Tile 2: الدولة */}
@@ -705,18 +707,20 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('country');
+                  setActiveFilterModal((prev) => (prev === 'country' ? null : 'country'));
                 }
               }}
-              onClick={() => setActiveFilterModal('country')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedCountryId !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => setActiveFilterModal((prev) => (prev === 'country' ? null : 'country'))}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                activeFilterModal === 'country'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedCountryId !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title={publicLanguage === 'ar' ? 'اختيار من الدول المعروضة؛ ابحث بالاسم للوصول إلى بقية الدول' : 'Choose a displayed country; search by name to find other countries'}
             >
-              <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
                 <MapPin
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedCountryId !== 'الكل'
@@ -724,11 +728,11 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
                       : 'text-[#0E7C86] dark:text-[#34BFC9]'
                   }`}
                 />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedCountryId === 'الكل' ? publicT('public_country') : countryNames.find(country => country.id === selectedCountryId)?.label || selectedCountryId}
                 </span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3.5 h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'country' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
           </div>
         </div>
@@ -736,6 +740,35 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
 
       {/* Official Gold Divider Ribbon */}
       <div className="w-full h-[1.5px] bg-gradient-to-r from-[#D6A43B]/45 via-[#F2CD78] to-[#D6A43B]/45 dark:from-[#D6A43B]/30 dark:via-[#F2CD78]/65 dark:to-[#D6A43B]/30 mb-3 md:mb-5" />
+
+      {/* Inline Attached Filter Panels */}
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'continent'}
+        title={publicT('public_choose_continent')}
+        icon={Globe2}
+        selectedValue={selectedContinent}
+        onSelect={(val) => setSelectedContinent(val)}
+        onClose={() => setActiveFilterModal(null)}
+        dir={publicDir}
+        options={continents.map((c) => ({
+          value: c,
+          label: c === 'الكل' ? publicT('public_all_continents') : regionLabel(c),
+        }))}
+      />
+
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'country'}
+        title={publicT('public_country')}
+        icon={MapPin}
+        selectedValue={selectedCountryId}
+        onSelect={(val) => setSelectedCountryId(val)}
+        onClose={() => setActiveFilterModal(null)}
+        dir={publicDir}
+        options={countryNames.map((cnt) => ({
+          value: cnt.id,
+          label: cnt.id === 'الكل' ? publicT('public_all_countries_2') : cnt.label,
+        }))}
+      />
 
       {/* ========================================================================= */}
       {/* 4. CONTENT & COUNTRY CARDS LIST                                           */}
@@ -875,31 +908,31 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
               {/* Bottom Row: 4 Pill Boxes in 2x2 Grid */}
               <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-[#142B5F]/8 dark:border-white/8">
                 {/* 1. Continent */}
-                <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
+                <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
                   <Globe2 className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                  <span className="truncate">{country.continent}</span>
+                  <span className="min-w-0 leading-tight line-clamp-2 break-words">{country.continent}</span>
                 </div>
 
                 {/* 2. Living Cost */}
-                <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
+                <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
                   <Coins className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                  <span className="truncate">
+                  <span className="min-w-0 leading-tight line-clamp-2 break-words">
                     {publicT('public_living_costs')} {country.livingCost}
                   </span>
                 </div>
 
                 {/* 3. Universities Count */}
-                <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
+                <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
                   <Building2 className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                  <span className="truncate">
+                  <span className="min-w-0 leading-tight line-clamp-2 break-words">
                     {publicLanguage === 'en' ? `${universitiesCountDisplay} Universities` : `${universitiesCountDisplay} جامعة`}
                   </span>
                 </div>
 
                 {/* 4. Scholarships Count */}
-                <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
+                <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel ">
                   <GraduationCap className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                  <span className="truncate">
+                  <span className="min-w-0 leading-tight line-clamp-2 break-words">
                     {publicLanguage === 'en' ? `${scholarshipsCountDisplay} Scholarships` : `${scholarshipsCountDisplay} منحة دراسية`}
                   </span>
                 </div>
@@ -944,33 +977,6 @@ export const CountriesSearchPage: React.FC<CountriesSearchPageProps> = ({
         </nav>
       ) : null}
 
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'continent'}
-        title={publicT('public_choose_continent')}
-        icon={Globe2}
-        selectedValue={selectedContinent}
-        onSelect={(val) => setSelectedContinent(val)}
-        onClose={() => setActiveFilterModal(null)}
-        dir={publicDir}
-        options={continents.map((c) => ({
-          value: c,
-          label: c === 'الكل' ? publicT('public_all_continents') : regionLabel(c),
-        }))}
-      />
-
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'country'}
-        title={publicT('public_country')}
-        icon={MapPin}
-        selectedValue={selectedCountryId}
-        onSelect={(val) => setSelectedCountryId(val)}
-        onClose={() => setActiveFilterModal(null)}
-        dir={publicDir}
-        options={countryNames.map((cnt) => ({
-          value: cnt.id,
-          label: cnt.id === 'الكل' ? publicT('public_all_countries_2') : cnt.label,
-        }))}
-      />
     </div>
   );
 };

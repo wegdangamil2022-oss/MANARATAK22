@@ -38,7 +38,15 @@ export const MajorSectionHeader: React.FC<{
   title: string;
   subtitle?: string;
   className?: string;
-}> = ({ id, icon: Icon, title, subtitle, className = '' }) => {
+  titleClassName?: string;
+}> = ({
+  id,
+  icon: Icon,
+  title,
+  subtitle,
+  className = '',
+  titleClassName = 'text-[13.5px] sm:text-[14px] md:text-[15px]',
+}) => {
   const { dir: publicDir } = usePublicTemplateTranslation();
   const underlineGradient =
     publicDir === 'ltr'
@@ -71,7 +79,9 @@ export const MajorSectionHeader: React.FC<{
               <Icon className="w-3.25 h-3.25 md:w-3.75 md:h-3.75 relative z-10 text-[#F2CD78]" />
             </span>
             <span className="inline-flex flex-col items-start min-w-0">
-              <h2 className="text-[13.5px] sm:text-[14px] md:text-[15px] font-extrabold text-[#142B5F] dark:text-[#F1F5F9] leading-snug tracking-tight text-start font-['Cairo',sans-serif]">
+              <h2
+                className={`${titleClassName} font-extrabold text-[#142B5F] dark:text-[#F1F5F9] leading-snug tracking-tight text-start font-['Cairo',sans-serif]`}
+              >
                 {title}
               </h2>
               <span

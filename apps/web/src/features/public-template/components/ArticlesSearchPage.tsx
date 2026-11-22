@@ -19,7 +19,7 @@ import {
 import { ARTICLE_PREVIEWS, GOLDEN_ARTICLES, ArticlePreview } from '../data/articleData';
 import { PublicArticle } from '../types';
 import { useTranslation as usePublicTemplateTranslation } from '../../../i18n/I18nProvider';
-import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
+import { PublicCardsPagination, PublicInlineFilterPanel, usePaginatedCatalog } from './DetailUi';
 
 interface ArticlesSearchPageProps {
   articles?: PublicArticle[];
@@ -245,7 +245,7 @@ export const ArticlesSearchPage: React.FC<ArticlesSearchPageProps> = ({
               <div className="w-10 md:w-14 h-0.5 bg-gradient-to-r from-[#D6A43B] via-[#F2CD78] to-[#D6A43B] rounded-full" />
             </div>
 
-            <p className="text-[11px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto truncate">
+            <p className="text-[10px] sm:text-xs md:text-sm text-[#DDEFF2] font-medium font-['Cairo',sans-serif] leading-relaxed max-w-md md:max-w-2xl mx-auto px-2 line-clamp-2">
               {publicT('public_practical_guides_and_editorial_articles_to_help_you')}
             </p>
           </div>
@@ -303,24 +303,26 @@ export const ArticlesSearchPage: React.FC<ArticlesSearchPageProps> = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('category');
+                  setActiveFilterModal((prev) => (prev === 'category' ? null : 'category'));
                 }
               }}
-              onClick={() => setActiveFilterModal('category')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedCategory !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => setActiveFilterModal((prev) => (prev === 'category' ? null : 'category'))}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                activeFilterModal === 'category'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedCategory !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title="اختر تصنيف المقال"
             >
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
                 <FileText className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedCategory === 'الكل' ? 'تصنيف المقال' : selectedCategory}
                 </span>
               </div>
-              <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'category' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
 
             {/* Tile 2: الدولة / الوجهة */}
@@ -330,24 +332,26 @@ export const ArticlesSearchPage: React.FC<ArticlesSearchPageProps> = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setActiveFilterModal('country');
+                  setActiveFilterModal((prev) => (prev === 'country' ? null : 'country'));
                 }
               }}
-              onClick={() => setActiveFilterModal('country')}
-              className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedCountry !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+              onClick={() => setActiveFilterModal((prev) => (prev === 'country' ? null : 'country'))}
+              className={`relative min-w-0 overflow-hidden bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
+                activeFilterModal === 'country'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-1 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedCountry !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title="اختر الدولة أو النطاق"
             >
-              <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
+              <div className="min-w-0 flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
                 <Globe2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                <span className="truncate font-['Cairo',sans-serif]">
+                <span className="min-w-0 truncate font-['Cairo',sans-serif]">
                   {selectedCountry === 'الكل' ? 'الدولة / النطاق' : selectedCountry}
                 </span>
               </div>
-              <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 mt-0.5 shrink-0 transition-transform duration-200 ${activeFilterModal === 'country' ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
             </div>
           </div>
         </div>
@@ -355,6 +359,35 @@ export const ArticlesSearchPage: React.FC<ArticlesSearchPageProps> = ({
 
       {/* Gold Divider Ribbon Line */}
       <div className="w-full h-[1.5px] bg-gradient-to-r from-[#D6A43B]/45 via-[#F2CD78] to-[#D6A43B]/45 dark:from-[#D6A43B]/30 dark:via-[#F2CD78]/65 dark:to-[#D6A43B]/30 mb-3 md:mb-5" />
+
+      {/* Inline Attached Filter Panels */}
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'category'}
+        title="اختر تصنيف المقال"
+        icon={FileText}
+        selectedValue={selectedCategory}
+        onSelect={(val) => setSelectedCategory(val)}
+        onClose={() => setActiveFilterModal(null)}
+        dir={publicDir}
+        options={categories.map((cat) => ({
+          value: cat,
+          label: cat === 'الكل' ? 'جميع التصنيفات' : cat,
+        }))}
+      />
+
+      <PublicInlineFilterPanel
+        isOpen={activeFilterModal === 'country'}
+        title="اختر الدولة أو النطاق"
+        icon={Globe2}
+        selectedValue={selectedCountry}
+        onSelect={(val) => setSelectedCountry(val)}
+        onClose={() => setActiveFilterModal(null)}
+        dir={publicDir}
+        options={countries.map((cnt) => ({
+          value: cnt,
+          label: cnt === 'الكل' ? 'جميع الدول والنطاقات' : cnt,
+        }))}
+      />
 
       {/* ========================================================================= */}
       {/* ARTICLES COMPACT CARDS LIST (MATCHING SCHOLARSHIPS, MAJORS & UNIVERSITIES) */}
@@ -419,7 +452,7 @@ export const ArticlesSearchPage: React.FC<ArticlesSearchPageProps> = ({
                       </div>
 
                       <div className="flex flex-col items-start text-start min-w-0 flex-1">
-                        <h3 className="text-[11.5px] sm:text-[13px] md:text-[13.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5] group-hover:text-[#0E7C86] dark:group-hover:text-[#F2CD78] transition-colors font-['Cairo',sans-serif] leading-snug truncate w-full">
+                        <h3 className="text-[11.5px] sm:text-[13px] md:text-[13.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5] group-hover:text-[#0E7C86] dark:group-hover:text-[#F2CD78] transition-colors font-['Cairo',sans-serif] leading-snug line-clamp-2 break-words w-full">
                           {article.titleAr}
                         </h3>
                         <span className="text-[9.5px] sm:text-[10.5px] font-medium text-[#5C707C] dark:text-[#9BB4C7] font-['Cairo',sans-serif] truncate w-full">
@@ -447,19 +480,19 @@ export const ArticlesSearchPage: React.FC<ArticlesSearchPageProps> = ({
 
                   {/* Bottom Row: 4 Boxes in 2x2 Grid (3 Frost Info Boxes + View Details CTA) */}
                   <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-[#142B5F]/8 dark:border-white/8">
-                    <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
+                    <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
                       <BookOpen className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                      <span className="truncate">{article.categoryAr}</span>
+                      <span className="min-w-0 leading-tight line-clamp-2 break-words">{article.categoryAr}</span>
                     </div>
 
-                    <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
+                    <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
                       <Globe2 className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                      <span className="truncate">{article.countryAr}</span>
+                      <span className="min-w-0 leading-tight line-clamp-2 break-words">{article.countryAr}</span>
                     </div>
 
-                    <div className="bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg pr-3 pl-2 py-1.5 flex items-center justify-start gap-1.5 text-[10px] sm:text-[11px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
+                    <div className="min-w-0 overflow-hidden bg-[#F6F8FA] dark:bg-[#0B1529]/85 border border-[#142B5F]/8 dark:border-white/8 rounded-lg px-2 py-1.5 flex items-center justify-start gap-1.5 text-[9.5px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#DCE7F0] font-['Cairo',sans-serif] mn-panel">
                       <Clock className="w-3.5 h-3.5 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
-                      <span className="truncate">
+                      <span className="min-w-0 leading-tight line-clamp-2 break-words">
                         قراءة {article.readingTime} • {article.updatedAt}
                       </span>
                     </div>
@@ -470,13 +503,13 @@ export const ArticlesSearchPage: React.FC<ArticlesSearchPageProps> = ({
                         e.stopPropagation();
                         handleSelectCard(article);
                       }}
-                      className="bg-[#142B5F] hover:bg-[#0E7C86] dark:bg-[#162A52] dark:hover:bg-[#1C3566] text-white dark:text-[#F2CD78] border border-transparent dark:border-[#F2CD78]/35 rounded-lg px-2.5 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs mn-inverse"
+                      className="min-w-0 overflow-hidden bg-[#142B5F] hover:bg-[#0E7C86] dark:bg-[#162A52] dark:hover:bg-[#1C3566] text-white dark:text-[#F2CD78] border border-transparent dark:border-[#F2CD78]/35 rounded-lg px-2 py-1.5 flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer shadow-2xs mn-inverse"
                       data-mn-design="26ecd1db9e"
                     >
-                      <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight text-white dark:text-[#F2CD78]">
+                      <span className="text-[10px] sm:text-[11px] font-bold text-center leading-tight text-white dark:text-[#F2CD78] truncate">
                         {publicT('public_view_details')}
                       </span>
-                      <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[#F2CD78]" />
+                      <ChevronLeft className="w-3.5 h-3.5 rotate-180 text-[#F2CD78] shrink-0" />
                     </button>
                   </div>
                 </div>
@@ -498,35 +531,6 @@ export const ArticlesSearchPage: React.FC<ArticlesSearchPageProps> = ({
         )}
       </div>
 
-      {/* Filter Modal: تصنيف المقال */}
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'category'}
-        title="اختر تصنيف المقال"
-        icon={FileText}
-        selectedValue={selectedCategory}
-        onSelect={(val) => setSelectedCategory(val)}
-        onClose={() => setActiveFilterModal(null)}
-        dir={publicDir}
-        options={categories.map((cat) => ({
-          value: cat,
-          label: cat === 'الكل' ? 'جميع التصنيفات' : cat,
-        }))}
-      />
-
-      {/* Filter Modal: الدولة / النطاق */}
-      <PublicFilterSelectModal
-        isOpen={activeFilterModal === 'country'}
-        title="اختر الدولة أو النطاق"
-        icon={Globe2}
-        selectedValue={selectedCountry}
-        onSelect={(val) => setSelectedCountry(val)}
-        onClose={() => setActiveFilterModal(null)}
-        dir={publicDir}
-        options={countries.map((cnt) => ({
-          value: cnt,
-          label: cnt === 'الكل' ? 'جميع الدول والنطاقات' : cnt,
-        }))}
-      />
     </div>
   );
 };
