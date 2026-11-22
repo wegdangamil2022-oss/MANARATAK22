@@ -42,34 +42,42 @@ export function PublicFilterSelectModal({
       <button
         type="button"
         aria-label={publicT('public_close')}
-        className="fixed inset-0 bg-black/55 backdrop-blur-xs z-50 transition-opacity animate-fade-in"
+        className="fixed inset-0 bg-[#0A1326]/50 backdrop-blur-[2px] z-50 transition-opacity animate-fade-in"
         onClick={onClose}
       />
 
       <div
         dir={dir}
-        className="fixed top-14 inset-x-3 mx-auto max-w-xs md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full bg-[var(--mn-surface)] border-1.5 border-[#142B5F]/35 dark:border-[#D6A43B]/45 rounded-2xl shadow-2xl z-50 flex flex-col p-3.5 font-['Cairo',sans-serif] select-none mn-panel transition-all"
+        className="fixed bottom-0 inset-x-0 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-sm bg-white dark:bg-[#111E38] border-t md:border border-[#142B5F]/18 dark:border-white/14 rounded-t-3xl md:rounded-2xl shadow-[0_-12px_36px_rgba(10,19,38,0.22)] md:shadow-2xl z-50 flex flex-col px-3.5 pt-2.5 pb-[max(16px,env(safe-area-inset-bottom,16px))] md:p-4 font-['Cairo',sans-serif] select-none mn-panel transition-all max-h-[62vh] md:max-h-[70vh]"
       >
+        {/* Mobile Grab Handle */}
+        <div className="md:hidden w-10 h-1 rounded-full bg-[#142B5F]/20 dark:bg-white/20 mx-auto mb-2.5 shrink-0" />
+
         {/* Header */}
-        <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-[var(--mn-border)] shrink-0 font-['Cairo',sans-serif]">
-          <h4 className="text-[12px] font-bold text-[var(--mn-heading)] flex items-center gap-1.5 font-['Cairo',sans-serif]">
-            <span className="w-6 h-6 rounded-lg bg-[#142B5F] text-white flex items-center justify-center shrink-0 shadow-2xs">
-              <HeaderIcon className="w-3.5 h-3.5 text-white" />
+        <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-[#142B5F]/10 dark:border-white/10 shrink-0 font-['Cairo',sans-serif]">
+          <h4 className="text-[12.5px] font-extrabold text-[#142B5F] dark:text-[#F1F5F9] flex items-center gap-2 font-['Cairo',sans-serif]">
+            <span className="relative w-7 h-7 rounded-lg bg-[#142B5F] text-[#F2CD78] flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute top-0 right-0 w-2 h-2 bg-[#D6A43B] rounded-bl-[4px]"
+              />
+              <HeaderIcon className="w-3.5 h-3.5 text-[#F2CD78] relative z-10" />
             </span>
             <span>{title}</span>
           </h4>
           <button
             type="button"
             onClick={onClose}
-            className="text-[10.5px] font-bold text-white bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] px-3 py-1 rounded-lg hover:opacity-95 transition-all cursor-pointer active:scale-95 shadow-2xs font-['Cairo',sans-serif]"
+            className="w-7 h-7 rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529] border border-[#142B5F]/12 dark:border-white/12 text-[#142B5F] dark:text-[#EDF5F5] hover:border-[#0E7C86] hover:text-[#0E7C86] flex items-center justify-center transition-all cursor-pointer active:scale-95"
+            aria-label={publicT('public_close')}
           >
-            {publicT('public_close')}
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* Spacious Scrollable Options List (shows up to 6 items completely without scrolling) */}
+        {/* Scrollable Options List */}
         <div
-          className="max-h-[268px] overflow-y-auto overscroll-contain pr-1 pl-0.5 space-y-1 font-['Cairo',sans-serif] scroll-smooth"
+          className="overflow-y-auto overscroll-contain pr-0.5 pl-0.5 space-y-1.5 font-['Cairo',sans-serif] scroll-smooth"
           style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
         >
           {options.map((opt) => {
@@ -82,16 +90,16 @@ export function PublicFilterSelectModal({
                   handleSelect?.(opt.value);
                   onClose();
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold font-['Cairo',sans-serif] transition-all cursor-pointer text-start ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-[11.5px] font-bold font-['Cairo',sans-serif] transition-all cursor-pointer text-start ${
                   isSelected
-                    ? 'bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white shadow-2xs'
-                    : 'bg-[var(--mn-page)]/80 hover:bg-[var(--mn-surface-muted)] text-[var(--mn-heading)] border border-[var(--mn-border)]/60'
+                    ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
+                    : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border border-[#142B5F]/10 dark:border-white/10 hover:border-[#0E7C86]/45'
                 }`}
               >
                 <span className="truncate font-['Cairo',sans-serif]">{opt.label}</span>
                 <span
                   className={`w-2 h-2 rounded-full shrink-0 transition-all ${
-                    isSelected ? 'bg-[#F2CD78]' : 'bg-[#142B5F]/20 dark:bg-white/20'
+                    isSelected ? 'bg-[#38C6D4]' : 'bg-[#142B5F]/18 dark:bg-white/20'
                   }`}
                 />
               </button>
@@ -101,9 +109,9 @@ export function PublicFilterSelectModal({
 
         {/* Scroll Indicator Footer only when list has more than 6 items */}
         {options.length > 6 && (
-          <div className="mt-2 pt-1.5 border-t border-[var(--mn-border)]/60 flex items-center justify-center gap-1 text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4] font-['Cairo',sans-serif]">
-            <ChevronDown className="w-3 h-3 animate-bounce" />
-            <span>{dir === 'ltr' ? `Scroll for more options (${options.length})` : `اسحب لأسفل لعرض بقية الخيارات (${options.length})`}</span>
+          <div className="mt-2 pt-1.5 border-t border-[#142B5F]/10 dark:border-white/10 flex items-center justify-center gap-1 text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4] font-['Cairo',sans-serif] shrink-0">
+            <ChevronDown className="w-3 h-3" />
+            <span>{dir === 'ltr' ? `Scroll for more options (${options.length})` : `اسحب لعرض بقية الخيارات (${options.length})`}</span>
           </div>
         )}
       </div>

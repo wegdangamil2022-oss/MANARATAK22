@@ -3,7 +3,7 @@ const ApiClient =
   import.meta.env.VITE_PUBLIC_TEMPLATE_DATA_MODE === 'prototype'
     ? PreviewStudentApiClient
     : LiveApiClient;
-import { FormEvent, useEffect, useRef, useState, type ReactNode } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { ApiClient as LiveApiClient, type StudentOwnedAssetDto } from '../../api/client';
 import { useTranslation } from '../../i18n/I18nProvider';
 import {
@@ -24,6 +24,8 @@ import {
 } from 'lucide-react';
 import {
   HorizontalSwipeTabs,
+  WorkspaceTabCanopy,
+  SummarySectionCard,
   CareerJobsExplorePanel,
   CareerSkillDevelopmentPanel,
 } from './StudentExpandedSections';
@@ -222,82 +224,64 @@ export function StudentCareerWorkspace() {
       profile.resumeAssetId,
   );
 
-  const cairo12Style = { fontFamily: "'Cairo', sans-serif", fontSize: '12px' } as const;
-
   const inputStyle =
-    "mt-1 block min-h-9 w-full rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-1.5 text-[12px] font-['Cairo',sans-serif] font-medium text-[var(--mn-heading)] placeholder:font-['Cairo',sans-serif] placeholder:text-[var(--mn-text-muted)] placeholder:text-[11.5px] outline-none transition-colors focus:border-[#0E7C86] dark:bg-[var(--mn-surface-elevated)]";
+    "mt-1 block w-full rounded-xl border border-[#142B5F]/12 dark:border-white/12 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 py-1.5 text-[11px] sm:text-[12px] font-['Cairo',sans-serif] font-medium text-[#142B5F] dark:text-white placeholder:text-[#5C707C] dark:placeholder:text-[#9BB4C7] outline-none transition-colors focus:border-[#0E7C86] dark:focus:border-[#38C6D4] focus:bg-white dark:focus:bg-[#111E38]";
   const labelStyle =
-    "block text-[11.5px] font-['Cairo',sans-serif] font-bold leading-[1.6] text-[var(--mn-heading)]";
-  const actionStyle =
-    "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-[#142B5F] hover:bg-[#1a3675] px-3.5 py-1.5 text-[11.5px] font-['Cairo',sans-serif] font-bold text-white transition-all shadow-2xs border border-[#D6A43B]/35 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50";
+    "block text-[10.5px] sm:text-[11px] font-['Cairo',sans-serif] font-bold leading-snug text-[#142B5F] dark:text-white";
+  const primaryActionStyle =
+    "mn-workspace-btn-sm inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 px-3.5 text-[10.5px] sm:text-[11px] font-['Cairo',sans-serif] font-bold text-white transition-opacity shadow-2xs cursor-pointer disabled:cursor-not-allowed disabled:opacity-50";
   const secondaryActionStyle =
-    "inline-flex min-h-8 items-center justify-center gap-1.5 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-1 text-[11.5px] font-['Cairo',sans-serif] font-bold text-[var(--mn-heading)] transition-colors hover:border-[#0E7C86] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[var(--mn-surface-elevated)]";
+    "mn-workspace-btn-sm inline-flex items-center justify-center gap-1.5 rounded-xl border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] dark:bg-[#0B1529] px-3 text-[10.5px] sm:text-[11px] font-['Cairo',sans-serif] font-bold text-[#142B5F] dark:text-white transition-all hover:bg-gradient-to-l hover:from-[#142B5F] hover:via-[#133A6A] hover:to-[#0E7C86] hover:text-white hover:border-transparent cursor-pointer disabled:cursor-not-allowed disabled:opacity-50";
 
   return (
-    <div dir={dir} className="mn-student-career-page mt-0 space-y-3.5 font-['Cairo',sans-serif]">
-      {/* Main section hero header with selective Navy start line */}
-      <div className="relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] -mt-px">
-        <section
-          aria-label={c('مساري المهني', 'My career')}
-          className="mn-student-career-hero relative overflow-hidden rounded-none border-x-0 border-t border-b border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-surface)] shadow-2xs mn-panel"
-        >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 w-[4px] z-10 bg-[#142B5F]"
-          />
-
-          <div className="px-3.5 pt-3 pb-3 pr-4 sm:px-5 sm:pt-3.5 sm:pb-3.5">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-2">
-                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-xl border border-[#D6A43B]/45 bg-[#142B5F]">
-                  <BriefcaseBusiness className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
-                </span>
-                <h2 className="mn-student-career-heading text-[14px] sm:text-[15px] font-bold leading-tight text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
-                  {c('مساري المهني والخريجون', 'Career & Alumni')}
-                </h2>
-              </div>
-
-              <span className="inline-flex shrink-0 items-center rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] dark:border-white/15 px-2 py-0.5 text-[10.5px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
-                {hasProfile ? c('الملف جاهز', 'Ready') : c('ملف جديد', 'New')} ·{' '}
-                {savedSkillsCount} {c('مهارات', 'skills')}
-              </span>
-            </div>
-          </div>
-        </section>
-
-        {/* 5 Sub-Tabs with Petrol Swipe Bar */}
+    <div dir={dir} className="mn-student-career-page mt-0 space-y-3 font-['Cairo',sans-serif]">
+      <WorkspaceTabCanopy
+        title={c('مساري المهني والخريجون', 'Career & Alumni')}
+        subtitle={c(
+          'ملفك المهني، فرص التدريب، التقديمات وشبكة الخريجين',
+          'Career profile, internships, applications and alumni network',
+        )}
+        icon={BriefcaseBusiness}
+        metaLabel={
+          <span className="tabular-nums">
+            {hasProfile ? c('جاهز', 'Ready') : c('جديد', 'New')} · {savedSkillsCount}{' '}
+            {c('مهارات', 'skills')}
+          </span>
+        }
+      >
         <HorizontalSwipeTabs
+          embedded
           ariaLabel={c('أقسام المسار المهني', 'Career sections')}
           activeId={activeSubTab}
           onSelect={setActiveSubTab}
           items={[
-            { id: 'PROFILE', label: c('ملفي المهني', 'Profile'), icon: UserRound },
-            { id: 'JOBS', label: c('فرص العمل والتدريب', 'Opportunities'), icon: BriefcaseBusiness },
+            { id: 'PROFILE', label: c('ملفي', 'Profile'), icon: UserRound },
+            { id: 'JOBS', label: c('الفرص', 'Jobs'), icon: BriefcaseBusiness },
             {
               id: 'APPLICATIONS',
-              label: c('تقديماتي المهنية', 'Applications'),
+              label: c('تقديماتي', 'Applied'),
               count: applications.length,
               icon: ClipboardList,
             },
-            { id: 'SKILLS', label: c('تطوير مهاراتي', 'Skills'), icon: Sparkles },
+            { id: 'SKILLS', label: c('مهاراتي', 'Skills'), icon: Sparkles },
             { id: 'ALUMNI', label: c('الخريجون', 'Alumni'), icon: GraduationCap },
           ]}
         />
-      </div>
+      </WorkspaceTabCanopy>
 
       {notice && (
         <div
           role="status"
-          className="flex items-center justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-2.5 text-[11.5px] text-[var(--mn-text)] shadow-2xs dark:bg-[var(--mn-surface-elevated)]"
+          className="flex items-center justify-between gap-2 rounded-xl border border-[#0E7C86]/25 dark:border-[#38C6D4]/30 bg-[#F6F8FA] dark:bg-[#111E38] px-3 py-2 text-[10.5px] sm:text-[11px] font-semibold text-[#142B5F] dark:text-white"
         >
-          <div className="flex items-center gap-2">
-            <Info className="h-3.5 w-3.5 shrink-0 text-[#0E7C86]" aria-hidden="true" />
-            <span>{notice}</span>
+          <div className="flex items-center gap-2 min-w-0">
+            <Info className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+            <span className="truncate">{notice}</span>
           </div>
           <button
             type="button"
             onClick={() => setNotice('')}
-            className="text-[11px] font-bold text-[var(--mn-text-muted)] hover:text-[var(--mn-heading)]"
+            className="mn-workspace-btn-sm shrink-0 text-[10px] font-bold text-[#0E7C86] dark:text-[#38C6D4] hover:underline cursor-pointer"
           >
             {c('إغلاق', 'Close')}
           </button>
@@ -306,16 +290,14 @@ export function StudentCareerWorkspace() {
 
       {/* SUB-TAB 1: ملفي المهني */}
       {activeSubTab === 'PROFILE' && (
-        <CareerSectionCard
+        <SummarySectionCard
           id="mn-career-profile"
           title={c('ملفي المهني والسيرة الذاتية', 'Career profile & CV')}
-          icon={<UserRound className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}
+          icon={UserRound}
+          metaLabel={c('خاص بك', 'Private')}
         >
-          <div
-            style={cairo12Style}
-            className="rounded-xl border border-[#0E7C86]/20 bg-[#0E7C86]/5 dark:bg-[#0E7C86]/10 p-2.5 mb-3 flex items-center gap-2 text-[11px] text-[var(--mn-heading)]"
-          >
-            <LockKeyhole className="h-3.5 w-3.5 shrink-0 text-[#0E7C86]" aria-hidden="true" />
+          <div className="rounded-xl border border-[#0E7C86]/20 dark:border-[#38C6D4]/25 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 py-2 mb-3 flex items-center gap-2 text-[10px] sm:text-[11px] font-medium text-[#5C707C] dark:text-[#9BB4C7]">
+            <LockKeyhole className="h-3.5 w-3.5 shrink-0 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
             <span>
               {c(
                 'ملفك المهني خاص ولا يُشارك إلا عند تقديمك المباشر على فرصة.',
@@ -324,11 +306,10 @@ export function StudentCareerWorkspace() {
             </span>
           </div>
 
-          <form onSubmit={submitProfile} className="space-y-3">
+          <form onSubmit={submitProfile} className="space-y-2.5">
             <label className={labelStyle}>
               {c('المسمى المهني / التخصص الحالي', 'Current headline or major')}
               <input
-                style={cairo12Style}
                 className={inputStyle}
                 value={profile.headline || ''}
                 maxLength={240}
@@ -345,7 +326,6 @@ export function StudentCareerWorkspace() {
             <label className={labelStyle}>
               {c('النبذة المهنية المختصرة', 'Professional summary')}
               <textarea
-                style={cairo12Style}
                 className={`${inputStyle} min-h-20 resize-y leading-relaxed`}
                 rows={2}
                 value={profile.summary || ''}
@@ -364,7 +344,6 @@ export function StudentCareerWorkspace() {
               <label className={labelStyle}>
                 {c('المهارات (افصل بينها بفواصل)', 'Skills (comma-separated)')}
                 <input
-                  style={cairo12Style}
                   className={inputStyle}
                   value={skills}
                   placeholder={c(
@@ -375,67 +354,58 @@ export function StudentCareerWorkspace() {
                 />
               </label>
               {parsedSkillsList.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {parsedSkillsList.map((skill, index) => (
-                    <span
-                      key={`${skill}-${index}`}
-                      style={cairo12Style}
-                      className="inline-flex items-center gap-1 rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[11px] font-bold text-[#0E7C86] dark:text-[#55CBC5]"
-                    >
-                      <span style={cairo12Style}>{skill}</span>
-                    </span>
-                  ))}
-                </div>
+                <p className="mt-1.5 text-[10px] font-semibold text-[#0E7C86] dark:text-[#38C6D4]">
+                  {parsedSkillsList.join(' · ')}
+                </p>
               )}
             </div>
 
             <label className={labelStyle}>
               <div className="flex items-center justify-between">
                 <span>{c('السيرة الذاتية المعتمدة (PDF)', 'CV (PDF from my files)')}</span>
-                <span className="text-[10.5px] text-[var(--mn-text-muted)] font-normal">
+                <span className="text-[9.5px] font-semibold text-[#5C707C] dark:text-[#9BB4C7] tabular-nums">
                   {assets.length > 0
                     ? c(`${assets.length} ملف متاح`, `${assets.length} files`)
                     : c('لا توجد ملفات PDF', 'No PDF files')}
                 </span>
               </div>
               <select
-                style={cairo12Style}
                 className={`${inputStyle} cursor-pointer`}
                 value={profile.resumeAssetId || ''}
                 onChange={(event) =>
                   setProfile((previous) => ({ ...previous, resumeAssetId: event.target.value }))
                 }
               >
-                <option style={cairo12Style} value="">
+                <option value="">
                   {c('— بدون تحديد سيرة ذاتية —', '— No file selected —')}
                 </option>
                 {profile.resumeAssetId &&
                   !assets.some((row) => row.id === profile.resumeAssetId) && (
-                    <option style={cairo12Style} value={profile.resumeAssetId}>
+                    <option value={profile.resumeAssetId}>
                       {c('الملف المحفوظ حاليًا', 'Currently saved file')}
                     </option>
                   )}
                 {assets.map((row) => (
-                  <option key={row.id} value={row.id} style={cairo12Style}>
+                  <option key={row.id} value={row.id}>
                     {row.metadata?.originalFilename || row.reference}
                   </option>
                 ))}
               </select>
             </label>
 
-            <div className="flex items-center justify-end border-t border-[var(--mn-border)] dark:border-white/10 pt-2.5">
-              <button type="submit" disabled={busy || loading} className={actionStyle}>
-                <ShieldCheck className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
+            <div className="flex items-center justify-end border-t border-[#142B5F]/10 dark:border-white/10 pt-2.5">
+              <button type="submit" disabled={busy || loading} className={primaryActionStyle}>
+                <ShieldCheck className="h-3.5 w-3.5 text-white" aria-hidden="true" />
                 <span>{c('حفظ الملف المهني', 'Save career profile')}</span>
               </button>
             </div>
           </form>
-        </CareerSectionCard>
+        </SummarySectionCard>
       )}
 
       {/* SUB-TAB 2: فرص العمل والتدريب */}
       {activeSubTab === 'JOBS' && (
-        <div className="space-y-3.5">
+        <div className="space-y-3">
           <CareerJobsExplorePanel
             onSelectJob={(selectedJob) => {
               setJob(selectedJob);
@@ -443,9 +413,9 @@ export function StudentCareerWorkspace() {
           />
 
           {job && (
-            <CareerSectionCard
+            <SummarySectionCard
               title={c('نموذج التقديم المباشر', 'Direct application form')}
-              icon={<BriefcaseBusiness className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}
+              icon={BriefcaseBusiness}
             >
               <form
                 onSubmit={(event) => {
@@ -457,13 +427,13 @@ export function StudentCareerWorkspace() {
                     consent,
                   });
                 }}
-                className="space-y-3"
+                className="space-y-2.5"
               >
-                <div className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3">
-                  <span className="text-[10px] font-bold text-[#0E7C86]">
+                <div className="mn-summary-start-bar relative overflow-hidden rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-2.5">
+                  <span className="text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">
                     {c('الفرصة المختارة', 'Selected role')}
                   </span>
-                  <h4 className="mt-0.5 text-[12.5px] font-bold text-[var(--mn-heading)]">
+                  <h4 className="mt-0.5 text-[11px] sm:text-[12px] font-bold text-[#142B5F] dark:text-white">
                     {job.title}
                   </h4>
                 </div>
@@ -471,7 +441,6 @@ export function StudentCareerWorkspace() {
                 <label className={labelStyle}>
                   {c('رسالة التقديم المختصرة', 'Cover letter')}
                   <textarea
-                    style={cairo12Style}
                     value={coverLetter}
                     maxLength={4000}
                     onChange={(event) => setCoverLetter(event.target.value)}
@@ -484,12 +453,9 @@ export function StudentCareerWorkspace() {
                   />
                 </label>
 
-                <label
-                  style={cairo12Style}
-                  className="flex items-start gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-2.5 text-[11.5px] font-medium text-[var(--mn-heading)] cursor-pointer"
-                >
+                <label className="flex items-start gap-2 rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-2.5 text-[10.5px] sm:text-[11px] font-medium text-[#142B5F] dark:text-white cursor-pointer">
                   <input
-                    className="mt-1 h-4 w-4 shrink-0 rounded accent-[#142B5F]"
+                    className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded accent-[#0E7C86] cursor-pointer"
                     type="checkbox"
                     checked={consent}
                     onChange={(event) => setConsent(event.target.checked)}
@@ -502,7 +468,7 @@ export function StudentCareerWorkspace() {
                   </span>
                 </label>
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-[var(--mn-border)]">
+                <div className="flex justify-end gap-2 pt-2 border-t border-[#142B5F]/10 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => setJob(null)}
@@ -512,47 +478,52 @@ export function StudentCareerWorkspace() {
                   </button>
                   <button
                     type="submit"
-                    className={actionStyle}
+                    className={primaryActionStyle}
                     disabled={busy || loading || !consent || !profile.resumeAssetId}
                   >
-                    <CheckCircle2 className="h-3.5 w-3.5 text-[#F2CD78]" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-white" aria-hidden="true" />
                     <span>{c('إرسال التقديم', 'Submit application')}</span>
                   </button>
                 </div>
               </form>
-            </CareerSectionCard>
+            </SummarySectionCard>
           )}
         </div>
       )}
 
       {/* SUB-TAB 3: تقديماتي المهنية */}
       {activeSubTab === 'APPLICATIONS' && (
-        <CareerSectionCard
+        <SummarySectionCard
           id="mn-career-applications"
           title={c('تقديماتي المهنية المسجلة', 'My career applications')}
-          icon={<ClipboardList className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}
-          count={`${applications.length} ${c('طلب', 'applications')}`}
+          icon={ClipboardList}
+          metaLabel={`${applications.length} ${c('طلب', 'applications')}`}
         >
           {applications.length === 0 ? (
-            <div className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-5 text-center dark:bg-[var(--mn-surface-elevated)]">
-              <ClipboardList
-                className="h-7 w-7 mx-auto text-[#0E7C86] mb-1.5"
-                aria-hidden="true"
-              />
-              <h4 className="text-[12.5px] font-bold text-[var(--mn-heading)]">
+            <div className="rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-5 text-center">
+              <span className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                <ClipboardList className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <h4 className="text-[11px] sm:text-[12px] font-bold text-[#142B5F] dark:text-white">
                 {c('لا توجد طلبات تقديم مهنية مسجلة بعد', 'No career applications yet')}
               </h4>
+              <p className="mt-1 text-[10px] sm:text-[11px] font-medium text-[#5C707C] dark:text-[#9BB4C7]">
+                {c(
+                  'تصفح فرص التدريب والعمل المتاحة وقدّم مباشرة باستخدام ملفك المهني.',
+                  'Browse available training and career roles and apply directly with your profile.',
+                )}
+              </p>
               <button
                 type="button"
                 onClick={() => setActiveSubTab('JOBS')}
-                className="mt-2.5 inline-flex min-h-8 items-center gap-1 rounded-xl bg-[#142B5F] px-3 py-1 text-[11px] font-bold text-white border border-[#D6A43B]/35 cursor-pointer"
+                className={`mt-3 ${primaryActionStyle}`}
               >
                 <span>{c('تصفح فرص العمل والتدريب', 'Browse opportunities')}</span>
               </button>
             </div>
           ) : (
             <div className="space-y-2.5">
-              <div className="grid gap-2.5 sm:grid-cols-2">
+              <div className={`grid gap-2.5 ${applications.length > 1 ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
                 {applications.map((row) => {
                   const statusInfo = getApplicationStatusInfo(row.status, c);
                   const canWithdraw = ['SUBMITTED', 'UNDER_REVIEW', 'SHORTLISTED'].includes(
@@ -561,29 +532,34 @@ export function StudentCareerWorkspace() {
                   return (
                     <article
                       key={row.id}
-                      className="flex flex-col justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3 shadow-2xs dark:bg-[var(--mn-surface-elevated)]"
+                      className={`relative overflow-hidden flex flex-col justify-between rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#111E38] hover:border-[#0E7C86]/35 p-2.5 sm:p-3 transition-all ${
+                        canWithdraw ? 'mn-summary-start-bar' : ''
+                      }`}
                     >
-                      <div>
-                        <div className="flex items-start justify-between gap-2">
-                          <h4 className="text-[12px] font-bold leading-snug text-[var(--mn-heading)]">
-                            {row.jobSnapshot?.title || c('فرصة مهنية', 'Career opportunity')}
-                          </h4>
-                          <span
-                            className={`shrink-0 rounded-lg border px-2 py-0.5 text-[10px] font-bold ${statusInfo.className}`}
-                          >
-                            {statusInfo.label}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex min-w-0 flex-1 items-start gap-2.5">
+                          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                            <BriefcaseBusiness className="h-3.5 w-3.5" aria-hidden="true" />
                           </span>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="text-[10.5px] sm:text-[12px] font-bold leading-snug text-[#142B5F] dark:text-white">
+                              {row.jobSnapshot?.title || c('فرصة مهنية', 'Career opportunity')}
+                            </h4>
+                            <div className="mt-0.5 text-[9.5px] font-semibold text-[#5C707C] dark:text-[#9BB4C7] tabular-nums">
+                              #{row.publicId}
+                            </div>
+                          </div>
                         </div>
-                        <div className="mt-1.5 text-[10.5px] text-[var(--mn-text-muted)]">
-                          #{row.publicId}
-                        </div>
+                        <span className={`shrink-0 text-[9.5px] font-bold ${statusInfo.className}`}>
+                          {statusInfo.label}
+                        </span>
                       </div>
 
                       {canWithdraw && (
-                        <div className="mt-2.5 flex justify-end border-t border-[var(--mn-border)] pt-2">
+                        <div className="mt-2.5 flex justify-end border-t border-[#142B5F]/10 dark:border-white/10 pt-2">
                           <button
                             type="button"
-                            className="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-[10.5px] font-bold text-rose-700 cursor-pointer"
+                            className="mn-workspace-btn-sm rounded-lg border border-[#142B5F]/20 dark:border-white/15 bg-white dark:bg-[#111E38] px-2.5 text-[10px] font-bold text-[#5C707C] dark:text-[#9BB4C7] hover:text-[#142B5F] dark:hover:text-white hover:border-[#0E7C86] transition-colors cursor-pointer disabled:opacity-50"
                             disabled={busy}
                             onClick={() =>
                               void write(`applications/${row.id}/withdraw`, 'POST', {
@@ -608,10 +584,10 @@ export function StudentCareerWorkspace() {
                     disabled={loading || page <= 1}
                     onClick={() => setPage((value) => value - 1)}
                   >
-                    <ChevronRight className="h-3.5 w-3.5" />
+                    <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>{c('السابق', 'Prev')}</span>
                   </button>
-                  <span className="text-[11px] font-bold">
+                  <span className="text-[10.5px] font-bold text-[#142B5F] dark:text-white tabular-nums">
                     {page} / {totalPages}
                   </span>
                   <button
@@ -621,13 +597,13 @@ export function StudentCareerWorkspace() {
                     onClick={() => setPage((value) => value + 1)}
                   >
                     <span>{c('التالي', 'Next')}</span>
-                    <ChevronLeft className="h-3.5 w-3.5" />
+                    <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
                   </button>
                 </div>
               )}
             </div>
           )}
-        </CareerSectionCard>
+        </SummarySectionCard>
       )}
 
       {/* SUB-TAB 4: تطوير مهاراتي */}
@@ -637,14 +613,14 @@ export function StudentCareerWorkspace() {
 
       {/* SUB-TAB 5: الخريجون (إعدادات الخريج + شبكة الخريجين) */}
       {activeSubTab === 'ALUMNI' && (
-        <div className="space-y-3.5">
-          <CareerSectionCard
+        <div className="space-y-3">
+          <SummarySectionCard
             id="mn-career-alumni"
             title={c('ملف الخريج والخصوصية', 'Alumni profile & privacy')}
-            icon={<GraduationCap className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}
+            icon={GraduationCap}
           >
             <form
-              className="space-y-3"
+              className="space-y-2.5"
               onSubmit={(event) => {
                 event.preventDefault();
                 void write('alumni', 'PUT', {
@@ -662,7 +638,6 @@ export function StudentCareerWorkspace() {
                   {c('اسم العرض في دليل الخريجين', 'Display name')}
                   <input
                     required
-                    style={cairo12Style}
                     className={inputStyle}
                     value={alumni.displayName}
                     maxLength={240}
@@ -676,8 +651,7 @@ export function StudentCareerWorkspace() {
                 <label className={labelStyle}>
                   {c('سنة التخرج', 'Graduation year')}
                   <input
-                    style={cairo12Style}
-                    className={inputStyle}
+                    className={`${inputStyle} tabular-nums`}
                     type="number"
                     min={1970}
                     max={new Date().getFullYear() + 7}
@@ -699,7 +673,6 @@ export function StudentCareerWorkspace() {
                 <label className={labelStyle}>
                   {c('جهة العمل الحالية (اختياري)', 'Current employer')}
                   <input
-                    style={cairo12Style}
                     className={inputStyle}
                     value={alumni.employerName || ''}
                     maxLength={240}
@@ -713,7 +686,6 @@ export function StudentCareerWorkspace() {
                 <label className={labelStyle}>
                   {c('مستوى ظهور الملف', 'Visibility level')}
                   <select
-                    style={cairo12Style}
                     className={`${inputStyle} cursor-pointer`}
                     value={alumni.visibility}
                     onChange={(event) =>
@@ -723,26 +695,23 @@ export function StudentCareerWorkspace() {
                       }))
                     }
                   >
-                    <option style={cairo12Style} value="PRIVATE">
+                    <option value="PRIVATE">
                       {c('خاص — غير مدرج في الدليل', 'Private')}
                     </option>
-                    <option style={cairo12Style} value="ALUMNI_ONLY">
+                    <option value="ALUMNI_ONLY">
                       {c('للخريجين الموافقين فقط', 'Consenting alumni only')}
                     </option>
-                    <option style={cairo12Style} value="PUBLIC">
+                    <option value="PUBLIC">
                       {c('عام', 'Public')}
                     </option>
                   </select>
                 </label>
               </div>
 
-              <label
-                style={cairo12Style}
-                className="flex items-start gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-2.5 text-[11.5px] font-medium text-[var(--mn-heading)] cursor-pointer"
-              >
+              <label className="flex items-start gap-2 rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-2.5 text-[10.5px] sm:text-[11px] font-medium text-[#142B5F] dark:text-white cursor-pointer">
                 <input
                   type="checkbox"
-                  className="mt-1 h-4 w-4 shrink-0 rounded accent-[#142B5F]"
+                  className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded accent-[#0E7C86] cursor-pointer"
                   checked={alumniConsent}
                   onChange={(event) => setAlumniConsent(event.target.checked)}
                 />
@@ -754,123 +723,111 @@ export function StudentCareerWorkspace() {
                 </span>
               </label>
 
-              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[var(--mn-border)] pt-2.5">
-                <button type="submit" className={actionStyle} disabled={busy || loading}>
-                  <ShieldCheck className="h-3.5 w-3.5 text-[#F2CD78]" />
+              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[#142B5F]/10 dark:border-white/10 pt-2.5">
+                <button type="submit" className={primaryActionStyle} disabled={busy || loading}>
+                  <ShieldCheck className="h-3.5 w-3.5 text-white" aria-hidden="true" />
                   <span>{c('حفظ إعدادات الخريج', 'Save alumni settings')}</span>
                 </button>
               </div>
             </form>
-          </CareerSectionCard>
+          </SummarySectionCard>
 
-          <CareerSectionCard
+          <SummarySectionCard
             id="mn-career-network"
             title={c('دليل شبكة الخريجين', 'Alumni directory')}
-            icon={<UsersRound className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />}
-          >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-[11px] font-medium text-[var(--mn-text-muted)]">
-                {alumni.visibility === 'PRIVATE'
-                  ? c(
-                      'فعّل ظهور ملفك إلى «للخريجين الموافقين» لاستعراض زملائك.',
-                      'Enable alumni visibility above to browse peers.',
-                    )
-                  : c('تواصل مع زملائك الخريجين المشاركين في الشبكة.', 'Connect with peers.')}
-              </span>
+            icon={UsersRound}
+            action={
               <button
                 type="button"
-                className={actionStyle}
+                className={secondaryActionStyle}
                 disabled={busy || loading || networkLoading || alumni.visibility === 'PRIVATE'}
                 onClick={() => loadNetwork(1)}
               >
-                <UsersRound className="h-3.5 w-3.5 text-[#F2CD78]" />
+                <UsersRound className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>
                   {networkLoading
                     ? c('جارٍ التحميل…', 'Loading…')
                     : c('تصفح الشبكة', 'Browse network')}
                 </span>
               </button>
-            </div>
+            }
+          >
+            <p className="text-[10.5px] sm:text-[11px] font-medium text-[#5C707C] dark:text-[#9BB4C7]">
+              {alumni.visibility === 'PRIVATE'
+                ? c(
+                    'فعّل ظهور ملفك إلى «للخريجين الموافقين» لاستعراض زملائك.',
+                    'Enable alumni visibility above to browse peers.',
+                  )
+                : c('تواصل مع زملائك الخريجين المشاركين في الشبكة.', 'Connect with peers.')}
+            </p>
 
             {network.length > 0 && (
-              <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
-                {network.map((row) => (
-                  <article
-                    key={row.id}
-                    className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-2.5"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-[#142B5F] text-[#F2CD78]">
-                        <GraduationCap className="h-3.5 w-3.5" />
-                      </span>
-                      <div className="min-w-0">
-                        <h4 className="text-[11.5px] font-bold text-[var(--mn-heading)] truncate">
-                          {row.displayName}
-                        </h4>
-                        <div className="flex items-center gap-2 text-[10px] text-[var(--mn-text-muted)]">
-                          {row.graduationYear && (
-                            <span className="inline-flex items-center gap-1">
-                              <Calendar className="h-3 w-3 text-[#0E7C86]" />
-                              <span>{row.graduationYear}</span>
-                            </span>
-                          )}
-                          {row.employerName && (
-                            <span className="inline-flex items-center gap-1 truncate">
-                              <Building2 className="h-3 w-3 text-[#0E7C86]" />
-                              <span className="truncate">{row.employerName}</span>
-                            </span>
-                          )}
+              <div className="mt-3 space-y-2.5">
+                <div className="grid gap-2.5 sm:grid-cols-2">
+                  {network.map((row) => (
+                    <article
+                      key={row.id}
+                      className="rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-2.5"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                          <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
+                        </span>
+                        <div className="min-w-0">
+                          <h4 className="text-[10.5px] sm:text-[11.5px] font-bold text-[#142B5F] dark:text-white truncate">
+                            {row.displayName}
+                          </h4>
+                          <div className="flex items-center gap-2 text-[9.5px] text-[#5C707C] dark:text-[#9BB4C7] tabular-nums">
+                            {row.graduationYear && (
+                              <span className="inline-flex items-center gap-1">
+                                <Calendar className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+                                <span>{row.graduationYear}</span>
+                              </span>
+                            )}
+                            {row.employerName && (
+                              <span className="inline-flex items-center gap-1 truncate">
+                                <Building2 className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
+                                <span className="truncate">{row.employerName}</span>
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  ))}
+                </div>
+
+                {networkPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 pt-1">
+                    <button
+                      type="button"
+                      className={secondaryActionStyle}
+                      disabled={networkLoading || networkPage <= 1}
+                      onClick={() => loadNetwork(networkPage - 1)}
+                    >
+                      <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span>{c('السابق', 'Prev')}</span>
+                    </button>
+                    <span className="text-[10.5px] font-bold text-[#142B5F] dark:text-white tabular-nums">
+                      {networkPage} / {networkPages}
+                    </span>
+                    <button
+                      type="button"
+                      className={secondaryActionStyle}
+                      disabled={networkLoading || networkPage >= networkPages}
+                      onClick={() => loadNetwork(networkPage + 1)}
+                    >
+                      <span>{c('التالي', 'Next')}</span>
+                      <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                  </div>
+                )}
               </div>
             )}
-          </CareerSectionCard>
+          </SummarySectionCard>
         </div>
       )}
     </div>
-  );
-}
-
-function CareerSectionCard({
-  id,
-  title,
-  icon,
-  count,
-  children,
-}: {
-  id?: string;
-  title: string;
-  icon: ReactNode;
-  count?: string;
-  children: ReactNode;
-}) {
-  return (
-    <section
-      id={id}
-      aria-label={title}
-      className="mn-student-career-section relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] scroll-mt-6 rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] px-3.5 py-3 sm:px-5 sm:py-3.5 shadow-2xs mn-panel dark:border-white/10 font-['Cairo',sans-serif] overflow-hidden"
-    >
-      <div className="mb-2.5 border-b border-[var(--mn-border)] dark:border-white/10 pb-2 flex min-w-0 items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/40 bg-[#142B5F]">
-            {icon}
-          </span>
-          <h3 className="inline-block border-b-2 border-[#D6A43B] pb-0.5 text-[13.5px] sm:text-[14px] font-bold leading-snug text-[#1E293B] dark:text-[#F8FAFC] font-['Cairo',sans-serif]">
-            {title}
-          </h3>
-        </div>
-        {count && (
-          <span className="shrink-0 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2 py-0.5 text-[10px] font-semibold text-[#334155] dark:text-[#E2E8F0]">
-            {count}
-          </span>
-        )}
-      </div>
-
-      {children}
-    </section>
   );
 }
 
@@ -879,33 +836,32 @@ function getApplicationStatusInfo(status: string, c: (ar: string, en: string) =>
     case 'SUBMITTED':
       return {
         label: c('تم التقديم', 'Submitted'),
-        className: 'bg-[#0E7C86]/10 text-[#0E7C86] border-[#0E7C86]/25',
+        className: 'text-[#0E7C86] dark:text-[#38C6D4]',
       };
     case 'UNDER_REVIEW':
       return {
         label: c('قيد المراجعة', 'Under review'),
-        className: 'bg-[#142B5F]/10 text-[#142B5F] dark:text-[#F2CD78] border-[#142B5F]/20',
+        className: 'text-[#142B5F] dark:text-white',
       };
     case 'SHORTLISTED':
       return {
         label: c('قائمة قصيرة', 'Shortlisted'),
-        className: 'bg-[#0E7C86]/10 text-[#0E7C86] border-[#0E7C86]/25',
+        className: 'text-[#0E7C86] dark:text-[#38C6D4]',
       };
     case 'ACCEPTED':
       return {
         label: c('مقبول', 'Accepted'),
-        className:
-          'bg-[var(--mn-success-soft)] text-[var(--mn-success-text)] border-[var(--mn-success-border)]',
+        className: 'text-[#0E7C86] dark:text-[#38C6D4]',
       };
     case 'REJECTED':
       return {
         label: c('غير مستوفٍ', 'Rejected'),
-        className: 'bg-rose-500/10 text-rose-700 border-rose-500/20',
+        className: 'text-[#5C707C] dark:text-[#9BB4C7]',
       };
     default:
       return {
         label: status || c('قيد المتابعة', 'Pending'),
-        className: 'bg-[var(--mn-page)] text-[var(--mn-text-muted)] border-[var(--mn-border)]',
+        className: 'text-[#5C707C] dark:text-[#9BB4C7]',
       };
   }
 }

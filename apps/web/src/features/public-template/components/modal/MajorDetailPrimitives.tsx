@@ -184,7 +184,7 @@ export const MajorDetailFooterActions: React.FC<{
       <span>{effectiveFavorite ? savedLabel : 'حفظ التخصص'}</span>
       <Bookmark
         className={`w-3.5 h-3.5 md:w-4 md:h-4 ${
-          effectiveFavorite ? 'fill-[#F2CD78] text-[#F2CD78]' : 'text-[#F2CD78]'
+          effectiveFavorite ? 'fill-[#38C6D4] text-[#38C6D4]' : 'text-[#38C6D4]'
         }`}
       />
     </button>

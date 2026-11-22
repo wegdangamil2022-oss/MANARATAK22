@@ -171,19 +171,39 @@ export function StudentServiceBookingPanel({ requestId }: { requestId: string })
   return (
     <section
       dir={dir}
-      className="mn-student-service-booking-panel relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] space-y-3 rounded-none border-x-0 border-t border-b border-[var(--mn-border)] bg-[var(--mn-surface)] px-3.5 py-3.5 sm:px-5 sm:py-4 shadow-2xs mn-panel dark:border-white/10 overflow-hidden"
+      className="mn-student-service-booking-panel relative overflow-hidden rounded-2xl border border-[#142B5F]/10 dark:border-white/10 bg-white dark:bg-[#111E38] px-3 py-3 sm:px-4.5 sm:py-4 shadow-[0_2px_10px_rgba(20,43,95,0.035)] dark:shadow-[0_6px_18px_rgba(0,0,0,0.24)] mn-panel font-['Cairo',sans-serif] space-y-2.5"
       aria-label={label('مواعيد ومخرجات الخدمة', 'Service bookings and deliverables')}
     >
-      <div className="mb-2.5 flex min-w-0 items-center gap-2 border-b border-[var(--mn-border)] dark:border-white/10 pb-2.5">
-        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[#D6A43B]/35 bg-[#142B5F] [&>svg]:h-3.5 [&>svg]:w-3.5">
-          <CalendarClock className="h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#142B5F]/28 dark:via-[#D6A43B]/35 to-transparent"
+      />
+
+      <div className="relative z-10 flex min-w-0 items-center gap-2">
+        <span className="relative grid h-7 w-7 shrink-0 place-items-center overflow-hidden rounded-lg bg-[#142B5F] shadow-2xs">
+          <span aria-hidden="true" className="pointer-events-none absolute top-0 right-0 h-2 w-2 rounded-bl-sm bg-[#D6A43B]" />
+          <CalendarClock className="relative z-10 h-3.5 w-3.5 text-[#F2CD78]" aria-hidden="true" />
         </span>
-        <h3 className="min-w-0 text-[12.5px] sm:text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">{label('مواعيد ومخرجات الخدمة', 'Service bookings and deliverables')}</h3>
+        <div className="inline-flex flex-col items-start min-w-0">
+          <h3 className="text-[13px] sm:text-[14.5px] font-extrabold leading-tight text-[#142B5F] dark:text-[#F1F5F9] truncate">
+            {label('مواعيد ومخرجات الخدمة', 'Service bookings and deliverables')}
+          </h3>
+          <span
+            aria-hidden="true"
+            className="w-full min-w-[68px] h-[1.5px] mt-0.5 rounded-full bg-[linear-gradient(270deg,rgba(14,124,134,0.68)_0%,rgba(14,124,134,0.3)_72%,transparent_100%)] dark:bg-[linear-gradient(270deg,rgba(56,198,212,0.75)_0%,rgba(56,198,212,0.34)_72%,transparent_100%)]"
+          />
+        </div>
       </div>
-      {notice && <p role="status" className="rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] p-3 text-[11px] leading-[1.8] text-[var(--mn-text-muted)]">{notice}</p>}
+
+      {notice && (
+        <p role="status" className="rounded-xl border border-[#0E7C86]/25 dark:border-[#38C6D4]/25 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 py-2 text-[10.5px] font-semibold leading-relaxed text-[#0E7C86] dark:text-[#38C6D4]">
+          {notice}
+        </p>
+      )}
+
       {packages.length > 0 && (
-        <>
-          <label className="block text-[11px] font-semibold text-[var(--mn-heading)]">
+        <div className="space-y-2">
+          <label className="block text-[10.5px] sm:text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9]">
             {label('الخدمة أو الباقة', 'Service or package')}
             <select
               value={packageId}
@@ -193,7 +213,7 @@ export function StudentServiceBookingPanel({ requestId }: { requestId: string })
                 setInputs({});
                 setConsent(false);
               }}
-              className="mt-1 block min-h-10 w-full rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[12px] text-[var(--mn-heading)]"
+              className="mt-1 block h-9 w-full rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 text-[11px] font-semibold text-[#142B5F] dark:text-[#F1F5F9] outline-none focus:border-[#0E7C86]"
             >
               <option value="">{label('الخدمة المفردة', 'Single service')}</option>
               {packages.map((pkg) => (
@@ -204,22 +224,28 @@ export function StudentServiceBookingPanel({ requestId }: { requestId: string })
             </select>
           </label>
           {packageCursor && (
-            <button type="button" disabled={busy} onClick={() => void more('packages')} className="min-h-9 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-1.5 text-[12px] font-bold text-[var(--mn-heading)] disabled:opacity-50">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void more('packages')}
+              className="mn-workspace-btn-sm inline-flex items-center rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 px-3 text-[10.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5] disabled:opacity-50 cursor-pointer"
+            >
               {label('المزيد من الباقات', 'More packages')}
             </button>
           )}
-        </>
+        </div>
       )}
+
       {selected && (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {selected.items.map((item) => (
-            <fieldset key={item.serviceId} className="rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] p-3">
-              <legend className="px-1 text-[12px] font-bold text-[var(--mn-heading)]">
+            <fieldset key={item.serviceId} className="rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-3 space-y-2">
+              <legend className="px-1 text-[11px] font-bold text-[#142B5F] dark:text-[#F1F5F9]">
                 {item.localizedContent?.[language]?.displayName ?? item.displayName} ×{' '}
                 {item.quantity}
               </legend>
               {item.inputSchema.map((field) => (
-                <label key={field.key} className="mt-2 block text-[11px] font-semibold text-[var(--mn-heading)]">
+                <label key={field.key} className="block text-[10.5px] font-semibold text-[#142B5F] dark:text-[#DCE7F0]">
                   {field.key}
                   <input
                     type={
@@ -255,17 +281,19 @@ export function StudentServiceBookingPanel({ requestId }: { requestId: string })
                         },
                       }))
                     }
-                    className={field.type === 'BOOLEAN'
-                      ? 'mt-1 h-4 w-4 accent-[#142B5F]'
-                      : 'mt-1 block min-h-10 w-full rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] px-3 py-2 text-[12px] text-[var(--mn-heading)]'}
+                    className={
+                      field.type === 'BOOLEAN'
+                        ? 'mt-1 h-4 w-4 accent-[#0E7C86]'
+                        : 'mt-1 block h-9 w-full rounded-lg border border-[#142B5F]/12 dark:border-white/10 bg-white dark:bg-[#111E38] px-3 text-[11px] text-[#142B5F] dark:text-[#F1F5F9] outline-none focus:border-[#0E7C86]'
+                    }
                   />
                 </label>
               ))}
             </fieldset>
           ))}
-          <label className="flex items-start gap-2 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] p-3 text-[11px] font-semibold leading-[1.8] text-[var(--mn-heading)]">
+          <label className="flex items-start gap-2 rounded-xl border border-[#142B5F]/10 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-2.5 text-[10.5px] font-semibold leading-relaxed text-[#142B5F] dark:text-[#DCE7F0] cursor-pointer">
             <input
-              className="mt-1 h-4 w-4 shrink-0 accent-[#142B5F]"
+              className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#0E7C86]"
               type="checkbox"
               checked={consent}
               onChange={(event) => setConsent(event.target.checked)}
@@ -277,36 +305,50 @@ export function StudentServiceBookingPanel({ requestId }: { requestId: string })
           </label>
         </div>
       )}
-      <div className="flex flex-wrap gap-2">
-        {slots.map((slot) => (
-          <button
-            type="button"
-            key={slot.id}
-            disabled={busy || Boolean(selected && !consent)}
-            className="min-h-10 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-[12px] font-semibold text-[var(--mn-heading)] transition-colors hover:border-[#D6A43B] disabled:opacity-50"
-            onClick={() => void book(slot.id)}
-          >
-            {new Date(slot.startsAt).toLocaleString(language, { timeZone: slot.timezone })} —{' '}
-            {label('حجز مؤقت', 'Temporary booking')}
-          </button>
-        ))}
-      </div>
+
+      {slots.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {slots.map((slot) => (
+            <button
+              type="button"
+              key={slot.id}
+              disabled={busy || Boolean(selected && !consent)}
+              className="mn-workspace-btn-sm rounded-lg border border-[#0E7C86]/30 dark:border-[#38C6D4]/32 bg-[#F6F8FA] hover:bg-gradient-to-l hover:from-[#142B5F] hover:via-[#133A6A] hover:to-[#0E7C86] hover:border-transparent dark:bg-[#0B1529]/80 px-3 text-[10.5px] font-bold text-[#142B5F] hover:text-white dark:text-[#EDF5F5] transition-all disabled:opacity-50 cursor-pointer tabular-nums"
+              onClick={() => void book(slot.id)}
+            >
+              {new Date(slot.startsAt).toLocaleString(language, { timeZone: slot.timezone })} —{' '}
+              {label('حجز مؤقت', 'Temporary booking')}
+            </button>
+          ))}
+        </div>
+      )}
+
       {slotCursor && (
-        <button type="button" disabled={busy} onClick={() => void more('slots')} className="min-h-9 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-1.5 text-[12px] font-bold text-[var(--mn-heading)] disabled:opacity-50">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void more('slots')}
+          className="mn-workspace-btn-sm rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 px-3 text-[10.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5] disabled:opacity-50 cursor-pointer"
+        >
           {label('المزيد من المواعيد', 'More availability')}
         </button>
       )}
-      {deliverables.map((file) => (
-        <button
-          type="button"
-          key={file.id}
-          disabled={busy}
-          onClick={() => void download(file.id)}
-          className="min-h-9 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-1.5 text-[12px] font-bold text-[var(--mn-heading)] transition-colors hover:border-[#D6A43B] disabled:opacity-50"
-        >
-          {label('تنزيل المخرج', 'Download deliverable')}: {file.artifactType}
-        </button>
-      ))}
+
+      {deliverables.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {deliverables.map((file) => (
+            <button
+              type="button"
+              key={file.id}
+              disabled={busy}
+              onClick={() => void download(file.id)}
+              className="mn-workspace-btn-sm rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-[#F6F8FA] hover:bg-white dark:bg-[#0B1529]/80 px-3 text-[10.5px] font-bold text-[#142B5F] dark:text-[#EDF5F5] hover:border-[#0E7C86]/55 transition-colors disabled:opacity-50 cursor-pointer"
+            >
+              {label('تنزيل المخرج', 'Download deliverable')}: {file.artifactType}
+            </button>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

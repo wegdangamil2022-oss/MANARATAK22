@@ -101,7 +101,7 @@ export const ServicesLandingPage: React.FC<ServicesLandingPageProps> = ({ onBack
 
   return (
     <div className="min-h-screen bg-[#F6F8FA] dark:bg-[#0A1326] pb-24 text-[#203442] dark:text-[#EDF5F5] font-['Cairo',sans-serif] select-none mn-panel dark:[--mn-border:rgba(255,255,255,0.12)]" dir={publicDir}>
-      <div className="relative mn-search-hero overflow-hidden px-3 sm:px-4 pt-2.5 pb-2.5 sm:pt-4 sm:pb-3 text-white shadow-xs mn-inverse">
+      <div className="relative mn-search-hero overflow-hidden px-3 sm:px-4 pt-3 pb-2.5 sm:pt-5 sm:pb-3.5 md:pt-6 md:pb-4 min-h-[201px] sm:min-h-[248px] md:min-h-[299px] flex flex-col justify-between text-white shadow-xs mn-inverse w-full">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute left-5 top-3 grid grid-cols-5 gap-1.5 opacity-20">
             {Array.from({ length: 20 }).map((_, index) => (
@@ -125,18 +125,18 @@ export const ServicesLandingPage: React.FC<ServicesLandingPageProps> = ({ onBack
           </button>
         )}
 
-        <div className="max-w-md sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto text-center relative z-10 space-y-1.5 sm:space-y-2 md:space-y-3 pt-0.5 md:pt-2">
+        <div className="max-w-md sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto text-center relative z-10 space-y-1.5 sm:space-y-2 md:space-y-3 pt-1 md:pt-3 my-auto w-full">
           <div className="flex justify-center">
             <Sparkles className="h-4.5 w-4.5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-[#F2CD78] drop-shadow-[0_0_8px_rgba(214,164,59,0.75)]" aria-hidden="true" />
           </div>
 
-          <div className="space-y-0.5 md:space-y-1">
+          <div className="space-y-0.5 md:space-y-1.5">
             <h1 className="font-['Cairo',sans-serif] text-xl sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight text-white">
               {publicT('public_services')}{' '}
               <span className="text-[#F2CD78]">{publicT('public_manaratak')}</span>
             </h1>
 
-            <div className="flex justify-center pt-0.5 pb-0.5 md:pt-1.5">
+            <div className="flex justify-center pt-0.5 pb-0.5 md:pt-1">
               <div className="w-10 md:w-14 h-0.5 bg-gradient-to-r from-[#D6A43B] via-[#F2CD78] to-[#D6A43B] rounded-full" />
             </div>
 
@@ -147,15 +147,15 @@ export const ServicesLandingPage: React.FC<ServicesLandingPageProps> = ({ onBack
         </div>
 
         {/* 2 Balanced Quick Track Selector Tiles inside Hero */}
-        <div className="max-w-[320px] sm:max-w-[380px] md:max-w-[460px] mx-auto mt-2 sm:mt-2.5 md:mt-3.5 relative z-20 pb-0 md:pb-1">
+        <div className="w-full max-w-[320px] sm:max-w-[380px] md:max-w-[460px] mx-auto mt-2.5 sm:mt-3 md:mt-4 relative z-20 pb-0 md:pb-1">
           <div className="grid grid-cols-2 gap-1.5 sm:gap-2.5 md:gap-3">
             <button
               type="button"
               onClick={() => onOpenTrack?.('student')}
-              className="relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel"
+              className="relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel"
             >
               <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
-                <GraduationCap className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
+                <GraduationCap className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
                 <span className="truncate">{publicT('public_student_services')}</span>
               </div>
               <span className="text-[9px] sm:text-[9.5px] font-bold text-[#5C707C] dark:text-[#9BB4C7] mt-0.5 truncate w-full">استشارات وتجهيز أكاديمي</span>
@@ -164,10 +164,10 @@ export const ServicesLandingPage: React.FC<ServicesLandingPageProps> = ({ onBack
             <button
               type="button"
               onClick={() => onOpenTrack?.('general')}
-              className="relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel"
+              className="relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel"
             >
               <div className="flex items-center justify-center gap-1 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-[13px] font-['Cairo',sans-serif] w-full">
-                <FileText className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#34BFC9] shrink-0" />
+                <FileText className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0E7C86] dark:text-[#38C6D4] shrink-0" />
                 <span className="truncate">{publicT('public_general_services_and_support')}</span>
               </div>
               <span className="text-[9px] sm:text-[9.5px] font-bold text-[#5C707C] dark:text-[#9BB4C7] mt-0.5 truncate w-full">ترجمة وتوثيق وإجراءات</span>

@@ -2925,11 +2925,15 @@ export const ExamDetailModal: React.FC<ExamDetailModalProps> = ({
               }}
               aria-label={isFavorite ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}
               title={isFavorite ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}
-              className="w-9 h-9 md:w-10 md:h-10 rounded-xl border border-[#D6A43B]/80 bg-[#142B5F]/45 hover:bg-[#142B5F]/75 text-[#F2CD78] flex items-center justify-center shadow-xs backdrop-blur-xs transition-all active:scale-95 cursor-pointer"
+              className={`w-9 h-9 md:w-10 md:h-10 rounded-xl border flex items-center justify-center shadow-xs backdrop-blur-xs transition-all active:scale-95 cursor-pointer ${
+                isFavorite
+                  ? 'border-[#38C6D4]/75 bg-[#142B5F]/85 text-[#38C6D4]'
+                  : 'border-white/25 bg-[#142B5F]/55 hover:bg-[#142B5F]/80 text-white'
+              }`}
             >
               <Heart
                 className={`w-4 h-4 md:w-5 md:h-5 transition-transform ${
-                  isFavorite ? 'fill-[#F2CD78] text-[#F2CD78]' : 'text-[#F2CD78]'
+                  isFavorite ? 'fill-[#38C6D4] text-[#38C6D4]' : 'text-white'
                 }`}
               />
             </button>

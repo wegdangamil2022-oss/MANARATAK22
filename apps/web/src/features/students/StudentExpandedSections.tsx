@@ -84,15 +84,17 @@ export function HorizontalSwipeTabs<T extends string>({
 }) {
   const handleSelect = onSelect ?? onChange ?? (() => {});
   const gridColsClass =
-    items.length >= 5
+    items.length >= 6
       ? 'grid-cols-3 sm:grid-cols-6'
-      : items.length === 4
-        ? 'grid-cols-2 sm:grid-cols-4'
-        : items.length === 3
-          ? 'grid-cols-3'
-          : items.length === 2
-            ? 'grid-cols-2'
-            : 'grid-cols-4';
+      : items.length === 5
+        ? 'grid-cols-3 sm:grid-cols-5'
+        : items.length === 4
+          ? 'grid-cols-2 sm:grid-cols-4'
+          : items.length === 3
+            ? 'grid-cols-3'
+            : items.length === 2
+              ? 'grid-cols-2'
+              : 'grid-cols-4';
 
   const navContent = (
     <nav aria-label={ariaLabel} className={`grid ${gridColsClass} gap-1.5`}>
@@ -180,15 +182,15 @@ export function WorkspaceTabCanopy({
 
       <div className="px-3.5 py-3 sm:px-5 sm:py-4">
         <div className="flex items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-2">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
             <SummarySectionIcon icon={icon} size="lg" />
-            <div className="inline-flex flex-col items-start min-w-0">
-              <h2 className="text-[13.5px] sm:text-[15px] font-extrabold leading-tight text-[#142B5F] dark:text-[#F1F5F9] truncate font-['Cairo',sans-serif]">
+            <div className="inline-flex max-w-full flex-col items-start min-w-0 overflow-hidden">
+              <h2 className="max-w-full text-[13px] sm:text-[15px] font-extrabold leading-tight text-[#142B5F] dark:text-[#F1F5F9] truncate font-['Cairo',sans-serif]">
                 {title}
               </h2>
               <span
                 aria-hidden="true"
-                className="w-full min-w-[84px] h-[1.5px] mt-0.5 rounded-full bg-[linear-gradient(270deg,rgba(14,124,134,0.7)_0%,rgba(14,124,134,0.32)_72%,transparent_100%)] dark:bg-[linear-gradient(270deg,rgba(56,198,212,0.78)_0%,rgba(56,198,212,0.35)_72%,transparent_100%)]"
+                className="w-full min-w-[72px] h-[1.5px] mt-0.5 rounded-full bg-[linear-gradient(270deg,rgba(14,124,134,0.7)_0%,rgba(14,124,134,0.32)_72%,transparent_100%)] dark:bg-[linear-gradient(270deg,rgba(56,198,212,0.78)_0%,rgba(56,198,212,0.35)_72%,transparent_100%)]"
               />
             </div>
           </div>
@@ -338,15 +340,15 @@ export function SummarySectionCard({
       />
 
       <div className="relative z-10 flex min-w-0 items-center justify-between gap-2 mb-2.5 sm:mb-3">
-        <div className="flex min-w-0 items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           <SummarySectionIcon icon={icon} />
-          <div className="inline-flex flex-col items-start min-w-0">
-            <h3 className="text-[13px] sm:text-[14.5px] font-extrabold leading-tight text-[#142B5F] dark:text-[#F1F5F9] truncate font-['Cairo',sans-serif]">
+          <div className="inline-flex max-w-full flex-col items-start min-w-0 overflow-hidden">
+            <h3 className="max-w-full text-[13px] sm:text-[14.5px] font-extrabold leading-tight text-[#142B5F] dark:text-[#F1F5F9] truncate font-['Cairo',sans-serif]">
               {title}
             </h3>
             <span
               aria-hidden="true"
-              className="w-full min-w-[68px] h-[1.5px] mt-0.5 rounded-full bg-[linear-gradient(270deg,rgba(14,124,134,0.68)_0%,rgba(14,124,134,0.3)_72%,transparent_100%)] dark:bg-[linear-gradient(270deg,rgba(56,198,212,0.75)_0%,rgba(56,198,212,0.34)_72%,transparent_100%)]"
+              className="w-full min-w-[60px] h-[1.5px] mt-0.5 rounded-full bg-[linear-gradient(270deg,rgba(14,124,134,0.68)_0%,rgba(14,124,134,0.3)_72%,transparent_100%)] dark:bg-[linear-gradient(270deg,rgba(56,198,212,0.75)_0%,rgba(56,198,212,0.34)_72%,transparent_100%)]"
             />
           </div>
         </div>
@@ -1395,34 +1397,34 @@ export function VaultComparisonsPanel(_props?: {
     { label: 'التغطية المالية', csc: 'رسوم + سكن + راتب', chevening: 'رسوم + تذاكر + معيشة' },
     { label: 'متطلب اللغة', csc: 'IELTS 6.0 أو HSK', chevening: 'IELTS 6.5 أكاديمي' },
     { label: 'خبرة العمل', csc: 'غير مشروطة', chevening: 'سنتان (2,800 ساعة)' },
-    { label: 'نقطة القوة لك', csc: 'معدلك الأكاديمي ممتاز', chevening: 'مدة ماجستير سنة واحدة' },
+    { label: 'نقطة القوة لك', csc: 'معدلك الأكاديمي ممتاز', chevening: 'ماجستير سنة واحدة' },
   ];
 
   return (
-    <CalmSectionCard title="مقارنة الفرص وقراري" icon={Scale} badge="مقارنة ثنائية">
-      <div className="overflow-x-auto rounded-xl border border-[var(--mn-border)] dark:border-white/10">
-        <table className="w-full text-right text-[11px] font-['Cairo',sans-serif] border-collapse">
+    <SummarySectionCard title="مقارنة الفرص وقراري" icon={Scale} metaLabel="مقارنة ثنائية">
+      <div className="overflow-x-auto rounded-xl border border-[#142B5F]/12 dark:border-white/10">
+        <table className="w-full text-right text-[10.5px] sm:text-[11.5px] font-['Cairo',sans-serif] border-collapse">
           <thead>
             <tr className="bg-[#142B5F] text-white">
-              <th className="p-2.5 font-bold text-[#F2CD78] w-[28%] border-l border-white/10">
+              <th className="p-2 sm:p-2.5 font-bold text-[#F2CD78] w-[28%] border-l border-white/10">
                 المعيار
               </th>
-              <th className="p-2.5 font-bold w-[36%] border-l border-white/10">
+              <th className="p-2 sm:p-2.5 font-bold w-[36%] border-l border-white/10">
                 منحة الحكومة الصينية (CSC)
               </th>
-              <th className="p-2.5 font-bold w-[36%]">منحة تشيفنينغ البريطانية</th>
+              <th className="p-2 sm:p-2.5 font-bold w-[36%]">منحة تشيفنينغ البريطانية</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[var(--mn-border)] dark:divide-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)]">
+          <tbody className="divide-y divide-[#142B5F]/10 dark:divide-white/10 bg-white dark:bg-[#0B1529]/80">
             {rows.map((r) => (
               <tr key={r.label}>
-                <td className="p-2 font-bold text-[#1E293B] dark:text-[#F8FAFC] bg-[var(--mn-surface)] border-l border-[var(--mn-border)] dark:border-white/10">
+                <td className="p-2 sm:p-2.5 font-bold text-[#142B5F] dark:text-white bg-[#F6F8FA] dark:bg-[#111E38] border-l border-[#142B5F]/10 dark:border-white/10">
                   {r.label}
                 </td>
-                <td className="p-2 font-medium text-[#334155] dark:text-[#CBD5E1] border-l border-[var(--mn-border)] dark:border-white/10">
+                <td className="p-2 sm:p-2.5 font-medium text-[#142B5F]/85 dark:text-[#E2EDF5] border-l border-[#142B5F]/10 dark:border-white/10">
                   {r.csc}
                 </td>
-                <td className="p-2 font-medium text-[#334155] dark:text-[#CBD5E1]">
+                <td className="p-2 sm:p-2.5 font-medium text-[#142B5F]/85 dark:text-[#E2EDF5]">
                   {r.chevening}
                 </td>
               </tr>
@@ -1431,18 +1433,18 @@ export function VaultComparisonsPanel(_props?: {
         </table>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-2.5">
-        <span className="text-[11px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-2.5">
+        <span className="text-[10.5px] sm:text-[11.5px] font-bold text-[#142B5F] dark:text-white">
           الخيار المفضل للتقديم الأول:
         </span>
         <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => setPreferredId('csc')}
-            className={`rounded-lg border px-2.5 py-1 text-[10.5px] font-bold cursor-pointer ${
+            className={`mn-workspace-btn-sm rounded-lg border px-2.5 text-[10px] sm:text-[10.5px] font-bold cursor-pointer transition-all ${
               preferredId === 'csc'
-                ? 'border-[#142B5F] bg-[#142B5F] text-[#F2CD78]'
-                : 'border-[var(--mn-border)] bg-[var(--mn-surface)] text-[#334155]'
+                ? 'border-transparent bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
+                : 'border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-white dark:bg-[#111E38] text-[#142B5F] dark:text-white hover:border-[#0E7C86]'
             }`}
           >
             منحة الصين CSC ✓
@@ -1450,17 +1452,17 @@ export function VaultComparisonsPanel(_props?: {
           <button
             type="button"
             onClick={() => setPreferredId('chevening')}
-            className={`rounded-lg border px-2.5 py-1 text-[10.5px] font-bold cursor-pointer ${
+            className={`mn-workspace-btn-sm rounded-lg border px-2.5 text-[10px] sm:text-[10.5px] font-bold cursor-pointer transition-all ${
               preferredId === 'chevening'
-                ? 'border-[#142B5F] bg-[#142B5F] text-[#F2CD78]'
-                : 'border-[var(--mn-border)] bg-[var(--mn-surface)] text-[#334155]'
+                ? 'border-transparent bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
+                : 'border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-white dark:bg-[#111E38] text-[#142B5F] dark:text-white hover:border-[#0E7C86]'
             }`}
           >
             منحة تشيفنينغ
           </button>
         </div>
       </div>
-    </CalmSectionCard>
+    </SummarySectionCard>
   );
 }
 
@@ -1496,44 +1498,49 @@ export function VaultToolsResultsPanel(_props?: {
   ];
 
   return (
-    <CalmSectionCard
+    <SummarySectionCard
       title="نتائج أدواتي المحفوظة"
       icon={Sparkles}
-      badge={`${tools.length} نتائج`}
+      metaLabel={`${tools.length} نتائج`}
     >
       <div className="grid gap-2.5 sm:grid-cols-2">
         {tools.map((t) => (
-          <div
+          <article
             key={t.slug}
-            className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 flex flex-col justify-between"
+            className="rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#111E38] hover:border-[#0E7C86]/35 dark:hover:border-[#38C6D4]/40 p-2.5 sm:p-3 flex flex-col justify-between transition-all"
           >
-            <div>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-bold text-[#0E7C86] dark:text-[#55CBC5]">
-                  {t.date}
-                </span>
-                <LockKeyhole className="h-3.5 w-3.5 text-[#142B5F] dark:text-[#F2CD78]" />
+            <div className="flex items-start gap-2.5">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">
+                    {t.date}
+                  </span>
+                  <LockKeyhole className="h-3 w-3 shrink-0 text-[#5C707C] dark:text-[#9BB4C7]" aria-hidden="true" />
+                </div>
+                <h4 className="mt-0.5 text-[10.5px] sm:text-[12px] font-bold text-[#142B5F] dark:text-white leading-snug">
+                  {t.title}
+                </h4>
+                <p className="mt-0.5 text-[10px] sm:text-[11px] font-medium text-[#5C707C] dark:text-[#9BB4C7] leading-relaxed">
+                  {t.summary}
+                </p>
               </div>
-              <h4 className="mt-1 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
-                {t.title}
-              </h4>
-              <p className="mt-1 text-[11px] font-medium text-[#475569] dark:text-[#CBD5E1]">
-                {t.summary}
-              </p>
             </div>
-            <div className="mt-2.5 pt-2 border-t border-[var(--mn-border)] flex justify-end">
+            <div className="mt-2.5 pt-2 border-t border-[#142B5F]/10 dark:border-white/10 flex justify-end">
               <Link
                 to="/tools"
-                className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#142B5F] dark:text-[#F2CD78] hover:underline"
+                className="inline-flex items-center gap-1 text-[10px] sm:text-[10.5px] font-bold text-[#142B5F] dark:text-white hover:text-[#0E7C86] dark:hover:text-[#38C6D4] transition-colors"
               >
                 <span>فتح الأداة</span>
-                <ArrowUpLeft className="h-3 w-3 text-[#0E7C86]" />
+                <ArrowUpLeft className="h-3 w-3 text-[#0E7C86] dark:text-[#38C6D4]" aria-hidden="true" />
               </Link>
             </div>
-          </div>
+          </article>
         ))}
       </div>
-    </CalmSectionCard>
+    </SummarySectionCard>
   );
 }
 
@@ -1552,7 +1559,7 @@ export function ServiceDeliverablesPanel({
       requestCode: requests[0]?.publicId || 'DEMO-REQ-001',
       version: 'النسخة المراجَعة v1',
       status: 'جاهز للتنزيل',
-      date: 'أكتوبر 2026',
+      ready: true,
     },
     {
       id: 'deliv-2',
@@ -1560,39 +1567,52 @@ export function ServiceDeliverablesPanel({
       requestCode: requests[1]?.publicId || 'DEMO-REQ-002',
       version: 'ملف PDF معتمد',
       status: 'بانتظار إتمام المراجعة',
-      date: 'قيد الإعداد',
+      ready: false,
     },
   ];
 
   return (
-    <CalmSectionCard
+    <SummarySectionCard
       title="الملفات والمخرجات المستلمة"
       icon={FileCheck2}
-      badge={`${deliverables.length} ملف`}
+      metaLabel={`${deliverables.length} ملف`}
     >
-      <div className="space-y-2.5">
+      <div className="space-y-2">
         {deliverables.map((item) => (
-          <div
+          <article
             key={item.id}
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3"
+            className={`relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#111E38] hover:border-[#0E7C86]/35 dark:hover:border-[#38C6D4]/40 p-2.5 sm:p-3 transition-all ${
+              item.ready ? 'mn-summary-start-bar' : ''
+            }`}
           >
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 text-[10px] font-bold text-[#0E7C86]">
-                <span>طلب #{item.requestCode}</span>
-                <span>·</span>
-                <span>{item.version}</span>
+            <div className="flex min-w-0 flex-1 items-start gap-2.5">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                <FileCheck2 className="h-3.5 w-3.5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-1.5 text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4] tabular-nums">
+                  <span>طلب #{item.requestCode}</span>
+                  <span className="text-[#5C707C]/50">·</span>
+                  <span>{item.version}</span>
+                </div>
+                <h4 className="mt-0.5 text-[10.5px] sm:text-[12px] font-bold text-[#142B5F] dark:text-white leading-snug">
+                  {item.title}
+                </h4>
               </div>
-              <h4 className="mt-0.5 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
-                {item.title}
-              </h4>
             </div>
-            <span className="shrink-0 rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface)] px-2.5 py-1 text-[10.5px] font-bold text-[#142B5F] dark:text-[#F2CD78]">
+            <span
+              className={`shrink-0 self-end sm:self-center text-[9.5px] sm:text-[10px] font-bold ${
+                item.ready
+                  ? 'text-[#0E7C86] dark:text-[#38C6D4]'
+                  : 'text-[#5C707C] dark:text-[#9BB4C7]'
+              }`}
+            >
               {item.status}
             </span>
-          </div>
+          </article>
         ))}
       </div>
-    </CalmSectionCard>
+    </SummarySectionCard>
   );
 }
 
@@ -1610,54 +1630,62 @@ export function CareerJobsExplorePanel({
       title: 'مساعد باحث أكاديمي — مختبرات تحليل البيانات والذكاء الاصطناعي',
       org: 'برنامج التدريب البحثي للخريجين',
       type: 'تدريب بحثي عن بُعد / هجين',
-      channel: 'تقديم مباشر من حسابك',
+      channel: 'تقديم مباشر',
     },
     {
       id: 'job-edtech-fellow',
       title: 'زميل تطوير محتوى أكاديمي وإرشاد طلابي',
       org: 'مبادرات التعليم العالي الإقليمية',
       type: 'دوام جزئي مرن',
-      channel: 'تقديم مباشر من حسابك',
+      channel: 'تقديم مباشر',
     },
   ];
 
   return (
-    <CalmSectionCard title="فرص العمل والتدريب المتاحة" icon={BriefcaseBusiness} badge="٢ فرص">
+    <SummarySectionCard title="فرص العمل والتدريب المتاحة" icon={BriefcaseBusiness} metaLabel="٢ فرص">
       <div className="grid gap-2.5 sm:grid-cols-2">
         {jobs.map((item) => (
           <article
             key={item.id}
-            className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3 flex flex-col justify-between"
+            className="rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#111E38] hover:border-[#0E7C86]/35 dark:hover:border-[#38C6D4]/40 p-2.5 sm:p-3 flex flex-col justify-between transition-all"
           >
-            <div>
-              <span className="text-[10px] font-bold text-[#0E7C86] dark:text-[#55CBC5]">
-                {item.type} · {item.channel}
+            <div className="flex items-start gap-2.5">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                <BriefcaseBusiness className="h-3.5 w-3.5" aria-hidden="true" />
               </span>
-              <h4 className="mt-1 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] leading-snug">
-                {item.title}
-              </h4>
-              <p className="mt-0.5 text-[10.5px] font-medium text-[#64748B]">{item.org}</p>
+              <div className="min-w-0 flex-1">
+                <span className="text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">
+                  {item.type} · {item.channel}
+                </span>
+                <h4 className="mt-0.5 text-[10.5px] sm:text-[12px] font-bold text-[#142B5F] dark:text-white leading-snug">
+                  {item.title}
+                </h4>
+                <p className="mt-0.5 text-[10px] font-medium text-[#5C707C] dark:text-[#9BB4C7]">
+                  {item.org}
+                </p>
+              </div>
             </div>
-            <div className="mt-3 pt-2 border-t border-[var(--mn-border)] flex items-center justify-between">
+            <div className="mt-2.5 pt-2 border-t border-[#142B5F]/10 dark:border-white/10 flex items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={() => onSelectJob({ id: item.id, title: item.title })}
-                className="inline-flex min-h-8 items-center gap-1 rounded-lg bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 px-3 py-1 text-[10.5px] font-bold text-white cursor-pointer"
+                className="mn-workspace-btn-sm inline-flex items-center gap-1 rounded-lg bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 px-2.5 text-[10px] sm:text-[10.5px] font-bold text-white cursor-pointer shadow-2xs transition-opacity"
               >
                 <span>التقديم بملفي المهني</span>
-                <ArrowLeft className="h-3 w-3 text-[#F2CD78]" />
+                <ArrowLeft className="h-3 w-3 text-white" aria-hidden="true" />
               </button>
               <Link
                 to="/careers"
-                className="text-[10.5px] font-bold text-[#0E7C86] hover:underline"
+                className="inline-flex items-center gap-0.5 text-[10px] sm:text-[10.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4] hover:underline"
               >
-                دليل الوظائف
+                <span>دليل الوظائف</span>
+                <ArrowUpLeft className="h-3 w-3" aria-hidden="true" />
               </Link>
             </div>
           </article>
         ))}
       </div>
-    </CalmSectionCard>
+    </SummarySectionCard>
   );
 }
 
@@ -1682,29 +1710,37 @@ export function CareerSkillDevelopmentPanel({
   ];
 
   return (
-    <CalmSectionCard title="تطوير مهاراتي المهنية" icon={Sparkles} badge="جاهزية المسار">
+    <SummarySectionCard title="تطوير مهاراتي المهنية" icon={Sparkles} metaLabel="جاهزية المسار">
       <div className="grid gap-2.5 sm:grid-cols-2">
         {tracks.map((t) => (
-          <div
+          <article
             key={t.id}
-            className="flex items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3"
+            className="flex items-center justify-between gap-2.5 rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#111E38] hover:border-[#0E7C86]/35 dark:hover:border-[#38C6D4]/40 p-2.5 sm:p-3 transition-all"
           >
-            <div className="min-w-0">
-              <span className="text-[10px] font-bold text-[#0E7C86]">{t.status}</span>
-              <h4 className="mt-0.5 text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
-                {t.title}
-              </h4>
+            <div className="flex min-w-0 flex-1 items-start gap-2.5">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <span className="text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">
+                  {t.status}
+                </span>
+                <h4 className="mt-0.5 text-[10.5px] sm:text-[12px] font-bold text-[#142B5F] dark:text-white leading-snug">
+                  {t.title}
+                </h4>
+              </div>
             </div>
             <Link
               to={t.href}
-              className="shrink-0 rounded-lg border border-[#142B5F]/30 bg-[var(--mn-surface)] px-2.5 py-1 text-[10.5px] font-bold text-[#142B5F] dark:text-[#F2CD78]"
+              className="mn-workspace-btn-sm shrink-0 inline-flex items-center gap-1 rounded-lg border border-[#0E7C86]/28 dark:border-[#38C6D4]/30 bg-white dark:bg-[#111E38] px-2.5 text-[10px] font-bold text-[#142B5F] dark:text-white hover:bg-gradient-to-l hover:from-[#142B5F] hover:via-[#133A6A] hover:to-[#0E7C86] hover:text-white hover:border-transparent transition-all"
             >
-              فتح
+              <span>فتح</span>
+              <ArrowUpLeft className="h-3 w-3" aria-hidden="true" />
             </Link>
-          </div>
+          </article>
         ))}
       </div>
-    </CalmSectionCard>
+    </SummarySectionCard>
   );
 }
 
@@ -1719,45 +1755,57 @@ export function AcademicProfileSummaryCard() {
   const [targetDegree, setTargetDegree] = useState('ماجستير — خريف 2027 (الصين / بريطانيا)');
   const [savedNotice, setSavedNotice] = useState(false);
 
+  const inputClass =
+    'w-full rounded-xl border border-[#142B5F]/12 dark:border-white/12 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 py-1.5 text-[11px] sm:text-[12px] font-medium text-[#142B5F] dark:text-white outline-none focus:border-[#0E7C86] dark:focus:border-[#38C6D4] focus:bg-white dark:focus:bg-[#111E38] transition-colors';
+
   return (
-    <CalmSectionCard
+    <SummarySectionCard
       title="ملفي الأكاديمي واللغوي"
       icon={GraduationCap}
-      badge="يغذي توصيات المنح"
+      metaLabel="يغذي توصيات المنح"
     >
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-2.5 sm:grid-cols-2">
         <label className="block">
-          <span className="block text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1">
+          <span className="block text-[10.5px] sm:text-[11px] font-bold text-[#142B5F] dark:text-white mb-1">
             المؤهل الأكاديمي والتخصص
           </span>
           <input
             type="text"
             value={qualification}
-            onChange={(e) => setQualification(e.target.value)}
-            className="w-full rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] font-medium text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
+            onChange={(e) => {
+              setQualification(e.target.value);
+              setSavedNotice(false);
+            }}
+            className={inputClass}
           />
         </label>
 
         <div className="grid grid-cols-2 gap-2">
           <label className="block">
-            <span className="block text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1">
+            <span className="block text-[10.5px] sm:text-[11px] font-bold text-[#142B5F] dark:text-white mb-1">
               المعدل التراكمي
             </span>
             <input
               type="text"
               value={gpa}
-              onChange={(e) => setGpa(e.target.value)}
-              className="w-full rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] font-bold text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
+              onChange={(e) => {
+                setGpa(e.target.value);
+                setSavedNotice(false);
+              }}
+              className={`${inputClass} font-bold tabular-nums`}
             />
           </label>
           <label className="block">
-            <span className="block text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1">
+            <span className="block text-[10.5px] sm:text-[11px] font-bold text-[#142B5F] dark:text-white mb-1">
               مقياس المعدل
             </span>
             <select
               value={gpaScale}
-              onChange={(e) => setGpaScale(e.target.value)}
-              className="w-full rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-2.5 py-2 text-[12px] font-semibold text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
+              onChange={(e) => {
+                setGpaScale(e.target.value);
+                setSavedNotice(false);
+              }}
+              className={`${inputClass} font-semibold cursor-pointer`}
             >
               <option value="4.00">من 4.00</option>
               <option value="5.00">من 5.00</option>
@@ -1767,32 +1815,44 @@ export function AcademicProfileSummaryCard() {
         </div>
 
         <label className="block">
-          <span className="block text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1">
+          <span className="block text-[10.5px] sm:text-[11px] font-bold text-[#142B5F] dark:text-white mb-1">
             مستوى اللغة والاختبارات المعتمدة
           </span>
           <input
             type="text"
             value={englishTest}
-            onChange={(e) => setEnglishTest(e.target.value)}
-            className="w-full rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] font-medium text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
+            onChange={(e) => {
+              setEnglishTest(e.target.value);
+              setSavedNotice(false);
+            }}
+            className={inputClass}
           />
         </label>
 
         <label className="block">
-          <span className="block text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1">
+          <span className="block text-[10.5px] sm:text-[11px] font-bold text-[#142B5F] dark:text-white mb-1">
             الهدف الدراسي والوجهات المفضلة
           </span>
           <input
             type="text"
             value={targetDegree}
-            onChange={(e) => setTargetDegree(e.target.value)}
-            className="w-full rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2 text-[12px] font-medium text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
+            onChange={(e) => {
+              setTargetDegree(e.target.value);
+              setSavedNotice(false);
+            }}
+            className={inputClass}
           />
         </label>
       </div>
 
-      <div className="mt-3 pt-2.5 border-t border-[var(--mn-border)] dark:border-white/10 flex items-center justify-between gap-2">
-        <span className="text-[10.5px] font-medium text-[#64748B]">
+      <div className="mt-3 pt-2.5 border-t border-[#142B5F]/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-2">
+        <span
+          className={`text-[10px] sm:text-[10.5px] font-semibold ${
+            savedNotice
+              ? 'text-[#0E7C86] dark:text-[#38C6D4]'
+              : 'text-[#5C707C] dark:text-[#9BB4C7]'
+          }`}
+        >
           {savedNotice
             ? '✓ تم تحديث بيانات ملفك الأكاديمي'
             : 'تُستخدم هذه المعايير لمطابقة المنح وحساب الأهلية تلقائياً.'}
@@ -1800,12 +1860,12 @@ export function AcademicProfileSummaryCard() {
         <button
           type="button"
           onClick={() => setSavedNotice(true)}
-          className="rounded-xl bg-[#142B5F] hover:bg-[#1a3675] border border-[#D6A43B]/35 px-3.5 py-1.5 text-[11px] font-bold text-white cursor-pointer"
+          className="mn-workspace-btn-sm inline-flex items-center gap-1 rounded-lg bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 px-3 text-[10.5px] font-bold text-white cursor-pointer shadow-2xs transition-opacity"
         >
-          تحديث المؤهلات
+          <span>تحديث المؤهلات</span>
         </button>
       </div>
-    </CalmSectionCard>
+    </SummarySectionCard>
   );
 }
 
@@ -1834,20 +1894,20 @@ export function StudentCalendarTasksPanel({
   };
 
   return (
-    <CalmSectionCard title="التقويم والمواعيد والمهام" icon={CalendarClock} badge="مواعيدي">
+    <SummarySectionCard title="التقويم والمواعيد والمهام" icon={CalendarClock} metaLabel="مواعيدي">
       <form onSubmit={addTask} className="mb-3 flex items-center gap-2">
         <input
           type="text"
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
           placeholder="أضف تذكيرًا أو مهمة شخصية جديدة..."
-          className="flex-1 min-h-9 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 text-[11.5px] font-medium text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
+          className="flex-1 h-8 sm:h-9 rounded-xl border border-[#142B5F]/12 dark:border-white/12 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 text-[11px] sm:text-[11.5px] font-medium text-[#142B5F] dark:text-white placeholder:text-[#5C707C] dark:placeholder:text-[#9BB4C7] outline-none focus:border-[#0E7C86] dark:focus:border-[#38C6D4] focus:bg-white dark:focus:bg-[#111E38] transition-colors"
         />
         <button
           type="submit"
-          className="shrink-0 inline-flex min-h-9 items-center gap-1 rounded-xl bg-[#142B5F] px-3 text-[11px] font-bold text-white cursor-pointer border border-[#D6A43B]/35"
+          className="mn-workspace-btn-sm shrink-0 inline-flex items-center gap-1 rounded-xl bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 px-3 text-[10.5px] font-bold text-white cursor-pointer shadow-2xs transition-opacity"
         >
-          <Plus className="h-3.5 w-3.5 text-[#F2CD78]" />
+          <Plus className="h-3.5 w-3.5 text-white" aria-hidden="true" />
           <span>إضافة</span>
         </button>
       </form>
@@ -1856,15 +1916,17 @@ export function StudentCalendarTasksPanel({
         {trackers.map((t) => (
           <div
             key={t.id}
-            className="flex items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2"
+            className="mn-summary-start-bar relative overflow-hidden flex items-center justify-between gap-2 rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 py-2"
           >
             <div className="min-w-0">
-              <span className="text-[9.5px] font-bold text-[#0E7C86]">موعد منحة</span>
-              <h4 className="text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] truncate">
+              <span className="text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">
+                موعد منحة
+              </span>
+              <h4 className="text-[10.5px] sm:text-[11.5px] font-bold text-[#142B5F] dark:text-white truncate">
                 {t.owner?.displayName || 'ملف تقديم منحة'}
               </h4>
             </div>
-            <span className="shrink-0 rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2 py-0.5 text-[10px] font-bold text-[#0E7C86]">
+            <span className="shrink-0 text-[9.5px] sm:text-[10px] font-bold text-[#0E7C86] dark:text-[#38C6D4] tabular-nums">
               {t.deadlineAt
                 ? new Date(t.deadlineAt).toLocaleDateString('ar', {
                     year: 'numeric',
@@ -1879,7 +1941,7 @@ export function StudentCalendarTasksPanel({
         {customTasks.map((task) => (
           <label
             key={task.id}
-            className="flex items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] px-3 py-2 cursor-pointer"
+            className="flex items-center justify-between gap-2 rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#111E38] hover:border-[#0E7C86]/30 px-3 py-2 cursor-pointer transition-colors"
           >
             <div className="flex items-center gap-2 min-w-0">
               <input
@@ -1892,23 +1954,23 @@ export function StudentCalendarTasksPanel({
                     ),
                   )
                 }
-                className="h-4 w-4 rounded accent-[#142B5F]"
+                className="h-3.5 w-3.5 rounded accent-[#0E7C86] cursor-pointer shrink-0"
               />
               <span
-                className={`text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] ${
-                  task.done ? 'line-through opacity-65' : ''
+                className={`text-[10.5px] sm:text-[11.5px] font-bold text-[#142B5F] dark:text-white ${
+                  task.done ? 'line-through opacity-55' : ''
                 }`}
               >
                 {task.title}
               </span>
             </div>
-            <span className="shrink-0 text-[10px] font-semibold text-[#64748B]">
+            <span className="shrink-0 text-[9.5px] font-semibold text-[#5C707C] dark:text-[#9BB4C7] tabular-nums">
               {task.date}
             </span>
           </label>
         ))}
       </div>
-    </CalmSectionCard>
+    </SummarySectionCard>
   );
 }
 
@@ -1960,64 +2022,70 @@ export function StudentSupportCenterPanel() {
   };
 
   return (
-    <CalmSectionCard title="الدعم والمساعدة الطلابية" icon={HelpCircle} badge="خدمة الطلاب">
-      <div className="mb-3 flex items-center gap-1.5">
+    <SummarySectionCard
+      title="الدعم والمساعدة الطلابية"
+      icon={HelpCircle}
+      metaLabel="خدمة الطلاب"
+    >
+      <div className="mb-2.5 grid grid-cols-2 gap-1.5">
         <button
           type="button"
+          aria-pressed={subTab === 'FAQ'}
           onClick={() => setSubTab('FAQ')}
-          className={`rounded-lg border px-3 py-1 text-[11px] font-bold cursor-pointer ${
-            subTab === 'FAQ'
-              ? 'border-[#142B5F] bg-[#142B5F] text-[#F2CD78]'
-              : 'border-[var(--mn-border)] bg-[var(--mn-page)] text-[#334155]'
-          }`}
+          className="mn-student-subtab-btn inline-flex items-center justify-center gap-1 transition-all cursor-pointer"
         >
-          مركز المساعدة
+          <HelpCircle
+            className={`h-3 w-3 shrink-0 ${subTab === 'FAQ' ? 'text-white' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`}
+            aria-hidden="true"
+          />
+          <span>مركز المساعدة</span>
         </button>
         <button
           type="button"
+          aria-pressed={subTab === 'TICKETS'}
           onClick={() => setSubTab('TICKETS')}
-          className={`rounded-lg border px-3 py-1 text-[11px] font-bold cursor-pointer ${
-            subTab === 'TICKETS'
-              ? 'border-[#142B5F] bg-[#142B5F] text-[#F2CD78]'
-              : 'border-[var(--mn-border)] bg-[var(--mn-page)] text-[#334155]'
-          }`}
+          className="mn-student-subtab-btn inline-flex items-center justify-center gap-1 transition-all cursor-pointer tabular-nums"
         >
-          تذاكري ({tickets.length})
+          <MessageSquare
+            className={`h-3 w-3 shrink-0 ${subTab === 'TICKETS' ? 'text-white' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`}
+            aria-hidden="true"
+          />
+          <span>تذاكري ({tickets.length})</span>
         </button>
       </div>
 
       {subTab === 'FAQ' ? (
         <div className="space-y-2">
           {faqs.map((item) => (
-            <div
+            <article
               key={item.q}
-              className="rounded-xl border border-[var(--mn-border)] dark:border-white/10 bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3"
+              className="rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-2.5 sm:p-3"
             >
-              <h4 className="text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+              <h4 className="text-[10.5px] sm:text-[11.5px] font-bold text-[#142B5F] dark:text-white leading-snug">
                 {item.q}
               </h4>
-              <p className="mt-1 text-[11px] font-medium text-[#475569] dark:text-[#CBD5E1] leading-relaxed">
+              <p className="mt-1 text-[10px] sm:text-[11px] font-medium text-[#5C707C] dark:text-[#9BB4C7] leading-relaxed">
                 {item.a}
               </p>
-            </div>
+            </article>
           ))}
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <form onSubmit={handleCreateTicket} className="flex items-center gap-2">
             <input
               type="text"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="اكتب عنوان استفسارك أو المشكلة..."
-              className="flex-1 min-h-9 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 text-[11.5px] font-medium text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
+              className="flex-1 h-8 sm:h-9 rounded-xl border border-[#142B5F]/12 dark:border-white/12 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 text-[11px] sm:text-[11.5px] font-medium text-[#142B5F] dark:text-white placeholder:text-[#5C707C] dark:placeholder:text-[#9BB4C7] outline-none focus:border-[#0E7C86] dark:focus:border-[#38C6D4] focus:bg-white dark:focus:bg-[#111E38] transition-colors"
             />
             <button
               type="submit"
-              className="shrink-0 inline-flex min-h-9 items-center gap-1 rounded-xl bg-[#142B5F] px-3 text-[11px] font-bold text-white cursor-pointer border border-[#D6A43B]/35"
+              className="mn-workspace-btn-sm shrink-0 inline-flex items-center gap-1 rounded-xl bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 px-3 text-[10.5px] font-bold text-white cursor-pointer shadow-2xs transition-opacity"
             >
-              <Send className="h-3.5 w-3.5 text-[#F2CD78]" />
-              <span>إرسال تذكرة</span>
+              <Send className="h-3 w-3 text-white" aria-hidden="true" />
+              <span>إرسال</span>
             </button>
           </form>
 
@@ -2025,17 +2093,17 @@ export function StudentSupportCenterPanel() {
             {tickets.map((t) => (
               <div
                 key={t.id}
-                className="flex items-center justify-between gap-2 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] dark:bg-[var(--mn-surface-elevated)] p-3"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 p-2.5 sm:p-3"
               >
-                <div className="min-w-0">
-                  <span className="text-[10px] font-bold text-[#0E7C86]">
+                <div className="min-w-0 flex-1">
+                  <span className="text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4] tabular-nums">
                     #{t.id} · {t.category} · {t.updatedAt}
                   </span>
-                  <h4 className="mt-0.5 text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+                  <h4 className="mt-0.5 text-[10.5px] sm:text-[11.5px] font-bold text-[#142B5F] dark:text-white">
                     {t.subject}
                   </h4>
                 </div>
-                <span className="shrink-0 rounded-lg border border-[#0E7C86]/25 bg-[#0E7C86]/10 px-2.5 py-0.5 text-[10px] font-bold text-[#0E7C86]">
+                <span className="shrink-0 text-[9.5px] sm:text-[10px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">
                   {t.status}
                 </span>
               </div>
@@ -2043,7 +2111,7 @@ export function StudentSupportCenterPanel() {
           </div>
         </div>
       )}
-    </CalmSectionCard>
+    </SummarySectionCard>
   );
 }
 
@@ -2122,24 +2190,23 @@ export function AccountQuickSearchModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-2xl border border-[var(--mn-border)] dark:border-white/15 bg-[var(--mn-surface)] p-3.5 shadow-xl"
+        className="w-full max-w-md rounded-2xl border border-[#142B5F]/12 dark:border-white/12 bg-white dark:bg-[#111E38] p-3.5 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[var(--mn-border)]">
+        <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#142B5F]/10 dark:border-white/10">
           <div className="flex items-center gap-2">
-            <span className="grid h-7 w-7 place-items-center rounded-lg bg-[#142B5F] border border-[#D6A43B]/40 text-[#F2CD78]">
-              <Search className="h-3.5 w-3.5" />
-            </span>
-            <h3 className="text-[13px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+            <SummarySectionIcon icon={Search} />
+            <h3 className="text-[13px] font-bold text-[#142B5F] dark:text-white">
               البحث السريع في حسابي
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="grid h-7 w-7 place-items-center rounded-lg text-[#64748B] hover:bg-slate-100 cursor-pointer"
+            aria-label="إغلاق البحث"
+            className="mn-workspace-btn-sm grid h-7 w-7 place-items-center rounded-lg text-[#5C707C] dark:text-[#9BB4C7] hover:bg-[#F6F8FA] dark:hover:bg-[#0B1529] cursor-pointer"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
 
@@ -2150,9 +2217,9 @@ export function AccountQuickSearchModal({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="ابحث في تقديماتك، دوراتك، مستنداتك، أو طلباتك..."
-            className="w-full min-h-9 rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] pr-8 pl-3 text-[12px] font-medium text-[#1E293B] dark:text-[#F8FAFC] outline-none focus:border-[#0E7C86]"
+            className="w-full h-9 rounded-xl border border-[#142B5F]/12 dark:border-white/12 bg-[#F6F8FA] dark:bg-[#0B1529]/80 pr-8 pl-3 text-[11.5px] font-medium text-[#142B5F] dark:text-white placeholder:text-[#5C707C] dark:placeholder:text-[#9BB4C7] outline-none focus:border-[#0E7C86] dark:focus:border-[#38C6D4]"
           />
-          <Search className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#0E7C86]" />
+          <Search className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#0E7C86] dark:text-[#38C6D4]" />
         </div>
 
         <div className="mt-3 max-h-64 overflow-y-auto space-y-1.5">
@@ -2164,12 +2231,12 @@ export function AccountQuickSearchModal({
                 handleSelectTab('OPPORTUNITIES');
                 onClose();
               }}
-              className="w-full flex items-center justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-right hover:border-[#0E7C86] cursor-pointer"
+              className="w-full flex items-center justify-between rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 py-2 text-right hover:bg-white dark:hover:bg-[#111E38] hover:border-[#0E7C86]/40 cursor-pointer transition-colors"
             >
-              <span className="text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] truncate">
+              <span className="text-[11px] font-bold text-[#142B5F] dark:text-white truncate">
                 {t.owner?.displayName || 'ملف تقديم'}
               </span>
-              <span className="text-[10px] font-bold text-[#0E7C86]">فرصي</span>
+              <span className="text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">فرصي</span>
             </button>
           ))}
           {matchedCourses.map((c) => (
@@ -2180,12 +2247,12 @@ export function AccountQuickSearchModal({
                 handleSelectTab('LEARNING');
                 onClose();
               }}
-              className="w-full flex items-center justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-right hover:border-[#0E7C86] cursor-pointer"
+              className="w-full flex items-center justify-between rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 py-2 text-right hover:bg-white dark:hover:bg-[#111E38] hover:border-[#0E7C86]/40 cursor-pointer transition-colors"
             >
-              <span className="text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] truncate">
+              <span className="text-[11px] font-bold text-[#142B5F] dark:text-white truncate">
                 {c.courseName}
               </span>
-              <span className="text-[10px] font-bold text-[#0E7C86]">تعلمي</span>
+              <span className="text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">تعلمي</span>
             </button>
           ))}
           {matchedSaved.slice(0, 3).map((s) => (
@@ -2196,12 +2263,12 @@ export function AccountQuickSearchModal({
                 handleSelectTab('VAULT');
                 onClose();
               }}
-              className="w-full flex items-center justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-right hover:border-[#0E7C86] cursor-pointer"
+              className="w-full flex items-center justify-between rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 py-2 text-right hover:bg-white dark:hover:bg-[#111E38] hover:border-[#0E7C86]/40 cursor-pointer transition-colors"
             >
-              <span className="text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC] truncate">
+              <span className="text-[11px] font-bold text-[#142B5F] dark:text-white truncate">
                 {s.displayName || s.entityId}
               </span>
-              <span className="text-[10px] font-bold text-[#0E7C86]">محفوظاتي</span>
+              <span className="text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">محفوظاتي</span>
             </button>
           ))}
           {matchedRequests.map((r) => (
@@ -2212,12 +2279,12 @@ export function AccountQuickSearchModal({
                 handleSelectTab('SERVICES');
                 onClose();
               }}
-              className="w-full flex items-center justify-between rounded-xl border border-[var(--mn-border)] bg-[var(--mn-page)] px-3 py-2 text-right hover:border-[#0E7C86] cursor-pointer"
+              className="w-full flex items-center justify-between rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529]/80 px-3 py-2 text-right hover:bg-white dark:hover:bg-[#111E38] hover:border-[#0E7C86]/40 cursor-pointer transition-colors"
             >
-              <span className="text-[11.5px] font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+              <span className="text-[11px] font-bold text-[#142B5F] dark:text-white">
                 طلب خدمة #{r.publicId}
               </span>
-              <span className="text-[10px] font-bold text-[#0E7C86]">طلباتي</span>
+              <span className="text-[9.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">طلباتي</span>
             </button>
           ))}
         </div>

@@ -166,22 +166,23 @@ export function StudentAuthPage({ onAuthenticated }: { onAuthenticated: (destina
   }
 
   return (
-    <main dir="rtl" className="mn-page-shell flex min-h-[72vh] w-full items-center py-8">
-      <div className="mn-public-container flex justify-center">
-        <form onSubmit={submit} className="mn-card w-full max-w-md p-5 sm:p-7" noValidate>
-          {mode === 'login' && <label className="block text-sm">رمز تطبيق المصادقة — إذا كان مفعّلًا<input className="mt-2 block w-full rounded border p-2" autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={mfaCode} onChange={event=>setMfaCode(event.target.value.replace(/\D/g,''))}/></label>}
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[var(--mn-border-gold)] bg-[var(--mn-gold-surface)] text-[var(--mn-accent-text)]">
-              {mode === 'verify' ? <MailCheck className="h-5 w-5" /> : <ShieldCheck className="h-5 w-5" />}
+    <main dir="rtl" className="mn-page-shell flex min-h-[72vh] w-full items-center py-4 sm:py-8 px-2 sm:px-4 font-['Cairo',sans-serif]">
+      <div className="w-full max-w-[440px] mx-auto flex justify-center">
+        <form onSubmit={submit} className="w-full rounded-2xl bg-white dark:bg-[#111E38] border border-[#142B5F]/12 dark:border-white/10 shadow-[0_6px_24px_rgba(20,43,95,0.08)] p-4 sm:p-6" noValidate>
+          {mode === 'login' && <label className="block text-xs font-bold text-[#142B5F] dark:text-[#EDF5F5]">رمز تطبيق المصادقة — إذا كان مفعّلًا<input className="mt-1.5 block w-full rounded-xl border border-[#142B5F]/14 dark:border-white/12 bg-[#F6F8FA] dark:bg-[#0B1529] p-2 text-xs" autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={mfaCode} onChange={event=>setMfaCode(event.target.value.replace(/\D/g,''))}/></label>}
+          <div className="flex items-center gap-3 mt-1">
+            <span className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-[#142B5F] text-[#F2CD78] shrink-0 overflow-hidden shadow-xs">
+              <span aria-hidden="true" className="pointer-events-none absolute top-0 right-0 w-2.5 h-2.5 bg-[#D6A43B] rounded-bl-[5px]" />
+              {mode === 'verify' ? <MailCheck className="h-4.5 w-4.5 relative z-10" /> : <ShieldCheck className="h-4.5 w-4.5 relative z-10" />}
             </span>
             <div>
-              <p className="text-[11px] font-semibold text-[var(--mn-accent-text)]">بوابة حساب موحّدة وآمنة</p>
-              <h1 className="text-[20px] font-bold leading-7 text-[var(--mn-heading)]">
+              <p className="text-[10.5px] font-bold text-[#0E7C86] dark:text-[#38C6D4]">بوابة حساب موحّدة وآمنة</p>
+              <h1 className="text-[16px] sm:text-[18px] font-bold leading-snug text-[#142B5F] dark:text-[#F1F5F9]">
                 {mode === 'signup' ? 'إنشاء حساب جديد في منارتك' : mode === 'verify' ? 'تأكيد البريد الإلكتروني' : mode === 'forgot' ? 'استعادة كلمة المرور' : mode === 'reset' ? 'تعيين كلمة مرور جديدة' : 'تسجيل الدخول إلى منارتك'}
               </h1>
             </div>
           </div>
-          <p className="mt-2 text-xs leading-5 text-[var(--mn-text-muted)] sm:text-sm">
+          <p className="mt-2 text-[11px] leading-5 text-[#5C707C] dark:text-[#9BB4C7]">
             {mode === 'signup'
               ? 'أنشئ حسابك للوصول إلى أدوات الطالب والخدمات الأكاديمية.'
               : mode === 'verify'
@@ -192,25 +193,25 @@ export function StudentAuthPage({ onAuthenticated }: { onAuthenticated: (destina
           </p>
 
           {/* Mode Switcher Tabs */}
-          {mode !== 'forgot' && mode !== 'reset' && <div className="mt-4 flex rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface-elevated)] p-1">
+          {mode !== 'forgot' && mode !== 'reset' && <div className="mt-3.5 flex rounded-xl border border-[#142B5F]/12 dark:border-white/10 bg-[#F6F8FA] dark:bg-[#0B1529] p-1 gap-1">
             <button
               type="button"
               onClick={() => { setMode('login'); setError(null); setSuccess(null); }}
-              className={`flex-1 rounded-lg py-2 text-xs font-bold transition ${mode === 'login' ? 'bg-[var(--mn-surface)] text-[var(--mn-heading)] shadow-sm' : 'text-[var(--mn-text-muted)] hover:text-[var(--mn-heading)]'}`}
+              className={`flex-1 rounded-lg py-1.5 text-[11px] font-bold transition cursor-pointer ${mode === 'login' ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-xs' : 'text-[#5C707C] dark:text-[#9BB4C7] hover:text-[#142B5F] dark:hover:text-white'}`}
             >
               تسجيل الدخول
             </button>
             <button
               type="button"
               onClick={() => { setMode('signup'); setError(null); setSuccess(null); }}
-              className={`flex-1 rounded-lg py-2 text-xs font-bold transition ${mode === 'signup' ? 'bg-[var(--mn-surface)] text-[var(--mn-heading)] shadow-sm' : 'text-[var(--mn-text-muted)] hover:text-[var(--mn-heading)]'}`}
+              className={`flex-1 rounded-lg py-1.5 text-[11px] font-bold transition cursor-pointer ${mode === 'signup' ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-xs' : 'text-[#5C707C] dark:text-[#9BB4C7] hover:text-[#142B5F] dark:hover:text-white'}`}
             >
               إنشاء حساب
             </button>
             <button
               type="button"
               onClick={() => { setMode('verify'); setError(null); setSuccess(null); }}
-              className={`flex-1 rounded-lg py-2 text-xs font-bold transition ${mode === 'verify' ? 'bg-[var(--mn-surface)] text-[var(--mn-heading)] shadow-sm' : 'text-[var(--mn-text-muted)] hover:text-[var(--mn-heading)]'}`}
+              className={`flex-1 rounded-lg py-1.5 text-[11px] font-bold transition cursor-pointer ${mode === 'verify' ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-xs' : 'text-[#5C707C] dark:text-[#9BB4C7] hover:text-[#142B5F] dark:hover:text-white'}`}
             >
               تأكيد البريد
             </button>

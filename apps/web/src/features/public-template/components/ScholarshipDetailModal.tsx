@@ -1227,7 +1227,7 @@ export const ScholarshipDetailModal: React.FC<ScholarshipDetailModalProps> = ({
               </span>
               <Bookmark
                 className={`w-4 h-4 ${
-                  isFavorite ? 'fill-[#F2CD78] text-[#F2CD78]' : 'text-[#F2CD78]'
+                  isFavorite ? 'fill-[#38C6D4] text-[#38C6D4]' : 'text-[#38C6D4]'
                 }`}
               />
             </button>
@@ -1243,7 +1243,7 @@ export const ScholarshipDetailModal: React.FC<ScholarshipDetailModalProps> = ({
             className="flex items-center gap-2 rounded-2xl bg-[#142B5F] hover:bg-[#0E7C86] px-5 py-3 text-xs font-bold text-white shadow-[0_6px_16px_rgba(20,43,95,0.18)] transition-colors cursor-pointer"
           >
             <Bookmark
-              className={`w-4 h-4 ${isFavorite ? 'fill-[#F2CD78] text-[#F2CD78]' : 'text-[#F2CD78]'}`}
+              className={`w-4 h-4 ${isFavorite ? 'fill-[#38C6D4] text-[#38C6D4]' : 'text-[#38C6D4]'}`}
             />
             {isFavorite ? publicT('public_saved_3') : publicT('public_save_scholarship')}
           </button>

@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { Scholarship, DegreeLevel } from '../types';
 import { type PublicScholarshipDataStatus } from '../publicScholarshipDataSource';
-import { PublicCardsPagination, PublicFilterSelectModal, usePaginatedCatalog } from './DetailUi';
+import { PublicCardsPagination, usePaginatedCatalog } from './DetailUi';
 
 interface ScholarshipsSearchPageProps {
   scholarships?: Scholarship[];
@@ -186,19 +186,26 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
   const [draftNoIelts, setDraftNoIelts] = useState(false);
   const [draftEnglishOnly, setDraftEnglishOnly] = useState(false);
 
-  // Custom filter modal & exclusive accordion state
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isDegreeModalOpen, setIsDegreeModalOpen] = useState(false);
-  const [isFundingModalOpen, setIsFundingModalOpen] = useState(false);
+  // Inline attached filter drawer & exclusive accordion state
+  const [openFilterTab, setOpenFilterTab] = useState<'smart' | 'degree' | 'funding' | null>(null);
+  const isFilterOpen = openFilterTab === 'smart';
   const [activeAccordion, setActiveAccordion] = useState<'country' | 'major' | 'language' | null>('country');
 
-  const openSmartFilterModal = () => {
+  const toggleSmartFilterPanel = () => {
+    if (openFilterTab === 'smart') {
+      setOpenFilterTab(null);
+      return;
+    }
     setDraftCountry(selectedCountry);
     setDraftMajor(selectedMajor);
     setDraftNoIelts(noIeltsOnly);
     setDraftEnglishOnly(englishOnly);
     setActiveAccordion('country');
-    setIsFilterOpen(true);
+    setOpenFilterTab('smart');
+  };
+
+  const toggleFilterTab = (tab: 'degree' | 'funding') => {
+    setOpenFilterTab((prev) => (prev === tab ? null : tab));
   };
 
   const applySmartFilters = () => {
@@ -206,7 +213,7 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
     setSelectedMajor(draftMajor);
     setNoIeltsOnly(draftNoIelts);
     setEnglishOnly(draftEnglishOnly);
-    setIsFilterOpen(false);
+    setOpenFilterTab(null);
   };
 
   const resetDraftFilters = () => {
@@ -641,7 +648,7 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
         )}
 
         {/* ========================================================================= */}
-        {/* 3 BALANCED FLOATING FILTER TILES (Smart Filter + Degree + Funding Type)   */}
+        {/* 3 BALANCED FILTER TILES (Smart Filter + Degree + Funding Type)            */}
         {/* ========================================================================= */}
         <div className="max-w-md md:max-w-2xl mx-auto mn-inline-gutter mt-2 sm:mt-2.5 md:mt-3.5 relative z-20 pb-0 md:pb-1">
           <div className="grid grid-cols-3 gap-2 md:gap-3.5">
@@ -649,17 +656,20 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
             <div
               role="button"
               tabIndex={0}
+              aria-expanded={openFilterTab === 'smart'}
               onKeyDown={function (event) {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
-                  openSmartFilterModal();
+                  toggleSmartFilterPanel();
                 }
               }}
-              onClick={openSmartFilterModal}
+              onClick={toggleSmartFilterPanel}
               className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                smartFiltersCount > 0
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+                openFilterTab === 'smart'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-2 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : smartFiltersCount > 0
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
             >
               <div className="flex items-center justify-center gap-1 sm:gap-1.5 text-[#142B5F] dark:text-[#EDF5F5] font-bold text-[10.5px] sm:text-xs md:text-sm font-['Cairo',sans-serif] w-full">
@@ -667,29 +677,38 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     smartFiltersCount > 0
                       ? 'text-[#D6A43B] dark:text-[#F2CD78]'
-                      : 'text-[#0E7C86] dark:text-[#34BFC9]'
+                      : 'text-[#0E7C86] dark:text-[#38C6D4]'
                   }`}
                 />
                 <span className="truncate font-['Cairo',sans-serif]">{smartTileLabel}</span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown
+                className={`w-3.5 h-3.5 mt-0.5 transition-transform duration-200 ${
+                  openFilterTab === 'smart'
+                    ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]'
+                    : 'text-[#5C707C] dark:text-[#9BB4C7]'
+                }`}
+              />
             </div>
 
             {/* Tile 2: الدرجة العلمية */}
             <div
               role="button"
               tabIndex={0}
+              aria-expanded={openFilterTab === 'degree'}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setIsDegreeModalOpen(true);
+                  toggleFilterTab('degree');
                 }
               }}
-              onClick={() => setIsDegreeModalOpen(true)}
+              onClick={() => toggleFilterTab('degree')}
               className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedDegree !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+                openFilterTab === 'degree'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-2 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedDegree !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title={publicT('public_choose_degree')}
             >
@@ -698,7 +717,7 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedDegree !== 'الكل'
                       ? 'text-[#D6A43B] dark:text-[#F2CD78]'
-                      : 'text-[#0E7C86] dark:text-[#34BFC9]'
+                      : 'text-[#0E7C86] dark:text-[#38C6D4]'
                   }`}
                 />
                 <span className="truncate font-['Cairo',sans-serif]">
@@ -709,24 +728,33 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                       : selectedDegree}
                 </span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown
+                className={`w-3.5 h-3.5 mt-0.5 transition-transform duration-200 ${
+                  openFilterTab === 'degree'
+                    ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]'
+                    : 'text-[#5C707C] dark:text-[#9BB4C7]'
+                }`}
+              />
             </div>
 
             {/* Tile 3: نوع التمويل */}
             <div
               role="button"
               tabIndex={0}
+              aria-expanded={openFilterTab === 'funding'}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setIsFundingModalOpen(true);
+                  toggleFilterTab('funding');
                 }
               }}
-              onClick={() => setIsFundingModalOpen(true)}
+              onClick={() => toggleFilterTab('funding')}
               className={`relative bg-white dark:bg-[#111E38] hover:bg-[#F6F8FA] dark:hover:bg-[#162747] border-1.5 ${
-                selectedFunding !== 'الكل'
-                  ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
-                  : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#34BFC9]/45'
+                openFilterTab === 'funding'
+                  ? 'border-[#0E7C86] dark:border-[#38C6D4] ring-2 ring-[#0E7C86]/25 dark:ring-[#38C6D4]/25'
+                  : selectedFunding !== 'الكل'
+                    ? 'border-[#D6A43B] dark:border-[#F2CD78]/75 ring-1 ring-[#D6A43B]/25 dark:ring-[#F2CD78]/20'
+                    : 'border-[#142B5F]/18 dark:border-white/14 hover:border-[#0E7C86]/50 dark:hover:border-[#38C6D4]/45'
               } rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 md:p-3 flex flex-col items-center justify-center text-center shadow-[0_4px_14px_rgba(14,30,64,0.08)] transition-all h-[48px] sm:h-[62px] md:h-[70px] cursor-pointer mn-panel font-['Cairo',sans-serif]`}
               title={publicT('public_choose_funding_type')}
             >
@@ -735,21 +763,399 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
                   className={`w-3.5 h-3.5 md:w-4 md:h-4 shrink-0 ${
                     selectedFunding !== 'الكل'
                       ? 'text-[#D6A43B] dark:text-[#F2CD78]'
-                      : 'text-[#0E7C86] dark:text-[#34BFC9]'
+                      : 'text-[#0E7C86] dark:text-[#38C6D4]'
                   }`}
                 />
                 <span className="truncate font-['Cairo',sans-serif]">
                   {selectedFunding === 'الكل' ? publicT('public_funding') : selectedFunding}
                 </span>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-[#5C707C] dark:text-[#9BB4C7] mt-0.5" />
+              <ChevronDown
+                className={`w-3.5 h-3.5 mt-0.5 transition-transform duration-200 ${
+                  openFilterTab === 'funding'
+                    ? 'rotate-180 text-[#0E7C86] dark:text-[#38C6D4]'
+                    : 'text-[#5C707C] dark:text-[#9BB4C7]'
+                }`}
+              />
             </div>
           </div>
         </div>
       </div>
 
       {/* Official Gold Divider Ribbon */}
-      <div className="w-full h-[1.5px] bg-gradient-to-r from-[#D6A43B]/45 via-[#F2CD78] to-[#D6A43B]/45 dark:from-[#D6A43B]/30 dark:via-[#F2CD78]/65 dark:to-[#D6A43B]/30 mb-3 md:mb-5" />
+      <div className="w-full h-[1.5px] bg-gradient-to-r from-[#D6A43B]/45 via-[#F2CD78] to-[#D6A43B]/45 dark:from-[#D6A43B]/30 dark:via-[#F2CD78]/65 dark:to-[#D6A43B]/30 mb-3 md:mb-4" />
+
+      {/* ========================================================================= */}
+      {/* INLINE ATTACHED EXPANDABLE FILTER PANEL (No Full-Screen Dimmed Overlay)   */}
+      {/* ========================================================================= */}
+      {openFilterTab && (
+        <div className="w-full max-w-4xl md:max-w-[1120px] lg:max-w-[1160px] mx-auto px-1.5 sm:px-2.5 md:px-4 mb-3">
+          <div className="relative overflow-hidden bg-white dark:bg-[#111E38] border border-[#142B5F]/14 dark:border-white/12 rounded-2xl shadow-[0_8px_24px_rgba(20,43,95,0.08)] dark:shadow-[0_10px_28px_rgba(0,0,0,0.35)] p-3 sm:p-4 font-['Cairo',sans-serif] mn-panel">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#0E7C86]/65 to-transparent"
+            />
+
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#142B5F]/10 dark:border-white/10">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="relative w-7 h-7 rounded-lg bg-[#142B5F] text-[#F2CD78] flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                  <span aria-hidden="true" className="pointer-events-none absolute top-0 right-0 w-2 h-2 bg-[#D6A43B] rounded-bl-[4px]" />
+                  {openFilterTab === 'smart' ? (
+                    <SlidersHorizontal className="w-3.5 h-3.5 relative z-10" />
+                  ) : openFilterTab === 'degree' ? (
+                    <GraduationCap className="w-3.5 h-3.5 relative z-10" />
+                  ) : (
+                    <Coins className="w-3.5 h-3.5 relative z-10" />
+                  )}
+                </span>
+                <h4 className="text-[12px] sm:text-[13px] font-extrabold text-[#142B5F] dark:text-[#F1F5F9] truncate">
+                  {openFilterTab === 'smart'
+                    ? publicT('public_smart_filter_options')
+                    : openFilterTab === 'degree'
+                      ? publicT('public_choose_degree')
+                      : publicT('public_choose_funding_type')}
+                </h4>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setOpenFilterTab(null)}
+                aria-label={publicT('public_close')}
+                className="w-7 h-7 rounded-lg bg-[#F6F8FA] dark:bg-[#0B1529] border border-[#142B5F]/12 dark:border-white/12 text-[#142B5F] dark:text-[#EDF5F5] hover:border-[#0E7C86] hover:text-[#0E7C86] flex items-center justify-center transition-all cursor-pointer active:scale-95 shrink-0"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Panel Body: Smart Multi-Criteria Filter */}
+            {openFilterTab === 'smart' && (
+              <div className="space-y-2">
+                {draftFiltersCount > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 pb-2 border-b border-[#142B5F]/10 dark:border-white/10">
+                    {draftCountry !== 'الكل' && (
+                      <button
+                        type="button"
+                        onClick={() => setDraftCountry('الكل')}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#142B5F]/8 dark:bg-[#F2CD78]/12 text-[#142B5F] dark:text-[#F2CD78] border border-[#142B5F]/18 dark:border-[#F2CD78]/30 text-[10px] font-bold cursor-pointer hover:opacity-80"
+                      >
+                        <span className="truncate max-w-[110px]">{draftCountryLabel}</span>
+                        <X className="w-2.5 h-2.5 shrink-0" />
+                      </button>
+                    )}
+                    {draftMajor !== 'الكل' && (
+                      <button
+                        type="button"
+                        onClick={() => setDraftMajor('الكل')}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#0E7C86]/10 dark:bg-[#38C6D4]/15 text-[#0E7C86] dark:text-[#38C6D4] border border-[#0E7C86]/25 text-[10px] font-bold cursor-pointer hover:opacity-80"
+                      >
+                        <span className="truncate max-w-[110px]">{draftMajor}</span>
+                        <X className="w-2.5 h-2.5 shrink-0" />
+                      </button>
+                    )}
+                    {draftNoIelts && (
+                      <button
+                        type="button"
+                        onClick={() => setDraftNoIelts(false)}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#142B5F]/8 dark:bg-[#F2CD78]/12 text-[#142B5F] dark:text-[#F2CD78] border border-[#142B5F]/18 text-[10px] font-bold cursor-pointer hover:opacity-80"
+                      >
+                        <span>{publicT('public_without_ielts')}</span>
+                        <X className="w-2.5 h-2.5 shrink-0" />
+                      </button>
+                    )}
+                    {draftEnglishOnly && (
+                      <button
+                        type="button"
+                        onClick={() => setDraftEnglishOnly(false)}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#0E7C86]/10 dark:bg-[#38C6D4]/15 text-[#0E7C86] dark:text-[#38C6D4] border border-[#0E7C86]/25 text-[10px] font-bold cursor-pointer hover:opacity-80"
+                      >
+                        <span>{publicT('public_english_language')}</span>
+                        <X className="w-2.5 h-2.5 shrink-0" />
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* 1. Country Accordion */}
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => setActiveAccordion(activeAccordion === 'country' ? null : 'country')}
+                    className={`w-full flex items-center justify-between gap-2 py-2 px-3 rounded-xl border transition-all cursor-pointer ${
+                      activeAccordion === 'country'
+                        ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent shadow-xs'
+                        : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/10 dark:border-white/10'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2 min-w-0">
+                      <Globe2 className={`w-3.5 h-3.5 shrink-0 ${activeAccordion === 'country' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`} />
+                      <span className={`text-[11px] font-bold truncate ${activeAccordion === 'country' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
+                        {publicT('public_filter_by_country')}
+                      </span>
+                    </span>
+                    <span className="flex items-center gap-1.5 shrink-0">
+                      {draftCountry !== 'الكل' && (
+                        <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md truncate max-w-[92px] ${
+                          activeAccordion === 'country'
+                            ? 'bg-white/15 text-[#F2CD78]'
+                            : 'bg-[#0E7C86]/10 text-[#0E7C86] dark:bg-[#38C6D4]/15 dark:text-[#38C6D4]'
+                        }`}>
+                          {draftCountryLabel}
+                        </span>
+                      )}
+                      <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeAccordion === 'country' ? 'rotate-180 text-[#F2CD78]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
+                    </span>
+                  </button>
+
+                  {activeAccordion === 'country' && (
+                    <div className="rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/10 dark:border-white/10 p-1.5">
+                      <div className="max-h-[168px] overflow-y-auto overscroll-contain grid grid-cols-2 sm:grid-cols-3 gap-1.5" style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}>
+                        {countryOptions.map((country) => {
+                          const isSelected = draftCountry === country.id;
+                          return (
+                            <button
+                              key={country.id}
+                              type="button"
+                              onClick={() => setDraftCountry(isSelected ? 'الكل' : country.id)}
+                              className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer text-start ${
+                                isSelected
+                                  ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
+                                  : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/45 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/10 dark:border-white/10'
+                              }`}
+                            >
+                              <span className="truncate">{country.label}</span>
+                              {isSelected ? <Check className="w-3 h-3 text-[#38C6D4] shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. Major Accordion */}
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => setActiveAccordion(activeAccordion === 'major' ? null : 'major')}
+                    className={`w-full flex items-center justify-between gap-2 py-2 px-3 rounded-xl border transition-all cursor-pointer ${
+                      activeAccordion === 'major'
+                        ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent shadow-xs'
+                        : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/10 dark:border-white/10'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2 min-w-0">
+                      <BookOpen className={`w-3.5 h-3.5 shrink-0 ${activeAccordion === 'major' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`} />
+                      <span className={`text-[11px] font-bold truncate ${activeAccordion === 'major' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
+                        {publicT('public_by_major')}
+                      </span>
+                    </span>
+                    <span className="flex items-center gap-1.5 shrink-0">
+                      {draftMajor !== 'الكل' && (
+                        <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md truncate max-w-[92px] ${
+                          activeAccordion === 'major'
+                            ? 'bg-white/15 text-[#F2CD78]'
+                            : 'bg-[#0E7C86]/10 text-[#0E7C86] dark:bg-[#38C6D4]/15 dark:text-[#38C6D4]'
+                        }`}>
+                          {draftMajor}
+                        </span>
+                      )}
+                      <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeAccordion === 'major' ? 'rotate-180 text-[#F2CD78]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
+                    </span>
+                  </button>
+
+                  {activeAccordion === 'major' && (
+                    <div className="rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/10 dark:border-white/10 p-1.5">
+                      {majorOptions.length === 0 ? (
+                        <span className="text-[10px] text-[#5C707C] dark:text-[#9BB4C7] block p-2 text-center">
+                          {publicT('public_no_classified_majors_currently_available')}
+                        </span>
+                      ) : (
+                        <div className="max-h-[168px] overflow-y-auto overscroll-contain grid grid-cols-2 sm:grid-cols-3 gap-1.5" style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}>
+                          {majorOptions.map((major) => {
+                            const isSelected = draftMajor === major;
+                            return (
+                              <button
+                                key={major}
+                                type="button"
+                                onClick={() => setDraftMajor(isSelected ? 'الكل' : major)}
+                                className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer text-start ${
+                                  isSelected
+                                    ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
+                                    : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/45 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/10 dark:border-white/10'
+                                }`}
+                              >
+                                <span className="truncate">{major}</span>
+                                {isSelected ? <Check className="w-3 h-3 text-[#38C6D4] shrink-0" /> : <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* 3. Language Accordion */}
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => setActiveAccordion(activeAccordion === 'language' ? null : 'language')}
+                    className={`w-full flex items-center justify-between gap-2 py-2 px-3 rounded-xl border transition-all cursor-pointer ${
+                      activeAccordion === 'language'
+                        ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white border-transparent shadow-xs'
+                        : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/10 dark:border-white/10'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2 min-w-0">
+                      <Languages className={`w-3.5 h-3.5 shrink-0 ${activeAccordion === 'language' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#38C6D4]'}`} />
+                      <span className={`text-[11px] font-bold truncate ${activeAccordion === 'language' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
+                        {publicT('public_filter_by_language_requirements')}
+                      </span>
+                    </span>
+                    <span className="flex items-center gap-1.5 shrink-0">
+                      {(draftNoIelts || draftEnglishOnly) && (
+                        <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md ${
+                          activeAccordion === 'language'
+                            ? 'bg-white/15 text-[#F2CD78]'
+                            : 'bg-[#0E7C86]/10 text-[#0E7C86] dark:bg-[#38C6D4]/15 dark:text-[#38C6D4]'
+                        }`}>
+                          {(draftNoIelts ? 1 : 0) + (draftEnglishOnly ? 1 : 0)}
+                        </span>
+                      )}
+                      <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeAccordion === 'language' ? 'rotate-180 text-[#F2CD78]' : 'text-[#5C707C] dark:text-[#9BB4C7]'}`} />
+                    </span>
+                  </button>
+
+                  {activeAccordion === 'language' && (
+                    <div className="rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/10 dark:border-white/10 p-1.5 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setDraftNoIelts(!draftNoIelts)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer text-start ${
+                          draftNoIelts
+                            ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
+                            : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/45 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/10 dark:border-white/10'
+                        }`}
+                      >
+                        <span className="truncate">{publicT('public_filter_for_no_ielts_or_toefl_requirement')}</span>
+                        {draftNoIelts ? <Check className="w-3.5 h-3.5 text-[#38C6D4] shrink-0" /> : <span className="w-2 h-2 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setDraftEnglishOnly(!draftEnglishOnly)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer text-start ${
+                          draftEnglishOnly
+                            ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
+                            : 'bg-white dark:bg-[#111E38] hover:border-[#0E7C86]/45 text-[#142B5F] dark:text-[#E2ECF4] border border-[#142B5F]/10 dark:border-white/10'
+                        }`}
+                      >
+                        <span className="truncate">{publicT('public_filter_for_study_in_english_only')}</span>
+                        {draftEnglishOnly ? <Check className="w-3.5 h-3.5 text-[#38C6D4] shrink-0" /> : <span className="w-2 h-2 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Footer */}
+                <div className="pt-2 border-t border-[#142B5F]/10 dark:border-white/10 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={applySmartFilters}
+                    className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] hover:opacity-95 text-white text-[11.5px] font-bold shadow-xs transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <span>تطبيق الفلترة</span>
+                    <span className="px-1.5 py-0.5 rounded-md bg-white/15 text-[#F2CD78] text-[10px] font-extrabold leading-none">
+                      {draftMatchesCount}
+                    </span>
+                  </button>
+
+                  {draftFiltersCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={resetDraftFilters}
+                      className="px-3 py-2 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529] hover:border-[#0E7C86]/45 border border-[#142B5F]/12 dark:border-white/12 text-[#142B5F] dark:text-[#EDF5F5] text-[11px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer shrink-0"
+                    >
+                      <RotateCcw className="w-3 h-3 text-[#0E7C86] dark:text-[#38C6D4]" />
+                      <span>مسح</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Panel Body: Degree Selector (Instant 1-Tap) */}
+            {openFilterTab === 'degree' && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                {degreeLevels.map((degree) => {
+                  const isSelected = selectedDegree === degree;
+                  const label =
+                    degree === 'الكل'
+                      ? publicT('public_all_degrees')
+                      : degree === 'زمالة أبحاث'
+                        ? 'الزمالة'
+                        : degree;
+                  return (
+                    <button
+                      key={degree}
+                      type="button"
+                      onClick={() => {
+                        setSelectedDegree(degree);
+                        setOpenFilterTab(null);
+                      }}
+                      className={`flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer text-start ${
+                        isSelected
+                          ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
+                          : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border border-[#142B5F]/10 dark:border-white/10 hover:border-[#0E7C86]/45'
+                      }`}
+                    >
+                      <span className="truncate">{label}</span>
+                      {isSelected ? (
+                        <Check className="w-3.5 h-3.5 text-[#38C6D4] shrink-0" />
+                      ) : (
+                        <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Panel Body: Funding Type Selector (Instant 1-Tap) */}
+            {openFilterTab === 'funding' && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+                {fundingTypes.map((funding) => {
+                  const isSelected = selectedFunding === funding;
+                  const label = funding === 'الكل' ? publicT('public_all_funding_types') : funding;
+                  return (
+                    <button
+                      key={funding}
+                      type="button"
+                      onClick={() => {
+                        setSelectedFunding(funding);
+                        setOpenFilterTab(null);
+                      }}
+                      className={`flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer text-start ${
+                        isSelected
+                          ? 'bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-2xs'
+                          : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-white dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border border-[#142B5F]/10 dark:border-white/10 hover:border-[#0E7C86]/45'
+                      }`}
+                    >
+                      <span className="truncate">{label}</span>
+                      {isSelected ? (
+                        <Check className="w-3.5 h-3.5 text-[#38C6D4] shrink-0" />
+                      ) : (
+                        <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* 4. SCHOLARSHIP CARDS LIST                                                 */}
@@ -922,387 +1328,6 @@ const PrototypeScholarshipsSearchPage: React.FC<ScholarshipsSearchPageProps> = (
           />
         )}
       </div>
-
-      {/* Smart Multi-Criteria Filter Sheet (Combine Country + Major + Language before Applying) */}
-      {isFilterOpen && (
-        <>
-          {/* Backdrop Blur */}
-          <button
-            type="button"
-            aria-label={publicT('public_close_filter_options')}
-            className="fixed inset-0 bg-black/55 backdrop-blur-xs z-50 transition-opacity animate-fade-in"
-            onClick={() => setIsFilterOpen(false)}
-          />
-
-          {/* Smart Filter Modal */}
-          <div className="fixed top-12 inset-x-3 mx-auto max-w-[360px] sm:max-w-sm md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full bg-white dark:bg-[#111E38] border-1.5 border-[#142B5F]/18 dark:border-white/14 rounded-2xl shadow-2xl z-50 flex flex-col p-3.5 max-h-[82vh] font-['Cairo',sans-serif] select-none mn-panel transition-all">
-            {/* Header */}
-            <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-[#142B5F]/10 dark:border-white/10 shrink-0 font-['Cairo',sans-serif]">
-              <h4 className="text-[12px] font-bold text-[#142B5F] dark:text-[#F1F5F9] flex items-center gap-1.5 font-['Cairo',sans-serif]">
-                <span className="w-6 h-6 rounded-lg bg-[#142B5F] text-white flex items-center justify-center shrink-0 shadow-2xs">
-                  <SlidersHorizontal className="w-3.5 h-3.5 text-[#F2CD78]" />
-                </span>
-                <span>{publicT('public_smart_filter_options')}</span>
-              </h4>
-              <button
-                type="button"
-                onClick={() => setIsFilterOpen(false)}
-                className="text-[10.5px] font-bold text-white bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] px-3 py-1 rounded-lg hover:opacity-95 transition-all cursor-pointer active:scale-95 shadow-2xs font-['Cairo',sans-serif]"
-              >
-                {publicT('public_close')}
-              </button>
-            </div>
-
-            {/* Active Draft Selection Chips (removable individually while combining filters) */}
-            {draftFiltersCount > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5 pb-2 mb-2 border-b border-[#142B5F]/10 dark:border-white/10 shrink-0">
-                {draftCountry !== 'الكل' && (
-                  <button
-                    type="button"
-                    onClick={() => setDraftCountry('الكل')}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#142B5F]/8 dark:bg-[#F2CD78]/12 text-[#142B5F] dark:text-[#F2CD78] border border-[#142B5F]/18 dark:border-[#F2CD78]/30 text-[10px] font-bold cursor-pointer hover:opacity-80 transition-opacity"
-                  >
-                    <span className="truncate max-w-[110px]">{draftCountryLabel}</span>
-                    <X className="w-2.5 h-2.5 shrink-0" />
-                  </button>
-                )}
-                {draftMajor !== 'الكل' && (
-                  <button
-                    type="button"
-                    onClick={() => setDraftMajor('الكل')}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#DDEFF2]/85 dark:bg-[#34BFC9]/15 text-[#0E7C86] dark:text-[#7FD4DE] border border-[#0E7C86]/22 dark:border-[#34BFC9]/30 text-[10px] font-bold cursor-pointer hover:opacity-80 transition-opacity"
-                  >
-                    <span className="truncate max-w-[110px]">{draftMajor}</span>
-                    <X className="w-2.5 h-2.5 shrink-0" />
-                  </button>
-                )}
-                {draftNoIelts && (
-                  <button
-                    type="button"
-                    onClick={() => setDraftNoIelts(false)}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#142B5F]/8 dark:bg-[#F2CD78]/12 text-[#142B5F] dark:text-[#F2CD78] border border-[#142B5F]/18 dark:border-[#F2CD78]/30 text-[10px] font-bold cursor-pointer hover:opacity-80 transition-opacity"
-                  >
-                    <span>{publicT('public_without_ielts')}</span>
-                    <X className="w-2.5 h-2.5 shrink-0" />
-                  </button>
-                )}
-                {draftEnglishOnly && (
-                  <button
-                    type="button"
-                    onClick={() => setDraftEnglishOnly(false)}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#DDEFF2]/85 dark:bg-[#34BFC9]/15 text-[#0E7C86] dark:text-[#7FD4DE] border border-[#0E7C86]/22 dark:border-[#34BFC9]/30 text-[10px] font-bold cursor-pointer hover:opacity-80 transition-opacity"
-                  >
-                    <span>{publicT('public_english_language')}</span>
-                    <X className="w-2.5 h-2.5 shrink-0" />
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* Focused Exclusive Accordions Area */}
-            <div
-              className="overflow-y-auto overscroll-contain pr-0.5 flex-1 space-y-2 font-['Cairo',sans-serif]"
-              style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
-            >
-              {/* 1. Accordion: فلترة حسب الدولة */}
-              <div className="space-y-1">
-                <button
-                  type="button"
-                  onClick={() => setActiveAccordion(activeAccordion === 'country' ? null : 'country')}
-                  className={`w-full flex items-center justify-between gap-2 py-2 px-3 rounded-xl border transition-all cursor-pointer font-['Cairo',sans-serif] ${
-                    activeAccordion === 'country'
-                      ? 'bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white border-transparent shadow-xs'
-                      : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-[#DDEFF2]/45 dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/10 dark:border-white/10'
-                  }`}
-                >
-                  <span className="flex items-center gap-2 min-w-0">
-                    <Globe2 className={`w-3.5 h-3.5 shrink-0 ${activeAccordion === 'country' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#34BFC9]'}`} />
-                    <span className={`text-[11px] font-bold truncate ${activeAccordion === 'country' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
-                      {publicT('public_filter_by_country')}
-                    </span>
-                  </span>
-                  <span className="flex items-center gap-1.5 shrink-0">
-                    {draftCountry !== 'الكل' && (
-                      <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md truncate max-w-[92px] ${
-                        activeAccordion === 'country'
-                          ? 'bg-white/15 text-[#F2CD78]'
-                          : 'bg-[#DDEFF2] text-[#0E7C86] dark:bg-[#F2CD78]/15 dark:text-[#F2CD78]'
-                      }`}>
-                        {draftCountryLabel}
-                      </span>
-                    )}
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                        activeAccordion === 'country' ? 'rotate-180 text-[#F2CD78]' : 'text-[#5C707C] dark:text-[#9BB4C7]'
-                      }`}
-                    />
-                  </span>
-                </button>
-
-                {activeAccordion === 'country' && (
-                  <div className="rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/10 dark:border-white/10 p-1.5 mt-1">
-                    <div
-                      className="max-h-[212px] overflow-y-auto overscroll-contain pr-1 space-y-1 border-r-2 border-[#0E7C86]/45 dark:border-[#34BFC9]/40 mr-1 font-['Cairo',sans-serif] scroll-smooth"
-                      style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
-                    >
-                      {countryOptions.map((country) => {
-                        const isSelected = draftCountry === country.id;
-                        return (
-                          <button
-                            key={country.id}
-                            type="button"
-                            onClick={() => setDraftCountry(isSelected ? 'الكل' : country.id)}
-                            className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-[11px] font-bold font-['Cairo',sans-serif] transition-all cursor-pointer text-start ${
-                              isSelected
-                                ? 'bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white shadow-2xs'
-                                : 'bg-white dark:bg-[#111E38] hover:bg-[#DDEFF2]/45 dark:hover:bg-[#182B4F] text-[#203442] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
-                            }`}
-                            data-mn-design="55f5605788"
-                          >
-                            <span className="truncate font-['Cairo',sans-serif]">{country.label}</span>
-                            {isSelected ? (
-                              <Check className="w-3.5 h-3.5 text-[#F2CD78] shrink-0" />
-                            ) : (
-                              <span className="w-2 h-2 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {countryOptions.length > 6 && (
-                      <div className="mt-1.5 pt-1 border-t border-[#142B5F]/8 dark:border-white/8 flex items-center justify-center gap-1 text-[9.5px] font-bold text-[#0E7C86] dark:text-[#34BFC9]">
-                        <ChevronDown className="w-2.5 h-2.5 animate-bounce" />
-                        <span>اسحب لعرض بقية الدول ({countryOptions.length})</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* 2. Accordion: حسب التخصصات */}
-              <div className="space-y-1">
-                <button
-                  type="button"
-                  onClick={() => setActiveAccordion(activeAccordion === 'major' ? null : 'major')}
-                  className={`w-full flex items-center justify-between gap-2 py-2 px-3 rounded-xl border transition-all cursor-pointer font-['Cairo',sans-serif] ${
-                    activeAccordion === 'major'
-                      ? 'bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white border-transparent shadow-xs'
-                      : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-[#DDEFF2]/45 dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/10 dark:border-white/10'
-                  }`}
-                >
-                  <span className="flex items-center gap-2 min-w-0">
-                    <BookOpen className={`w-3.5 h-3.5 shrink-0 ${activeAccordion === 'major' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#34BFC9]'}`} />
-                    <span className={`text-[11px] font-bold truncate ${activeAccordion === 'major' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
-                      {publicT('public_by_major')}
-                    </span>
-                  </span>
-                  <span className="flex items-center gap-1.5 shrink-0">
-                    {draftMajor !== 'الكل' && (
-                      <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md truncate max-w-[92px] ${
-                        activeAccordion === 'major'
-                          ? 'bg-white/15 text-[#F2CD78]'
-                          : 'bg-[#DDEFF2] text-[#0E7C86] dark:bg-[#F2CD78]/15 dark:text-[#F2CD78]'
-                      }`}>
-                        {draftMajor}
-                      </span>
-                    )}
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                        activeAccordion === 'major' ? 'rotate-180 text-[#F2CD78]' : 'text-[#5C707C] dark:text-[#9BB4C7]'
-                      }`}
-                    />
-                  </span>
-                </button>
-
-                {activeAccordion === 'major' && (
-                  <div className="rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/10 dark:border-white/10 p-1.5 mt-1">
-                    <div
-                      className="max-h-[212px] overflow-y-auto overscroll-contain pr-1 space-y-1 border-r-2 border-[#0E7C86]/45 dark:border-[#34BFC9]/40 mr-1 font-['Cairo',sans-serif] scroll-smooth"
-                      style={{ scrollbarWidth: 'thin', scrollbarColor: '#0E7C86 transparent' }}
-                    >
-                      {majorOptions.length === 0 ? (
-                        <span className="text-[10px] text-[#5C707C] dark:text-[#9BB4C7] block p-2 text-center font-['Cairo',sans-serif]" data-mn-design="a050cea8a2">
-                          {publicT('public_no_classified_majors_currently_available')}
-                        </span>
-                      ) : (
-                        majorOptions.map((major) => {
-                          const isSelected = draftMajor === major;
-                          return (
-                            <button
-                              key={major}
-                              type="button"
-                              onClick={() => setDraftMajor(isSelected ? 'الكل' : major)}
-                              className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-[11px] font-bold font-['Cairo',sans-serif] transition-all cursor-pointer text-start ${
-                                isSelected
-                                  ? 'bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white shadow-2xs'
-                                  : 'bg-white dark:bg-[#111E38] hover:bg-[#DDEFF2]/45 dark:hover:bg-[#182B4F] text-[#203442] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
-                              }`}
-                              data-mn-design="55f5605788"
-                            >
-                              <span className="truncate font-['Cairo',sans-serif]">{major}</span>
-                              {isSelected ? (
-                                <Check className="w-3.5 h-3.5 text-[#F2CD78] shrink-0" />
-                              ) : (
-                                <span className="w-2 h-2 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />
-                              )}
-                            </button>
-                          );
-                        })
-                      )}
-                    </div>
-                    {majorOptions.length > 6 && (
-                      <div className="mt-1.5 pt-1 border-t border-[#142B5F]/8 dark:border-white/8 flex items-center justify-center gap-1 text-[9.5px] font-bold text-[#0E7C86] dark:text-[#34BFC9]">
-                        <ChevronDown className="w-2.5 h-2.5 animate-bounce" />
-                        <span>اسحب لعرض بقية التخصصات ({majorOptions.length})</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* 3. Accordion: فلترة حسب شروط اللغة */}
-              <div className="space-y-1">
-                <button
-                  type="button"
-                  onClick={() => setActiveAccordion(activeAccordion === 'language' ? null : 'language')}
-                  className={`w-full flex items-center justify-between gap-2 py-2 px-3 rounded-xl border transition-all cursor-pointer font-['Cairo',sans-serif] ${
-                    activeAccordion === 'language'
-                      ? 'bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white border-transparent shadow-xs'
-                      : 'bg-[#F6F8FA] dark:bg-[#0B1529]/80 hover:bg-[#DDEFF2]/45 dark:hover:bg-[#162747] text-[#142B5F] dark:text-[#EDF5F5] border-[#142B5F]/10 dark:border-white/10'
-                  }`}
-                >
-                  <span className="flex items-center gap-2 min-w-0">
-                    <Languages className={`w-3.5 h-3.5 shrink-0 ${activeAccordion === 'language' ? 'text-[#F2CD78]' : 'text-[#0E7C86] dark:text-[#34BFC9]'}`} />
-                    <span className={`text-[11px] font-bold truncate ${activeAccordion === 'language' ? 'text-white' : 'text-[#142B5F] dark:text-[#EDF5F5]'}`}>
-                      {publicT('public_filter_by_language_requirements')}
-                    </span>
-                  </span>
-                  <span className="flex items-center gap-1.5 shrink-0">
-                    {(draftNoIelts || draftEnglishOnly) && (
-                      <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-md ${
-                        activeAccordion === 'language'
-                          ? 'bg-white/15 text-[#F2CD78]'
-                          : 'bg-[#DDEFF2] text-[#0E7C86] dark:bg-[#F2CD78]/15 dark:text-[#F2CD78]'
-                      }`}>
-                        {(draftNoIelts ? 1 : 0) + (draftEnglishOnly ? 1 : 0)}
-                      </span>
-                    )}
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                        activeAccordion === 'language' ? 'rotate-180 text-[#F2CD78]' : 'text-[#5C707C] dark:text-[#9BB4C7]'
-                      }`}
-                    />
-                  </span>
-                </button>
-
-                {activeAccordion === 'language' && (
-                  <div className="rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/65 border border-[#142B5F]/10 dark:border-white/10 p-1.5 mt-1">
-                    <div className="pr-1 space-y-1 border-r-2 border-[#0E7C86]/45 dark:border-[#34BFC9]/40 mr-1 font-['Cairo',sans-serif]">
-                      {/* Option: No IELTS */}
-                      <button
-                        type="button"
-                        onClick={() => setDraftNoIelts(!draftNoIelts)}
-                        className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-[11px] font-bold font-['Cairo',sans-serif] transition-all cursor-pointer text-start ${
-                          draftNoIelts
-                            ? 'bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white shadow-2xs'
-                            : 'bg-white dark:bg-[#111E38] hover:bg-[#DDEFF2]/45 dark:hover:bg-[#182B4F] text-[#203442] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
-                        }`}
-                        data-mn-design="55f5605788"
-                      >
-                        <span className="truncate font-['Cairo',sans-serif]">{publicT('public_filter_for_no_ielts_or_toefl_requirement')}</span>
-                        {draftNoIelts ? (
-                          <Check className="w-3.5 h-3.5 text-[#F2CD78] shrink-0" />
-                        ) : (
-                          <span className="w-2 h-2 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />
-                        )}
-                      </button>
-
-                      {/* Option: English Study */}
-                      <button
-                        type="button"
-                        onClick={() => setDraftEnglishOnly(!draftEnglishOnly)}
-                        className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-[11px] font-bold font-['Cairo',sans-serif] transition-all cursor-pointer text-start ${
-                          draftEnglishOnly
-                            ? 'bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] text-white shadow-2xs'
-                            : 'bg-white dark:bg-[#111E38] hover:bg-[#DDEFF2]/45 dark:hover:bg-[#182B4F] text-[#203442] dark:text-[#E2ECF4] border border-[#142B5F]/8 dark:border-white/8'
-                        }`}
-                        data-mn-design="55f5605788"
-                      >
-                        <span className="truncate font-['Cairo',sans-serif]">{publicT('public_filter_for_study_in_english_only')}</span>
-                        {draftEnglishOnly ? (
-                          <Check className="w-3.5 h-3.5 text-[#F2CD78] shrink-0" />
-                        ) : (
-                          <span className="w-2 h-2 rounded-full shrink-0 bg-[#142B5F]/18 dark:bg-white/20" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Sticky Action Footer: Apply Combined Filters with Live Results Count + Clear */}
-            <div className="pt-2.5 mt-2.5 border-t border-[#142B5F]/10 dark:border-white/10 flex items-center gap-2 shrink-0 font-['Cairo',sans-serif]">
-              <button
-                type="button"
-                onClick={applySmartFilters}
-                className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-l from-[#142B5F] via-[#153B75] to-[#0E7C86] hover:opacity-95 text-white text-[11.5px] font-bold shadow-xs transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>تطبيق الفلترة</span>
-                <span className="px-1.5 py-0.5 rounded-md bg-white/15 text-[#F2CD78] text-[10px] font-extrabold leading-none">
-                  {draftMatchesCount}
-                </span>
-              </button>
-
-              {draftFiltersCount > 0 && (
-                <button
-                  type="button"
-                  onClick={resetDraftFilters}
-                  className="px-3 py-2 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529] hover:bg-[#DDEFF2]/60 dark:hover:bg-[#162747] border border-[#142B5F]/12 dark:border-white/12 text-[#142B5F] dark:text-[#EDF5F5] text-[11px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer shrink-0"
-                >
-                  <RotateCcw className="w-3 h-3 text-[#0E7C86] dark:text-[#34BFC9]" />
-                  <span>مسح</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Custom Cairo-Font Modal for Degree Level (including Fellowship / الزمالة) */}
-      <PublicFilterSelectModal
-        isOpen={isDegreeModalOpen}
-        title={publicT('public_choose_degree')}
-        icon={GraduationCap}
-        selectedValue={selectedDegree}
-        onSelect={(val) => setSelectedDegree(val)}
-        onClose={() => setIsDegreeModalOpen(false)}
-        dir={publicDir}
-        options={degreeLevels.map((degree) => ({
-          value: degree,
-          label:
-            degree === 'الكل'
-              ? publicT('public_all_degrees')
-              : degree === 'زمالة أبحاث'
-                ? 'الزمالة'
-                : degree,
-        }))}
-      />
-
-      {/* Custom Cairo-Font Modal for Funding Type */}
-      <PublicFilterSelectModal
-        isOpen={isFundingModalOpen}
-        title={publicT('public_choose_funding_type')}
-        icon={Coins}
-        selectedValue={selectedFunding}
-        onSelect={(val) => setSelectedFunding(val)}
-        onClose={() => setIsFundingModalOpen(false)}
-        dir={publicDir}
-        options={fundingTypes.map((funding) => ({
-          value: funding,
-          label: funding === 'الكل' ? publicT('public_all_funding_types') : funding,
-        }))}
-      />
     </div>
   );
 };

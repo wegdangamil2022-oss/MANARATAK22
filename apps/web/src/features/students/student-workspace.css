@@ -102,10 +102,11 @@
   color: #0E7C86;
 }
 .mn-student-workspace .mn-student-nav .mn-student-nav-tile[aria-current='page'] {
-  background: linear-gradient(270deg, #142B5F 0%, #133A6A 52%, #0E7C86 100%);
-  border: 1px solid transparent;
+  background: #142B5F;
+  border: 1px solid #142B5F;
   color: #FFFFFF;
   font-weight: 700;
+  box-shadow: 0 2px 8px rgba(20, 43, 95, 0.22);
 }
 .mn-student-workspace .mn-student-nav .mn-student-nav-tile[aria-current='page'] span,
 .mn-student-workspace .mn-student-nav .mn-student-nav-tile[aria-current='page'] svg {
@@ -128,9 +129,10 @@
   color: #38C6D4;
 }
 .dark .mn-student-workspace .mn-student-nav .mn-student-nav-tile[aria-current='page'] {
-  background: linear-gradient(270deg, #142B5F 0%, #133A6A 52%, #0E7C86 100%);
-  border: 1px solid rgba(56, 198, 212, 0.35);
+  background: #142B5F;
+  border: 1px solid rgba(56, 198, 212, 0.55);
   color: #FFFFFF;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 .dark .mn-student-workspace .mn-student-nav .mn-student-nav-tile[aria-current='page'] span,
 .dark .mn-student-workspace .mn-student-nav .mn-student-nav-tile[aria-current='page'] svg {
@@ -243,7 +245,20 @@
  * Keep compact touch heights on mobile without global 44px button bloat,
  * and reserve .mn-summary-start-bar strictly for priority/active cards.
  */
-.mn-student-workspace .mn-summary-tab .mn-summary-start-bar {
+.mn-student-workspace span.mn-summary-start-bar {
+  pointer-events: none;
+  position: absolute;
+  inset-block: 0;
+  right: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #142B5F 0%, #133A6A 50%, #0E7C86 100%);
+}
+.mn-student-workspace :not(span).mn-summary-start-bar {
+  position: relative;
+  overflow: hidden;
+}
+.mn-student-workspace :not(span).mn-summary-start-bar::before {
+  content: '';
   pointer-events: none;
   position: absolute;
   inset-block: 0;
@@ -281,6 +296,15 @@
   min-height: 28px !important;
   height: 28px !important;
   font-family: 'Cairo', sans-serif !important;
+  line-height: 1.25 !important;
+}
+.mn-student-workspace .mn-workspace-select-sm {
+  box-sizing: border-box;
+  min-height: 28px !important;
+  height: 28px !important;
+  font-family: 'Cairo', sans-serif !important;
+  font-size: 10px !important;
+  line-height: 1.25 !important;
 }
 .mn-student-workspace .mn-student-subtab-btn {
   box-sizing: border-box;
@@ -586,13 +610,13 @@
   font-family: 'Cairo', sans-serif !important;
 }
 
-/* All input boxes, textareas, dropdowns, option lists, buttons, and labels in career MUST be Cairo 12px */
+/* All input boxes, textareas, dropdowns, option lists, and labels in career MUST be Cairo 12px */
 .mn-student-career-page input,
 .mn-student-career-page textarea,
 .mn-student-career-page select,
 .mn-student-career-page option,
 .mn-student-career-page optgroup,
-.mn-student-career-page button,
+.mn-student-career-page button:not(.mn-workspace-btn-sm):not(.mn-student-subtab-btn),
 .mn-student-career-page label,
 .mn-student-career-page input::placeholder,
 .mn-student-career-page textarea::placeholder,
@@ -601,7 +625,7 @@
 .mn-student-workspace .mn-student-career-page select,
 .mn-student-workspace .mn-student-career-page option,
 .mn-student-workspace .mn-student-career-page optgroup,
-.mn-student-workspace .mn-student-career-page button,
+.mn-student-workspace .mn-student-career-page button:not(.mn-workspace-btn-sm):not(.mn-student-subtab-btn),
 .mn-student-workspace .mn-student-career-page label,
 .mn-student-workspace .mn-student-career-page input::placeholder,
 .mn-student-workspace .mn-student-career-page textarea::placeholder {
@@ -737,17 +761,17 @@
   font-family: 'Cairo', sans-serif !important;
 }
 
-/* All input boxes, selects, and dropdown option lists in services MUST be Cairo 12px */
+/* All input boxes, selects, and dropdown option lists in services MUST be Cairo 12px (except compact toolbar selects) */
 .mn-student-services-page input,
 .mn-student-services-page textarea,
-.mn-student-services-page select,
+.mn-student-services-page select:not(.mn-workspace-select-sm),
 .mn-student-services-page option,
 .mn-student-services-page optgroup,
 .mn-student-services-page input::placeholder,
 .mn-student-services-page textarea::placeholder,
 .mn-student-workspace .mn-student-services-page input,
 .mn-student-workspace .mn-student-services-page textarea,
-.mn-student-workspace .mn-student-services-page select,
+.mn-student-workspace .mn-student-services-page select:not(.mn-workspace-select-sm),
 .mn-student-workspace .mn-student-services-page option,
 .mn-student-workspace .mn-student-services-page optgroup,
 .mn-student-workspace .mn-student-services-page input::placeholder,
@@ -792,13 +816,11 @@
   font-family: 'Cairo', sans-serif !important;
 }
 
-.mn-student-notifications-page button,
-.mn-student-notifications-page time,
-.mn-student-workspace .mn-student-notifications-page button,
-.mn-student-workspace .mn-student-notifications-page time {
+.mn-student-notifications-page button:not(.mn-workspace-btn-sm):not(.mn-student-subtab-btn),
+.mn-student-workspace .mn-student-notifications-page button:not(.mn-workspace-btn-sm):not(.mn-student-subtab-btn) {
   font-family: 'Cairo', sans-serif !important;
-  font-size: 12px !important;
-  line-height: 1.65 !important;
+  font-size: 11px !important;
+  line-height: 1.45 !important;
 }
 
 /* Notifications section headings: 14px Cairo Bold with signature gold underline touching text */
@@ -842,11 +864,11 @@
 
 .mn-student-profile-page input,
 .mn-student-profile-page select,
-.mn-student-profile-page button,
+.mn-student-profile-page button:not(.mn-workspace-btn-sm):not(.mn-student-subtab-btn),
 .mn-student-profile-page label,
 .mn-student-workspace .mn-student-profile-page input,
 .mn-student-workspace .mn-student-profile-page select,
-.mn-student-workspace .mn-student-profile-page button,
+.mn-student-workspace .mn-student-profile-page button:not(.mn-workspace-btn-sm):not(.mn-student-subtab-btn),
 .mn-student-workspace .mn-student-profile-page label {
   font-family: 'Cairo', sans-serif !important;
   font-size: 12px !important;

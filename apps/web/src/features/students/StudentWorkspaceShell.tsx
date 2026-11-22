@@ -280,11 +280,11 @@ export function StudentWorkspaceShell({
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[1.5px] bg-gradient-to-r from-[#D6A43B]/45 via-[#F2CD78] to-[#D6A43B]/45" />
       </section>
 
-      {/* Compact inline 8-tab student navigation: Manaratak Frost + Active Navy-Petrol Gradient */}
+      {/* Compact inline 8-tab student navigation: Level 1 Solid Royal Navy active vs Frost inactive */}
       <div
         role="navigation"
         aria-label="أقسام حساب الطالب"
-        className="mn-student-nav relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] mt-0 px-1.5 py-1.5 sm:px-2 sm:py-2.5 rounded-none bg-white dark:bg-[#111E38] border-x-0 border-t-0 border-b border-[#142B5F]/10 dark:border-white/10 shadow-none grid grid-cols-4 gap-1 sm:gap-2 mn-panel"
+        className="mn-student-nav relative -mx-3 sm:-mx-6 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] mt-0 mb-2.5 sm:mb-3 px-1.5 py-1.5 sm:px-2 sm:py-2.5 rounded-none bg-white dark:bg-[#111E38] border-x-0 border-t-0 border-b border-[#142B5F]/10 dark:border-white/10 shadow-none grid grid-cols-4 gap-1 sm:gap-2 mn-panel"
       >
         {tabs.map((item) => {
           const Icon = item.icon;
@@ -298,7 +298,7 @@ export function StudentWorkspaceShell({
               onClick={() => onTabChange(item.id)}
               className={`mn-student-nav-tile w-full min-w-0 min-h-[38px] sm:min-h-[46px] rounded-xl border px-1.5 py-1.5 sm:px-2.5 sm:py-2 flex flex-row items-center justify-center gap-1 sm:gap-1.5 transition-all duration-150 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0E7C86] ${
                 active
-                  ? 'border-transparent bg-gradient-to-l from-[#142B5F] via-[#133A6A] to-[#0E7C86] text-white shadow-xs font-bold'
+                  ? 'border-[#142B5F] dark:border-[#38C6D4]/55 bg-[#142B5F] text-white shadow-xs font-bold'
                   : 'border-[#142B5F]/12 bg-[#F6F8FA] text-[#142B5F] dark:border-white/12 dark:bg-[#0B1529]/85 dark:text-[#DCE7F0] hover:border-[#0E7C86]/45 hover:bg-white dark:hover:border-[#38C6D4]/45 dark:hover:bg-[#162747] font-semibold'
               }`}
             >
