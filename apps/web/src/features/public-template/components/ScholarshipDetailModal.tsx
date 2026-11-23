@@ -142,7 +142,7 @@ export const ScholarshipDetailModal: React.FC<ScholarshipDetailModalProps> = ({
               <Icon className="w-3.25 h-3.25 md:w-3.75 md:h-3.75 relative z-10 text-[#F2CD78]" />
             </span>
             <span className="inline-flex flex-col items-start min-w-0">
-              <Heading className="text-[13.5px] sm:text-[14px] md:text-[15px] font-extrabold text-[#142B5F] dark:text-[#F1F5F9] leading-snug tracking-tight text-start">
+              <Heading className="text-[12.5px] sm:text-[13px] md:text-[14.5px] font-extrabold text-[#142B5F] dark:text-[#F1F5F9] leading-snug tracking-tight text-start">
                 {title}
               </Heading>
               <span
@@ -480,7 +480,7 @@ export const ScholarshipDetailModal: React.FC<ScholarshipDetailModalProps> = ({
 
             <div className="relative overflow-hidden rounded-xl bg-[#F6F9FB] dark:bg-[#0B1529]/70 border border-[#142B5F]/8 dark:border-white/8 pl-3.5 pr-4 py-3 md:p-4">
               <div className="absolute top-2.5 right-0 bottom-2.5 w-[3px] rounded-l-full bg-gradient-to-b from-[#142B5F] to-[#0E7C86] dark:from-[#34BFC9] dark:to-[#F2CD78]" />
-              <p className="text-[11px] sm:text-[11.5px] md:text-xs font-bold text-[#203442] dark:text-[#DCE7F0] leading-[1.9] text-start font-['Cairo',sans-serif] pr-1">
+              <p className="text-[10.5px] sm:text-[11px] md:text-xs font-bold text-[#203442] dark:text-[#DCE7F0] leading-[1.85] text-start font-['Cairo',sans-serif] pr-1">
                 {scholarship.description}
               </p>
             </div>
@@ -510,7 +510,7 @@ export const ScholarshipDetailModal: React.FC<ScholarshipDetailModalProps> = ({
                         <span className="w-5.5 h-5.5 rounded-md bg-[#142B5F] text-white flex items-center justify-center shrink-0 shadow-[0_2px_6px_rgba(20,43,95,0.16)]">
                           <Coins className="w-3 h-3 text-white" />
                         </span>
-                        <h4 className="text-[11px] sm:text-xs md:text-[13px] font-bold text-[#142B5F] dark:text-[#F1F5F9] leading-snug font-['Cairo',sans-serif]">
+                        <h4 className="text-[10.5px] sm:text-[11px] md:text-xs font-bold text-[#142B5F] dark:text-[#F1F5F9] leading-snug font-['Cairo',sans-serif]">
                           {group.title}
                         </h4>
                       </div>
@@ -526,12 +526,12 @@ export const ScholarshipDetailModal: React.FC<ScholarshipDetailModalProps> = ({
                       {group.items.map((label, idx) => (
                         <div
                           key={idx}
-                          className="h-full flex items-center gap-2 px-3 py-2.5 md:px-3.5 md:py-3 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/75 border border-[#142B5F]/8 dark:border-white/8 transition-colors"
+                          className="h-full flex items-center gap-2 px-3 py-2 md:px-3.5 md:py-2.5 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/75 border border-[#142B5F]/8 dark:border-white/8 transition-colors"
                         >
                           <span className="w-4 h-4 rounded-full bg-[#0E7C86] text-white flex items-center justify-center shrink-0">
                             <Check className="w-2.5 h-2.5 stroke-[3]" />
                           </span>
-                          <span className="text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#203442] dark:text-[#E2ECF4]">
+                          <span className="text-[10px] sm:text-[10.5px] font-bold leading-snug text-[#203442] dark:text-[#E2ECF4]">
                             {label}
                           </span>
                         </div>
@@ -555,12 +555,12 @@ export const ScholarshipDetailModal: React.FC<ScholarshipDetailModalProps> = ({
                 ).map((benefit, idx) => (
                   <div
                     key={idx}
-                    className="h-full flex items-center gap-2 px-3 py-2.5 md:px-3.5 md:py-3 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/75 border border-[#142B5F]/8 dark:border-white/8 transition-colors"
+                    className="h-full flex items-center gap-2 px-3 py-2 md:px-3.5 md:py-2.5 rounded-xl bg-[#F6F8FA] dark:bg-[#0B1529]/75 border border-[#142B5F]/8 dark:border-white/8 transition-colors"
                   >
                     <span className="w-4 h-4 rounded-full bg-[#0E7C86] text-white flex items-center justify-center shrink-0">
                       <Check className="w-2.5 h-2.5 stroke-[3]" />
                     </span>
-                    <span className="text-[10.5px] sm:text-[11px] font-bold leading-snug text-[#203442] dark:text-[#E2ECF4]">
+                    <span className="text-[10px] sm:text-[10.5px] font-bold leading-snug text-[#203442] dark:text-[#E2ECF4]">
                       {benefit.label}
                     </span>
                   </div>
@@ -623,7 +623,7 @@ export const ScholarshipDetailModal: React.FC<ScholarshipDetailModalProps> = ({
                         <span className="w-5.5 h-5.5 rounded-md bg-[#142B5F] text-white flex items-center justify-center shrink-0 shadow-[0_2px_6px_rgba(20,43,95,0.16)]">
                           <Languages className="w-3 h-3 text-white" />
                         </span>
-                        <h4 className="text-[11px] sm:text-xs md:text-[13px] font-bold text-[#142B5F] dark:text-[#F1F5F9] leading-snug font-['Cairo',sans-serif]">
+                        <h4 className="text-[10.5px] sm:text-[11px] md:text-xs font-bold text-[#142B5F] dark:text-[#F1F5F9] leading-snug font-['Cairo',sans-serif]">
                           {langGroup.languageLabel}
                         </h4>
                       </div>
@@ -852,7 +852,7 @@ export const ScholarshipDetailModal: React.FC<ScholarshipDetailModalProps> = ({
                     <span className="w-1 h-4 rounded-full bg-[#142B5F] dark:bg-[#F2CD78]" />
                     <span className="w-1 h-2.5 rounded-full bg-[#0E7C86] dark:bg-[#34BFC9]" />
                   </span>
-                  <span className="text-[10.5px] sm:text-[11px] font-bold text-[#203442] dark:text-[#E2ECF4] leading-relaxed">
+                  <span className="text-[10px] sm:text-[10.5px] font-bold text-[#203442] dark:text-[#E2ECF4] leading-relaxed">
                     {condition.text}
                   </span>
                 </div>
@@ -921,7 +921,7 @@ export const ScholarshipDetailModal: React.FC<ScholarshipDetailModalProps> = ({
                 >
                   <div className="absolute top-3 right-0 bottom-3 w-[2.5px] rounded-l-full bg-[#D6A43B]/85 dark:bg-[#F2CD78]" />
                   <Info className="w-3.75 h-3.75 text-[#B48524] dark:text-[#F2CD78] shrink-0 mt-0.5 stroke-[2.15]" />
-                  <p className="text-[10.5px] sm:text-[11px] font-semibold text-[#334B57] dark:text-[#DCE7F0] leading-relaxed">
+                  <p className="text-[10px] sm:text-[10.5px] font-semibold text-[#334B57] dark:text-[#DCE7F0] leading-relaxed">
                     <span className="text-[#142B5F] dark:text-[#F2CD78] font-bold">{note.label}</span>{' '}
                     {note.text}
                   </p>
